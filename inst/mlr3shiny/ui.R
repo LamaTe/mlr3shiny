@@ -17,7 +17,7 @@ ui <- tagList(
   ),
   navbarPage(
     theme = shinytheme("sandstone"),
-    title = a("mlr3shiny", href = "https://google.com", target = "_blank", style = "color: white;"),
+    title = a("mlr3shiny", href = "https://github.com/LamaTe/mlr3shiny", target = "_blank", style = "color: white;"),
     windowTitle = "mlr3shiny",
     id = "navbar",
     tabPanel("1. Data",
