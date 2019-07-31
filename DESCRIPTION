@@ -25,7 +25,10 @@ Imports:
 	readxl,
 	stringr,
 	plyr,
-	purrr
+	purrr,
+	ranger,
+	e1071,
+	stats
 Remotes:
 	https://github.com/mlr-org/mlr3learners.git
 LazyData: true
