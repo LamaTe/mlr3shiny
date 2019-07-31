@@ -1,0 +1,33 @@
+Package: mlr3shiny
+Title: Machine Learning in Shiny with mlr3
+Version: 0.9.0
+Authors@R: 
+    person(given = "Laurens",
+           family = "Tetzlaff",
+           role = c("aut", "cre"),
+           email = "laurens.tetzlaff@outlook.de")
+Description: This application let's you conduct the basic steps of a machine learning workflow from a grahpical user interface built with Shiny. It uses the functionalities of the R-package mlr3.
+License: BSD_2_clause
+Encoding: UTF-8
+Depends:
+	R (>= 3.6)
+Imports:
+	mlr3,
+	shiny,
+	shinythemes,
+	shinyBS,
+	shinydashboard,
+	shinyjs,
+	shinyWidgets,
+	shinyalert,
+	data.table,
+	DT,
+	readxl,
+	stringr,
+	plyr,
+	purrr
+Remotes:
+	https://github.com/mlr-org/mlr3learners.git
+LazyData: true
+RoxygenNote: 6.1.1
+
