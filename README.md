@@ -1,13 +1,13 @@
 # mlr3shiny: Machine Learning in Shiny with mlr3
-This application let's you conduct the basic steps of a machine learning workflow from a grahpical user interface built with Shiny.  It uses the functionalities of the R-package [mlr3](https://mlr3.mlr-org.com).
+This application let's you conduct the basic steps of a machine learning workflow from a graphical user interface built with Shiny.  It uses the functionalities of the R-package [mlr3](https://mlr3.mlr-org.com).
 
 Current functionalities of mlr3shiny are:
 * Data import
 * Creation of a task for supervised learning (regression, classification)
 * Use of a set of algorithms as learners
 * Training and evaluation of the generated models
-* Benchmarks to compare several learners on a task simultaneously
-* Prediction on new data using the trained learnder
+* Benchmarking to compare several learners on a task simultaneously
+* Prediction on new data using the trained learner
 
 ## Installation
 Install the package in R from GitHub.
@@ -26,3 +26,9 @@ Start by importing a dataset. Then define a task (the problem to be solved) in t
 Resampling strategies can be applied in a sub-section of 'train & evaluate'.
 Alternatively, different learners can be compared in a benchmark.
 Use the final model to make a prediction on new data in the 'predict' tab. 
+
+## References to Algorithms
+* [linear/ logistic regression](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html)
+* [decision tree](https://CRAN.R-project.org/package=rpart)
+* [random forest](https://CRAN.R-project.org/package=ranger)
+* [support vector machine](https://CRAN.R-project.org/package=e1071)
