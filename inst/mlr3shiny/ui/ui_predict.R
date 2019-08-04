@@ -1,3 +1,4 @@
+# Layout of "Predict" UI
 tabpanel_predict <- fluidPage(
   fluidRow(
     column(3,
@@ -15,22 +16,22 @@ tabpanel_predict <- fluidPage(
              h5("Import a new dataset", style = "font-weight: bold;"),
              hr(style = "border-color: #3e3f3a;"),
              selectInput(
-               inputId = "Predict_data_type", label = h5("Type"),choices = c("csv", "txt", "xlsx"), 
+               inputId = "Predict_data_type", label = h5("Type"),choices = c("csv", "txt", "xlsx"),
                selected = "csv"),
              # To be expanded, if more file formats are accepted
              conditionalPanel(
                condition = "input.Predict_data_type == 'csv' || input.Predict_data_type == 'txt'",
-               fileInput(inputId = "Predict_data_csv", label = h5("Select a File"), 
+               fileInput(inputId = "Predict_data_csv", label = h5("Select a File"),
                          accept = c("text/csv", ".csv", "text/comma-separated-values,text/plain", "text*")),
                checkboxInput("Predict_data_header", "Header", TRUE),
-               selectInput(inputId = "Predict_data_sep", label = h5("Separator"), 
+               selectInput(inputId = "Predict_data_sep", label = h5("Separator"),
                            choices = c(Comma = ",", Semicolon = ";", Tab = "\t", Space = " ", Vertical = "|")),
-               selectInput(inputId = "Predict_data_quote", label = h5("Quote"), 
+               selectInput(inputId = "Predict_data_quote", label = h5("Quote"),
                            choices = c(None = "", "Double Quote" = '"', "Single Quote" = "'"), selected = '"')
              ),
              conditionalPanel(
                condition = "input.Predict_data_type == 'xlsx' || input.Predict_data_type == 'xls'",
-               fileInput(inputId = "Predict_data_xlsx", label = h5("Select a File"), 
+               fileInput(inputId = "Predict_data_xlsx", label = h5("Select a File"),
                          accept = c(".xlsx", ".xls")),
                checkboxInput("Predict_data_header_xlsx", "Header", TRUE),
                numericInput(inputId = "Predict_data_sheet", label = h5("Sheet"), value = 1)

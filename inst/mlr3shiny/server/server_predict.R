@@ -1,3 +1,4 @@
+# reactive values for the predict tab
 Pred <- reactiveValues(Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
 
 ## Functions
@@ -68,7 +69,7 @@ getLrnOverview <- function() {
       fluidRow(
         column(12,
                addOverviewLineWf("Learner: ", Pred$Learner_Ov[[1]]),
-               addOverviewLineWf("Parameter: ", Pred$Learner_Ov[[2]]),
+               #addOverviewLineWf("Parameter: ", Pred$Learner_Ov[[2]]),
                addOverviewLineWf("Predict Type", Pred$Learner_Ov[[3]]),
                addOverviewLineWf("Target:", Pred$Learner_Ov[[4]]),
                addOverviewLineWf("Status:", Pred$Learner_Ov[[5]])
@@ -179,6 +180,7 @@ output$Pred_new_data_view <- DT::renderDataTable({
   getNewDataTbl()
 })
 
+# make the prediction
 observeEvent(input$Predict_predict, {
   if (is.null(Pred$Learner) || is.null(Pred$New_Data)) {
     shinyalert(title = "Predicting Failed", 

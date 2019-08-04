@@ -1,8 +1,9 @@
+# Layout of  "Import" tab
 tabpanel_Data <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       width = 3,
-      # import training dataset
+      # import training data
       helpText("Welcome to mlr3shiny!", style = "text-align: center;"),
       helpText("Get to know machine learning in R with mlr3 and the help of Shiny.", HTML("<br/>"),
                "For more information click on the questionmark in the top-right corner or visit the GitHub repository by clicking on 'mlr3shiny'.
@@ -42,38 +43,9 @@ tabpanel_Data <- fluidPage(
         numericInput(inputId = "Data_train_sheet", label = h5("Sheet"), value = 1)
       )
     ),
-    # hr(style = "border-color: #3e3f3a;"),
-    # # import dataset for prediction
-    # prettySwitch(inputId = "Data_predict_show", label = "Import prediction data", status = "success", fill = TRUE),
-    # conditionalPanel(
-    #    condition = "input.Data_predict_show",
-    #    selectInput(
-    #       inputId = "Data_predict_type", label = "Type",choices = c("csv", "txt", "xlsx"),
-    #       selected = "csv"),
-    #    # To be expanded, if more file formats are accepted
-    #    conditionalPanel(
-    #       condition = "input.Data_predict_type == 'csv' || input.Data_predict_type == 'txt'",
-    #       fileInput(inputId = "Data_predict_csv", label = "Select a File",
-    #                 accept = c("text/csv", ".csv", "text/comma-separated-values,text/plain", "text*")),
-    #       checkboxInput("Data_predict_header", "Header", TRUE),
-    #       selectInput(inputId = "Data_predict_sep", label = "Separator",
-    #                   choices = c(Comma = ",", Semicolon = ";", Tab = "\t", Space = " ", Vertical = "|")),
-    #       selectInput(inputId = "Data_predict_quote", label = "Quote",
-    #                   choices = c(None = "", "Double Quote" = '"', "Single Quote" = "'"), selected = '"')
-    #    ),
-    #    conditionalPanel(
-    #       condition = "input.Data_predict_type == 'xlsx' || input.Data_predict_type == 'xls'",
-    #       fileInput(inputId = "Data_predict_xlsx", label = "Select a File",
-    #                 accept = c(".xlsx", ".xls")),
-    #       checkboxInput("Data_predict_header_xlsx", "Header", TRUE),
-    #       numericInput(inputId = "Data_predict_sheet", label = "Sheet", value = 1)
-    #    ))
-    # ),
     mainPanel(
       width = 9,
-      DT::dataTableOutput(outputId = "Data_train_view") # ,
-      # HTML("</br>"),
-      # DT::dataTableOutput(outputId = "Data_predict_view")
+      DT::dataTableOutput(outputId = "Data_train_view")
     )
   )
 )

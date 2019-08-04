@@ -1,3 +1,4 @@
+# reactive values for benchmarking
 Bench <- reactiveValues(Bench_Rslt = NULL, Res_Strat = NULL, Current_Learners = NULL, Current_Design = NULL, Best_Learner = NULL,
                         Overview = NULL)
 
@@ -58,6 +59,7 @@ getItersOv <- function() {
   }
 }
 
+# show selected Learners and their algorithms
 getCurrentLearnersOv <- function() {
   if (!is.null(Bench$Current_Learners)) {
     lrns <- paste(sapply(input$Bench_learners, function(x){
@@ -67,6 +69,7 @@ getCurrentLearnersOv <- function() {
   }
 }
 
+# find out the best learner once available
 getBestLrnOv <- function(){
   if (is.null(Bench$Best_Learner)) {
     return("[not available]")
@@ -84,6 +87,7 @@ getBestLrnOv <- function(){
   }
 }
 
+# create Overview
 createBenchOverview <- function() {
   overview <- list(
     Task <- currenttask$task$id,
@@ -95,6 +99,7 @@ createBenchOverview <- function() {
   return(overview)
 }
 
+# create UI for Overview
 getBenchOverviewUi <- function() {
   if (is.null(Bench$Current_Learners)) {
     ui <- tagList(
@@ -167,6 +172,7 @@ getBenchMeasuresUi <- function() {
   }
 }
 
+# Start Benchmark
 getBenchButton <- function() {
   if (!is.null(Bench$Current_Learners)) {
     buttonui <- tagList(
@@ -184,6 +190,7 @@ getBenchButton <- function() {
   }
 }
 
+# show comparison table for the performance of each learner
 getBenchTable <- function() {
   if (!is.null(Bench$Bench_Rslt)) {
     tabl <-  DT::datatable(as.data.table(Bench$Bench_Rslt$aggregate(measures = input$Bench_measure)[,-(1:2)]),
@@ -193,6 +200,7 @@ getBenchTable <- function() {
   }
 }
 
+# download benchmark
 getBenchDownload <- function() {
   if (!is.null(Bench$Bench_Rslt)) {
     downloadbtnui <- tagList(

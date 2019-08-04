@@ -1,3 +1,4 @@
+# reactive values for task
 currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, tableOptions = NULL)
 
 # render sidebarPanel depending on input for Task
@@ -29,7 +30,7 @@ observe({
   toggle(id = "Task_make", condition = (input$Task_backend == "imported training data"))
 })
 
-
+# decide whether it is a classification or regression task
 observeEvent(input$Task_make, {
   currenttask$target <- data$traindata[, input$Task_target]
   
@@ -48,7 +49,7 @@ observeEvent(input$Task_make, {
 # Task Summary
 observe({
   # get bad features
-  # To-DO: What to do when prediction data have unsupported features?
+  # To-DO: What to do when prediction data have unsupported features? -> for preprocessing later on
   allfeat <- currenttask$task$feature_types
   bad <- c("POSIXct", "complex", "Date")
   badfeat <- allfeat[which(allfeat[, 2]$type %in% bad), ]$id
@@ -60,8 +61,8 @@ observe({
     shinyalert(title = "Features Dropped", text = userhelp[["Features Dropped"]], closeOnClickOutside = TRUE, animation = FALSE)
   }
   
-  ### mlr task is R6 Object, prob Shiny cannot see, when this object's state changes cause its modified in place
-  ### to ensure that the table still updates when we remove task features later on , we need to make it an extra reactive value
+  ### mlr task is R6 Object, Shiny cannot see, when this object's state changes cause its modified in place
+  ### to ensure that the table still updates when the features are removed later on, assign it an extra reactive value
   currenttask$featTypes <- currenttask$task$feature_types
   currenttask$featNames <- currenttask$task$feature_names
   currenttask$overview <- list(
@@ -71,7 +72,6 @@ observe({
     cols = currenttask$task$ncol,
     observations = currenttask$task$nrow,
     target = c(currenttask$task$target_names),
-    #features = count(currenttask$task$feature_types[,2])
     features = currenttask$featTypes
   )
 })
@@ -129,12 +129,6 @@ observeEvent(input$Task_feat_deactivate, {
     currenttask$featNames <- currenttask$task$feature_names
 })
 
-# observeEvent(input$Task_set_role, {
-#   ## here we need to update currenttask$features, so that Shiny recognizes the R6- task - object has changed 
-#   currenttask$featTypes <- currenttask$task$feature_types
-#   currenttask$featNames <- currenttask$task$feature_names
-#   print (paste(currenttask$task$feature_names, "2"))
-# })
 
 
 printTaskProcessingUI <- function(){
@@ -151,15 +145,7 @@ printTaskProcessingUI <- function(){
                             multiple = TRUE)
              ),
       column(4, actionButton(inputId = "Task_feat_deactivate", label = "Drop", style = "float: right;"))
-    )#,
-    # fluidRow(
-    #   column(3, h5("Change Column Roles: ")),
-    #   column(3, selectInput(inputId = "Task_feat_role", label = h5("Select Feature"),
-    #                         choices = c("None", currenttask$featNames), selected = "None")),
-    #   column(3, selectInput(inputId = "Task_role", label = h5("Select Role"),
-    #                         choices = c("feature", "target", "label", "order", "groups", "weights"))),
-    #   column(3, actionButton(inputId = "Task_set_role", label = "Set Role", style = "float: right; margin-top: 25px;"))
-    # )
+    )
   )
 }
 

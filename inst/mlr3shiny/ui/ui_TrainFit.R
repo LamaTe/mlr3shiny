@@ -1,3 +1,4 @@
+# Layout of "Train and Evaluate" UI
 tabpanel_TrainFit <- fluidPage(
   fluidRow(
     id = "TrainFit_Basic",

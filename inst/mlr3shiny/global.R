@@ -1,28 +1,18 @@
 library(shiny)
-library(data.table)
 library(mlr3)
 library(mlr3learners)
 library(DT)
 library(shinythemes)
-#library(shinyBS)
 library(shinydashboard)
 library(shinyjs)
 library(shinyWidgets)
-library(readxl)
 library(shinyalert)
+library(data.table)
+library(readxl)
 library(stringr)
 library(plyr)
 library(purrr)
-# library(shinycssloaders)
 
-
-## code generierung mit reactive values speichern
-## mehr measures speichern
-## visualisierung
-## learner abbrechen button; benchmark 
-## shinymeta for source code generation -> domain logic expotrt
-# new family of reactives -> metaReactive2(), withMetaMode2(); metaObserve2; metaExpr() ...
-# expandChain() export desired code
 
 userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a machine learning workflow using your own data.",
                                 "You can navigate over the different sections by clicking on each tab. They are chronologically ordered.",
@@ -43,10 +33,9 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                  "Task Creation" = c("A training dataset must be imported before using it as data backend for a task."),
                  "Task Creation Target" = c(paste("The target variable needs to be of type factor (categorical) or numeric (a number).",
                                                   "If unsure you can have a look at the training data in the DATA tab.")),
-                 "Features Dropped" = c(paste("Your dataset contains unsupported features of type 'POSIXct' (Date and Time),", 
-                                              "'complex' (a complex number) or 'Date'.", 
+                 "Features Dropped" = c(paste("Your dataset contains unsupported features of type 'POSIXct' (Date and Time),",
+                                              "'complex' (a complex number) or 'Date'.",
                                               "These features will be disabled and not used to train your model.")),
-                 ##mlr3book Tasks ch. 3
                  Task = c(paste("A task is an object to store the training dataset as backend and additional information about it as meta information.",
                                 "These are needed due to the particular requirements of a machine-learning problem and e.g. include the target variable and specific roles for other variables.",
                                 "Moreover, the meta information store the task type such as a classification or a regression.",
@@ -56,7 +45,7 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                                 "On the right-hand side you can drop features, meaning disregarding a variable from the dataset and thereby changing the view of the task.",
                                 "This is useful for variables that do not provide an information gain such as an ID or a feature with only one level over all observations.",
                                 "To inspect the data, return to the 'Data' tab.", sep = " ")),
-                 
+
                  Learner = c(paste("Different machine-learning algorithms can be selected via 'learners' which",
                                    "are objects that provide an interface to the actual algorithm and store meta information. They are depicted on the right-hand side",
                                    "under the sections 'overview' and 'parameters' and include necessary settings such as the predict type,",
@@ -65,34 +54,30 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                                    sep = " "),
                              paste("Currently, one can select the algorithms: decision tree, random forest, support vector machine, logistic regression and",
                                    "linear regression. While logistic reg. is used for a classification task and linear reg. for a regression task, the others",
-                                   "are available for both.", "Each learner has hyperparameters of wich an extract is available under 'parameter settings'", 
-                                   "to adjust the learner during the training phase to the present dataset for a better model.", 
+                                   "are available for both.", "Each learner has hyperparameters of wich an extract is available under 'parameter settings'",
+                                   "to adjust the learner during the training phase to the present dataset for a better model.",
                                    "The predict type can be changed to align with the requirements for certain measures and more.",
                                    "If further information are needed, visist the GitHub repository in which all packages and algorithms are referenced",
                                    sep = " "),
-                             #https://stat.ethz.ch/R-manual/R-devel/library/rpart/html/rpart.control.html
-                             paste("Decision Trees are adjustable via:", 
+                             paste("Decision Trees are adjustable via:",
                                    "xval - number of cross validations while computing the tree (set as static parameter)",
                                    "minsplit - minimum number of observations in a node before performing a split",
                                    "cp - complexity parameter to prevent a split if overvall lack of fit is not decreased by the factor of cp",
                                    "maxdepth - maximum depth of any node of the tree", sep = "<br/>"),
-                             #https://cran.r-project.org/web/packages/ranger/ranger.pdf
                              paste("Random Forests are adjustable via:",
                                    "num.trees - number of trees used for prediction",
-                                   "mtry - number of features to possibly split at each node",
+                                   "mtry - number of features that are considered for splitting a node",
                                    "min.node.size - minimal node size to stop this node from splitting",
                                    sep = "<br/>"),
-                             #https://www.rdocumentation.org/packages/e1071/versions/1.7-2/topics/svm
                              paste("Support Vector machines are adjustable via:",
                                    "kernel - a kernel function to quantify the similarity of two observations",
                                    #"linear kernel - expects a linear relationship between a pair of observations and quantifies the similarity using standard correlation",
                                    #"polynomial kernel - fitting the sv classifier into a higher dimensinoal feature space",
                                    #"radial kernel - kernel with very local behaviour",
                                    "cost - cost of constraint violations (allowed missclassifications)",
-                                   #https://scikit-learn.org/stable/auto_examples/svm/plot_rbf_parameters.html#sphx-glr-auto-examples-svm-plot-rbf-parameters-py
-                                   "gamma - defines how far the influence of an observation reaches (low: far; high: close)", 
+                                   "gamma - defines how far the influence of an observation reaches (low: far; high: close)",
                                    "degree - changes the decision boundary of the model to be more flexible towards the data",sep = "<br/>")),
-                 Evaluate = c(paste("During the basic machine-learning workflow an algorithm is trained on a subset of the imported data, the training data,", 
+                 Evaluate = c(paste("During the basic machine-learning workflow an algorithm is trained on a subset of the imported data, the training data,",
                                     "and evaluated on the remaining part of it, the test dataset.",
                                     "The target variable is predicted both for the training and test dataset in order to be able to compare different",
                                     "hyperparameter settings and take care of overfitting (loss of generalizability to new data).",
@@ -106,7 +91,7 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                  Resample = c(paste("Resampling offers the possibility of training the same learner several times on different subsets of the",
                                     "training data.",
                                     "In doing so multipe models are generated, each differing slightly from the others.",
-                                    "By evaluating the aggregated performance over all models, a better inference on the suitability", 
+                                    "By evaluating the aggregated performance over all models, a better inference on the suitability",
                                     "of the algorithm and its hyperparameterset for the present machine learning problem",
                                     "can be made."),
                               paste("To start resampling choose a learner and a resampling strategy.",
@@ -139,7 +124,7 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                                      sep = " ")),
                  Predict = c(paste("After evaluating different learners and parameter sets, a final model can be computed on the entire training data",
                                    "using the most promising algorithm and settings.",
-                                   "The learner can then be applied to a new dataset of the same structure as the training data to predict the response", 
+                                   "The learner can then be applied to a new dataset of the same structure as the training data to predict the response",
                                    "of the target variable for each observation.",
                                    sep = " "),
                              paste("The desired learner needs to be selected and trained.",
@@ -151,13 +136,13 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
 
 
 #future TO-DO: implement additional learners, ultimately replace vector with as.data.table(mlr_learners)
-possiblelearners <- c("Logistic Regression" = "classif.log_reg", 
-                      "Random Forest" = "classif.ranger", "Random Forest" = "regr.ranger", 
+possiblelearners <- c("Logistic Regression" = "classif.log_reg",
+                      "Random Forest" = "classif.ranger", "Random Forest" = "regr.ranger",
                       "Decision Tree" = "classif.rpart",  "Decision Tree" = "regr.rpart",
                       "Support Vector Machine" = "classif.svm", "Support Vector Machine" = "regr.svm",
                       "Linear Regression" = "regr.lm")
 
-#log_reg and lm without params, add svm params
+#log_reg and lm without params
 learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      rpart = c("minsplit", "cp", "maxdepth"),
                      supportvm = c("kernel", "cost", "gamma", "degree")
@@ -171,21 +156,21 @@ possiblemeasures <- list(classif = c("classif.acc", "classif.ce"),
 errorModal <- function(title, description, id, err) {
   showModal(
     modalDialog(
-      title = h2(title, style = "text-align: center;"), 
+      title = h2(title, style = "text-align: center;"),
       h4(description),
       HTML("</br>"),
-      h4(paste("Error:", err, sep =  " ")),  
+      h4(paste("Error:", err, sep =  " ")),
       easyClose = TRUE, fade = FALSE,
-      footer = div(style = "display:inline-block;width:100%;text-align: center;", 
+      footer = div(style = "display:inline-block;width:100%;text-align: center;",
                    actionButton(inputId = id, label = "OK", `data-dismiss` = "modal",
                                 style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
   )
 }
 
 errorAlertTrain <- function(error) {
-  errorModal(title = "Model Training Failed", 
-             description = paste("It seems that the selected learner does not fully support the current data.", 
-                                 "Please review the dataset and check if the learner can work with all features present.", 
+  errorModal(title = "Model Training Failed",
+             description = paste("It seems that the selected learner does not fully support the current data.",
+                                 "Please review the dataset and check if the learner can work with all features present.",
                                  sep = " "),
              err = error$message,
              id = "okTrain")
@@ -193,24 +178,24 @@ errorAlertTrain <- function(error) {
 
 
 errorAlertPredict <- function(error) {
-  errorModal(title = "Predicting Target Failed", 
-             description = paste("Sorry, predicting the target variable of the training or test data did not work.", 
+  errorModal(title = "Predicting Target Failed",
+             description = paste("Sorry, predicting the target variable of the training or test data did not work.",
                                  "Please have a look at the error message to get insight into the cause.", sep = " "),
              err = error$message,
              id = "okPredict")
 }
 
 errorAlertPredictNew <- function(error) {
-  errorModal(title = "Predicting Target Failed", 
-             description = paste("Sorry, predicting the target variable of the newly imported dataset did not work.", 
+  errorModal(title = "Predicting Target Failed",
+             description = paste("Sorry, predicting the target variable of the newly imported dataset did not work.",
                                  "Please have a look at the error message to get insight into the cause.", sep = " "),
              err = error$message,
              id = "okPredict")
 }
 
 errorAlertResample <- function(error) {
-  errorModal(title = "Resampling Failed", 
-             description = paste("Sorry, performing the resampling strategy did not work.", 
+  errorModal(title = "Resampling Failed",
+             description = paste("Sorry, performing the resampling strategy did not work.",
                                  "Perhaps a resampling parameter did not support the value it was given,",
                                  "the selected learner is incompatible with some of the training data or",
                                  "the test data contain new factor levels that the model cannot handle.",
@@ -220,7 +205,7 @@ errorAlertResample <- function(error) {
 }
 
 errorAlertBench <- function(error) {
-  errorModal(title = "Benchmark Failed", 
+  errorModal(title = "Benchmark Failed",
              description = paste("Sorry, computing the benchmark failed.",
                                  "Perhaps a value of the resampling parameter settings is not supported,",
                                  "one of the selected learners is incompatible with some of the training data or",

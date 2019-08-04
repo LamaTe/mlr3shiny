@@ -32,35 +32,6 @@ observe({
   toggle(id = "Data_train_view", condition = (!is.null(data$traindata)))
 })
 
-# # predictdata
-# observe({
-#   if(input$Data_predict_type == "csv" || input$Data_predict_type == "txt"){
-#     filepath <-  input$Data_predict_csv$datapath
-#     if(!is.null(filepath) && (str_sub(filepath, -4, -1) == ".csv" || (str_sub(filepath, -4, -1) == ".txt" ))){
-#       data$predictdata <- read.csv(file = filepath, header = input$Data_predict_header,
-#                                    sep = input$Data_predict_sep, quote = input$Data_predict_quote)
-#     }
-#   } else if(input$Data_predict_type == "xlsx"){
-#      filepath <-  input$Data_predict_xlsx$datapath
-#         if(!is.null(filepath) && (str_sub(filepath, -5, -1) == ".xlsx" )){
-#           predicttibble <- read_excel(path = filepath, col_names = input$Data_predict_header_xlsx,
-#                                          sheet = input$Data_predict_sheet)
-#           predictdf <- as.data.frame(predicttibble)
-#           data$predictdata <- modify_at(predictdf, 
-#                                         which(as.character(sapply(predictdf, class)) == "character"), 
-#                                         as.factor)
-#     }
-#   }
-# })
-# 
-# output$Data_predict_view <- DT::renderDataTable({
-#   DT::datatable(data$predictdata, options = list(scrollX = TRUE))
-# })
-# 
-# observe({
-#   toggle(id = "Data_predict_view", condition = (!is.null(data$predictdata) && input$Data_predict_show))
-# })
-
 
 # show help if needed
 observeEvent(input$User_help, {

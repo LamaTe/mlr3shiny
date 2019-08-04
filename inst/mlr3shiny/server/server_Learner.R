@@ -1,9 +1,4 @@
-# use of algorithms:
-# rpart for decision trees: https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf
-# ranger for random forests: https://cran.r-project.org/web/packages/ranger/ranger.pdf
-#
-
-
+# each Learner has its own reactive values 
 LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL)
 Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
@@ -13,17 +8,19 @@ Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Pre
 Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 
+# check whether it is a regression or classification and the give possible learners for each
 observe({
    if (!is.null(currenttask$task) && currenttask$task$task_type == "classif") {
-      LearnerMeta$learner_choice <- c("logistic regression" = "classif.log_reg", "random forest" = "classif.ranger", "decision tree" = "classif.rpart",
+      LearnerMeta$learner_choice <- c("decision tree" = "classif.rpart", "logistic regression" = "classif.log_reg", "random forest" = "classif.ranger",
                                       "support vector machine" = "classif.svm")
    }
    else if (!is.null(currenttask$task) && currenttask$task$task_type == "regr") {
-      LearnerMeta$learner_choice <- c("linear regression" = "regr.lm", "random forest" = "regr.ranger", "decision tree" = "regr.rpart",
+      LearnerMeta$learner_choice <- c("decision tree" = "regr.rpart", "linear regression" = "regr.lm", "random forest" = "regr.ranger",
                                       "support vector machine" = "regr.svm")
    }
 })
 
+# let's user add another learner object
 addLearner <- function(LearnNumber){
   tagList(
     fluidRow(
@@ -45,6 +42,7 @@ output$Learner_other_Learner1 <- renderUI({
   addLearner(LearnNumber = 1)
 })
 
+# ui for each learner selection with name, choices and go button
 observeEvent(input$Learner_add, {
    LearnerMeta$Count <- LearnerMeta$Count + 1
    currentcount <- LearnerMeta$Count
@@ -67,6 +65,7 @@ observeEvent(input$Learner_add, {
           )
 })
 
+# only show learner panels when at least one is created otherwise give user info that no learner has been created yet
 observe({
    checkcondition <- is.null(c(Learner1$Learner, Learner2$Learner, Learner3$Learner, Learner4$Learner,
                                Learner5$Learner, Learner6$Learner, Learner7$Learner))
@@ -98,6 +97,7 @@ observe({
 # Learner tabs
 ## Learner overview
 
+# get set params
 getCurrentParams <- function(learnerobject) {
    selectedParams <- character(0)
    for (i in names(learnerobject$Learner$param_set$values)) {
@@ -112,6 +112,8 @@ getLearnerOverview <- function(learnerobject) {
    overview <- list(
       "name" = names(which(possiblelearners == learnerobject$Learner$id)),
       "predict type" = learnerobject$Predict_Type,
+      # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not 
+      # used in linear kernel -> confusing for user
       "params" = getCurrentParams(learnerobject = learnerobject),
       "predit types" = learnerobject$Learner$predict_types,
       "properties" = learnerobject$Learner$properties,
@@ -133,11 +135,11 @@ makeOverviewUi <- function(learnerobject) {
          column(6,
                 addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
                 addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
-                addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-                #addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", "))
+                #addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
+                addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", "))
                 ),
          column(6,
-                addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
+                #addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
                 addOverviewLineLearner("Properties: ", paste(learnerobject$Overview[[5]], collapse = ", ")),
                 addOverviewLineLearner("Supported Feature Types: ", paste(learnerobject$Overview[[6]], collapse = ", "))
                 )
@@ -205,6 +207,7 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
    } 
 }
 
+# get params that are available (defined in global)
 getAvailableParams <- function(algorithm, learnerobject) {
    learnerobject$Params <- learnerparams[[algorithm]]
    params <- list()
@@ -214,6 +217,7 @@ getAvailableParams <- function(algorithm, learnerobject) {
    return(params)
 }
 
+# define the parameter settings UI for each learner depending on the selected algorithm 
 makeParamUi <- function(learnerobject, learnername) {
    if (learnerobject$Learner$param_set$is_empty) {
       return(h5("No Parameters available to be set.", style = "text-align: center;"))
@@ -263,6 +267,7 @@ makeParamUi <- function(learnerobject, learnername) {
       return(parameterSvmUi)
       }
 }
+# make the overview for each learner
 makeLearnerOvTab <- function(learnerobject) {
    learnerov <- tagList(
       wellPanel(
@@ -276,6 +281,7 @@ makeLearnerOvTab <- function(learnerobject) {
    )
 }
 
+# place overview and learner together in a tab
 makeLearnerParamTab <- function(learnerobject, learnername) {
    learnerparams <- tagList(
                      wellPanel(
@@ -303,9 +309,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
    return(learnerparams)
 }
 
-# Note: right now, the default value in learner params UI resets when change_params is clicked
-# reason: the whole learner tab is one ui element, so when overview changes, the rest gets rerendered and numericInputs do not remember their values
-# future To-DO: encapsulate overview and learner parameter ui in two different uis so that the seleted param values also stays consistend in the Learner Parameter UI
+# add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
    observeEvent(input[[trigger]], {
@@ -342,6 +346,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    
    # # To-Do: get a prettier solution
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
+      paramlist <- list()
       for (i in learnerobject$Params) {
          currentinput <- input[[paste0(learnername, "Param", i)]]
          if (!is.na(currentinput) && !is.null(currentinput)) {
@@ -355,12 +360,13 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
                              animation = FALSE, closeOnClickOutside = TRUE)
             } 
             else {
-               learnerobject$Learner$param_set$values[[i]] <- currentinput
-               learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
-               learnerobject$Hash <- learnerobject$Learner$hash
+               paramlist[[i]] <- currentinput
                }
          }
       }
+      learnerobject$Learner$param_set$values <- paramlist
+      #learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
+      learnerobject$Hash <- learnerobject$Learner$hash
    })
 }
 

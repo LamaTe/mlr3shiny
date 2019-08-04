@@ -1,4 +1,4 @@
-### Basic Workflow
+### Basic Workflow reactive values
 Help <- reactiveValues(Tracker = 1)
 Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
@@ -17,14 +17,9 @@ getLearnChoicesUI <- function() {
   else {
     ui <- tagList(
         column(6,
-               # selected = character(0) necessary (unfortunately) - otherwise when task changes, a change in the learner is not registeres
-               # and ui rerendered... ugly solution
                radioButtons(inputId = "TrainFit_learner", label = h5("Select a new learner:"), choices = LearnerMeta$Learner_Avail,
                             selected = character(0))
-        )#,
-        # column(6,
-        #        actionButton(inputId = "TrainFit_start_wf", label = "Start")
-        # )
+        )
       )
     return(ui)
   }
@@ -174,11 +169,9 @@ getTrainUi <- function() {
         column(9, sliderInput(inputId = "TrainFit_input_split", label = NULL, min = 0, max = 100, value = 80)
         )
       ),
-      #hr(style = "border-color: #3e3f3a;"),
       fluidRow(
         column(12,
-               actionButton(inputId = "TrainFit_train_model", label = "Train model", style = "float: left;")#,
-               #downloadButton(outputId  = "TrainFit_model_download", label = "Export Experiment", style = "float: right;")
+               actionButton(inputId = "TrainFit_train_model", label = "Train model", style = "float: left;")
         )
       )
     )
@@ -199,7 +192,6 @@ getPredictUi <- function(Wfstate) {
                         "as well as on the data partition the model was trained on.", sep = " "))
         )
       ),
-      #hr(style = "border-color: #3e3f3a;"),
       fluidRow(
         column(12,
                actionButton(inputId = "TrainFit_predict_data", label = "Predict target", style = "float: left;")
@@ -218,13 +210,7 @@ getScoreUi <- function(Wfstate){
   else {
     scoreui <- tagList(
       fluidRow(
-        # column(6,
-        #        h5("Select a Measure.")
-        # ),
         column(6,
-               # fix-me: ugly regex
-               # selectInput(inputId = "TrainFit_select_measure", label = NULL,
-               #             choices = possiblemeasures[[sub("[.].*$", "", Wf$Current_Learner$id)]])
                selectizeInput(inputId = "TrainFit_select_measure", label = NULL,
                               choices = possiblemeasures[[currenttask$task$task_type]],
                               options = list(
@@ -233,8 +219,6 @@ getScoreUi <- function(Wfstate){
                               ),
                               multiple = TRUE)
         ),
-      #),
-      # fluidRow(
         column(6,
                actionButton(inputId = "TrainFit_score_perf", label = "Score", style = "float: right;")
         )
@@ -288,7 +272,7 @@ observeEvent(input$TrainFit_train_model, {
   validateSplit(inputsplit = input$TrainFit_input_split, inputseed = input$TrainFit_seed)
 })
 
-    
+
 
 # show predict target ui
 output$TrainFit_predict <- renderUI({
@@ -350,7 +334,6 @@ observe({
   if (!is.null(Wf$Current_Learner) && get(input$TrainFit_learner)$Hash != Wf$Current_Learner$hash) {
     resetWf()
     Wf$Current_Learner <- get(input$TrainFit_learner)$Learner$clone(deep = TRUE)
-    #updateActionButton(session, inputId = "TrainFit_start_wf", label = "Renew")
     Wf$Overview <- createWfOverview()
   }
 })
@@ -360,15 +343,6 @@ observeEvent(currenttask$task, {
   resetWf()
 
 })
-# output$TrainPred_model_download <- downloadHandler(
-#   filename = function() {
-#     paste(paste("Experiment", Exp$CurrentExp$task$id, Exp$CurrentExp$learner$id, sep = "_"), ".rds", sep = "")
-#   },
-#   content = function(file) {
-#     saveRDS(Exp$CurrentExp, file = file)
-#   }
-# )
-
 
 ### Use Resampling
 observeEvent(input$TrainFit_resample, {

@@ -1,3 +1,4 @@
+# Layout of benchmarking UI
 tabpanel_benchmarking <- fluidPage(
   fluidRow(
     column(4,
@@ -35,7 +36,7 @@ tabpanel_benchmarking <- fluidPage(
            hidden(
              wellPanel(
                id = "Bench_well_rslt",
-               h5("Benchmark Result", style = "font-weight: bold;"),
+               h5("Aggregated Benchmark Result", style = "font-weight: bold;"),
                DT::dataTableOutput(outputId = "Bench_rslt_view")
              )
            )

@@ -1,3 +1,4 @@
+# Layout of "Resampling" UI
 resample_ui <- fluidRow(
   id = "TrainFit_Resample",
   column(4,

@@ -1,3 +1,4 @@
+# reactive values for resampling
 Res <- reactiveValues(Current_Learner = NULL, Strat = NULL, R_Res = NULL, Perf_Aggr = NULL, Overview = NULL)
 
 ## Functions
@@ -30,7 +31,6 @@ createResOverview <- function() {
     Learner <- paste(input$Res_learner, Res$Current_Learner$id, sep = " "),
     Strategy <- input$Res_strategy,
     Iterations <- getResIters(),
-    #Instantiated <- "placeholder",
     "Aggregated Performance" <- getResPerfAggr()
   )
   return(overview)
@@ -141,12 +141,7 @@ getResMeasuresUi <- function() {
     hr(style = "border-color: #3e3f3a;"),
     h5("Measure Aggregated Performance", style = "font-weight: bold;"),
     fluidRow(
-      # column(6,
-      #        h5("Select a measure.")
-      # ),
       column(6,
-             # selectInput(inputId = "Res_measures", label = NULL,
-                         # choices = possiblemeasures[[currenttask$task$task_type]])
              selectizeInput(inputId = "Res_measures", label = NULL,
                             choices = possiblemeasures[[currenttask$task$task_type]],
                             options = list(
@@ -233,7 +228,7 @@ output$Res_resample_button <- renderUI({
     getResButton()
 })
 
-
+# set hyperparams for strategy and perform resampling 
 observeEvent(input$Res_resample, {
   paramsres <- list()
   for (i in Res$Strat$param_set$ids()) {
@@ -298,7 +293,6 @@ resetRes <- function() {
 observeEvent(input$Res_learner, {
   resetRes()
   Res$Current_Learner <- get(input$Res_learner)$Learner$clone(deep = TRUE)
-  #Res$Strat <- input$Res_strategy
   Res$Overview <- createResOverview()
 })
 
@@ -312,5 +306,4 @@ observe({
 
 observeEvent(currenttask$task, {
   resetRes()
-  #Res$Strat = NULL
 })

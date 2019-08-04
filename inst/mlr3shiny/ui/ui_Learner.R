@@ -1,3 +1,4 @@
+# Layout of "Learner" UI
 tabpanel_Learner <- fluidPage(
     fluidRow(
       column(4,
@@ -44,7 +45,7 @@ tabpanel_Learner <- fluidPage(
                         HTML("<br/>"),
                         fluidRow(
                           column(12,
-                                 div(style = "display:inline-block; width:100%; text-align: center;", 
+                                 div(style = "display:inline-block; width:100%; text-align: center;",
                                      actionButton(inputId = "Learner_add", label = " Add Learner", icon = icon("plus")))
                           )
                         )
@@ -54,7 +55,7 @@ tabpanel_Learner <- fluidPage(
       ),
      column(8,
                    id = "Learner_NA",
-                   wellPanel(h4("No Learner has been created yet.", 
+                   wellPanel(h4("No Learner has been created yet.",
                                 style = "text-align: center; text-weight: bold;"))
      ),
      hidden(

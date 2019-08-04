@@ -1,12 +1,9 @@
-
-### aus shinymlr
 ui_files <- list.files(path = "./ui", pattern = "*.R")
 ui_files <- paste0("ui/", ui_files)
 
 for (i in seq_along(ui_files)) {
   source(ui_files[i], local = TRUE)
 }
-###
 
 ui <- tagList(
   useShinyjs(),
@@ -17,7 +14,7 @@ ui <- tagList(
   ),
   navbarPage(
     theme = shinytheme("sandstone"),
-    title = a("mlr3shiny", href = "https://github.com/LamaTe/mlr3shiny", target = "_blank", style = "color: white;"),
+    title = a("mlr3shiny", href = "https://google.com", target = "_blank", style = "color: white;"),
     windowTitle = "mlr3shiny",
     id = "navbar",
     tabPanel("1. Data",
