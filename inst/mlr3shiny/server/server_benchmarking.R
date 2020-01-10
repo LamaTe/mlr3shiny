@@ -1,5 +1,5 @@
 # reactive values for benchmarking
-Bench <- reactiveValues(Bench_Rslt = NULL, Res_Strat = NULL, Current_Learners = NULL, Current_Design = NULL, Best_Learner = NULL,
+Bench <- reactiveValues(Bench_Rslt = NULL, Res_Strat = NULL, Current_Learners = NULL, Current_Design = NULL, Best = NULL,
                         Overview = NULL)
 
 ## Functions
@@ -32,7 +32,7 @@ getLrnsStrtsUI <- function() {
       fluidRow(
         column(12,
                div(style = "display:inline-block; width:100%; text-align: center;",
-                   actionButton(inputId = "Bench_start", label = "start benchmarking")
+                   actionButton(inputId = "Bench_start", label = "Start benchmarking")
                )
                )
       )
@@ -71,17 +71,20 @@ getCurrentLearnersOv <- function() {
 
 # find out the best learner once available
 getBestLrnOv <- function(){
-  if (is.null(Bench$Best_Learner)) {
+  if (is.null(Bench$Best)) {
     return("[not available]")
   }
   else{
-    learner <- NULL
+    learner_info_vec <- NULL
     # Fix-Me: pretty ugly solution, replace for with apply function and paste functions with better function for string handling
-    for (i in names(Bench$Current_Learners)) {
-      if (Bench$Best_Learner$learners[[1L]]$hash == Bench$Current_Learners[[i]]$hash) learner = i
+    for (learner_number in 1:length(Bench$Current_Learners)) {
+      if (Bench$Best[1] == Bench$Current_Learners[[learner_number]]$hash) {
+        learner_info_vec = paste(input$Bench_learners[[learner_number]], Bench$Current_Learners[[learner_number]]$id)
+      }
     }
-    best <- paste(learner,
-                  paste(input$Bench_measure[1], round(Bench$Best_Learner$aggregate(measures = input$Bench_measure[1]), 3), sep = ": "),
+
+    best <- paste(learner_info_vec,
+                  paste(input$Bench_measure[length(input$Bench_measure)], round(as.numeric(Bench$Best[2]), 3), sep = ": "),
                   sep = "; ")
     return(best)
   }
@@ -157,10 +160,11 @@ getBenchMeasuresUi <- function() {
         column(6,
                selectizeInput(inputId = "Bench_measure", label = NULL,
                               choices = possiblemeasures[[currenttask$task$task_type]],
-                              options = list(
-                                placeholder = 'Nothing selected',
-                                onInitialize = I('function() { this.setValue(""); }')
-                              ),
+                              # options = list(
+                              #   placeholder = 'Nothing selected',
+                              #   onInitialize = I('function() { this.setValue(""); }')
+                              # ),
+                              selected = possiblemeasures[[currenttask$task$task_type]][[1]],
                               multiple = TRUE)
         ),
         column(6,
@@ -191,13 +195,25 @@ getBenchButton <- function() {
 }
 
 # show comparison table for the performance of each learner
-getBenchTable <- function() {
+getBenchTable <- function(aggregated_result) {
   if (!is.null(Bench$Bench_Rslt)) {
-    tabl <-  DT::datatable(as.data.table(Bench$Bench_Rslt$aggregate(measures = input$Bench_measure)[,-(1:2)]),
+    tabl <-  DT::datatable(aggregated_result[, -c(1,2,3,6)],
                            options = list(scrollX = TRUE,searching = FALSE, ordering = FALSE, bInfo = FALSE,
                                           lengthChange = FALSE, paging = FALSE))
     return(tabl)
   }
+}
+
+getBestLrn <- function(aggregated_result) {
+  measure <- msr(input$Bench_measure[length(input$Bench_measure)])
+  if (measure$minimize) {
+    best_perf <- min(aggregated_result[[length(aggregated_result)]])
+  }
+  else {
+    best_perf <- max(aggregated_result[[length(aggregated_result)]])
+  }
+  best_lrn <- aggregated_result[which(aggregated_result[[length(aggregated_result)]] == best_perf)]
+  return(c(best_lrn$resample_result[[1]]$learners[[1]]$hash, best_lrn[[length(best_lrn)]]))
 }
 
 # download benchmark
@@ -262,7 +278,7 @@ observeEvent(input$Bench_benchmark, {
                  tryCatch({Bench$Res_Strat$param_set$values <- paramsbench
                  set.seed(42)
                  incProgress(0.2)
-                 Bench$Current_Design <- expand_grid(tasks = currenttask$task, learners = Bench$Current_Learners, resamplings = Bench$Res_Strat)
+                 Bench$Current_Design <- benchmark_grid(tasks = currenttask$task, learners = Bench$Current_Learners, resamplings = Bench$Res_Strat)
                  incProgress(0.4)
                  Bench$Bench_Rslt <- benchmark(Bench$Current_Design)
                  incProgress(0.6)
@@ -276,23 +292,26 @@ observeEvent(input$Bench_benchmark, {
 })
 
 observeEvent(input$Bench_aggr_measure, {
-  Bench$Best_Learner <- Bench$Bench_Rslt$best(measure = input$Bench_measure[1])
+  # aggreagte the results and find the best learner based on the last measure provided
+  aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
+  Bench$Best <- getBestLrn(aggr_rslt)
+
   output$Bench_rslt_view <- DT::renderDataTable({
-    getBenchTable()
+    getBenchTable(aggr_rslt)
   })
   Bench$Overview <- createBenchOverview()
 })
 
-
+# toggle the well panel only after performance was evaluated to avoid overview of results without valuable information
 observe({
-  toggle(id = "Bench_well_rslt", condition = !is.null(Bench$Best_Learner))
+  toggle(id = "Bench_well_rslt", condition = !is.null(Bench$Best))
 })
 
 resetBench <- function() {
   Bench$Current_Learners = NULL
   Bench$Bench_Rslt = NULL
   Bench$Current_Design = NULL
-  Bench$Best_Learner = NULL
+  Bench$Best = NULL
   Bench$Overview = NULL
 }
 
@@ -300,12 +319,12 @@ observeEvent(input$Bench_start, {
   if (!is.null(input$Bench_learners)) {
     resetBench()
     setLrnsObjects()
-    Bench$Res_Strat <- mlr_resamplings$get(input$Bench_res_strategy)
+    Bench$Res_Strat <- rsmp(input$Bench_res_strategy)
     Bench$Overview <- createBenchOverview()
   }
   else {
     shinyalert(title = "No Learner Selected",
-               text = paste("In order to start benchmarking learners must be selected.",
+               text = paste("In order to start benchmarking, learners must be selected.",
                             sep = " "),
                animation = FALSE, closeOnClickOutside = TRUE)
   }

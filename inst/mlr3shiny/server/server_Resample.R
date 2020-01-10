@@ -103,7 +103,7 @@ getResParams <- function() {
   else {
     params <- tagList()
     for (i in rev(Res$Strat$param_set$ids())) {
-        params <- tagAppendChild(params, get(i)(id = "Res", default = Res$Strat$param_set$values[[i]])) 
+        params <- tagAppendChild(params, get(i)(id = "Res", default = Res$Strat$param_set$values[[i]]))
     }
     return(params)
   }
@@ -178,10 +178,13 @@ getResButton <- function() {
 
 getResTable <- function() {
   if (!is.null(Res$R_Res)) {
-    tabl <- DT::datatable(as.data.table(Res$R_Res$prediction),
-                  options = list(scrollX = TRUE,searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
-    return(tabl)
+    ui <- DT::datatable(Res$R_Res$prediction()$data$tab,
+                options = list(scrollX = TRUE,searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
   }
+  else {
+    ui <- NULL
+  }
+  return(ui)
 }
 
 getResDownload <- function() {
@@ -211,7 +214,7 @@ output$Res_overview <- renderUI({
 observeEvent(input$Res_strategy, {
   Res$R_Res <- NULL
   Res$Perf_Aggr <- NULL
-  Res$Strat <- mlr_resamplings$get(input$Res_strategy)
+  Res$Strat <- rsmp(input$Res_strategy)
   Res$Overview <- createResOverview()
 })
 
@@ -224,16 +227,18 @@ output$Res_params <- renderUI({
 output$Res_measure <- renderUI({
     getResMeasuresUi()
 })
+
 output$Res_resample_button <- renderUI({
     getResButton()
 })
 
-# set hyperparams for strategy and perform resampling 
+# set hyperparams for strategy and perform resampling
 observeEvent(input$Res_resample, {
   paramsres <- list()
   for (i in Res$Strat$param_set$ids()) {
     paramsres[[i]] <- input[[paste0("Res_", i)]]
   }
+
   withProgress(message = "Performing resampling strategy",
     withCallingHandlers(
       tryCatch({Res$Strat$param_set$values <- paramsres
@@ -252,12 +257,14 @@ observeEvent(input$Res_resample, {
 
 observeEvent(input$Res_aggr_measure, {
   withCallingHandlers(
-    tryCatch(Res$Perf_Aggr <- Res$R_Res$aggregate(measures = input$Res_measures),
+    tryCatch(Res$Perf_Aggr <- Res$R_Res$aggregate(msrs(c(input$Res_measures))),
              error = errorAlertResample),
     warning = warningAlert
   )
   Res$Overview <- createResOverview()
 })
+
+
 
 output$Res_pred_view <- DT::renderDataTable({
   getResTable()
@@ -265,7 +272,6 @@ output$Res_pred_view <- DT::renderDataTable({
 observe({
   toggle(id = "Res_well_prediction", condition = !is.null(Res$R_Res))
 })
-
 
 output$Res_download <- renderUI({
   getResDownload()

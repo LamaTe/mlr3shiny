@@ -33,15 +33,15 @@ observe({
 # decide whether it is a classification or regression task
 observeEvent(input$Task_make, {
   currenttask$target <- data$traindata[, input$Task_target]
-  
+
   if (is.numeric(currenttask$target)) {
     currenttask$task <- TaskRegr$new(id = input$Task_id, backend = data$traindata, target = input$Task_target)
-  } 
+  }
   else if (is.factor(currenttask$target)) {
     currenttask$task <- TaskClassif$new(id = input$Task_id, backend = data$traindata, target = input$Task_target)
   }
   else {
-    shinyalert(title = "Target Selection", 
+    shinyalert(title = "Target Selection",
                text = userhelp[["Task Creation Target"]], closeOnClickOutside = TRUE, animation = FALSE)
   }
 })
@@ -54,13 +54,13 @@ observe({
   bad <- c("POSIXct", "complex", "Date")
   badfeat <- allfeat[which(allfeat[, 2]$type %in% bad), ]$id
   goodfeat <- allfeat[!badfeat,]$id
-  # deactivate unwanted features 
+  # deactivate unwanted features
   currenttask$task$select(cols = goodfeat)
-  
+
   if (length(badfeat)) {
     shinyalert(title = "Features Dropped", text = userhelp[["Features Dropped"]], closeOnClickOutside = TRUE, animation = FALSE)
   }
-  
+
   ### mlr task is R6 Object, Shiny cannot see, when this object's state changes cause its modified in place
   ### to ensure that the table still updates when the features are removed later on, assign it an extra reactive value
   currenttask$featTypes <- currenttask$task$feature_types
@@ -82,7 +82,7 @@ observe({
     currenttask$tableOptions <- list(paging = FALSE, searching = FALSE,
                    bInfo = FALSE, ordering = FALSE, width = "250px",
                    scrollY = "130px")
-  } 
+  }
   else {
     currenttask$tableOptions <- list(paging = FALSE, searching = FALSE,
                                      bInfo = FALSE, ordering = FALSE, width = "250px")
@@ -105,7 +105,7 @@ printTaskOverviewUI = function() {
             addOverviewLineTask("Data: ", paste(currenttask$overview[[4]], "Variables with",
                                             currenttask$overview[[5]], "Observations", sep = " ")),
             addOverviewLineTask("Target: ", currenttask$overview[[6]]),
-            addOverviewLineTask("Features: ", renderDataTable(expr = as.data.table(currenttask$overview[[7]]), rownames = FALSE, 
+            addOverviewLineTask("Features: ", renderDataTable(expr = as.data.table(currenttask$overview[[7]]), rownames = FALSE,
                                                           options = currenttask$tableOptions)
                             )
   )
@@ -121,10 +121,10 @@ output$Task_overview <- renderPrint({
 # Task processing
 
 observeEvent(input$Task_feat_deactivate, {
-    updatedfeat <- currenttask$task$feature_names[which(currenttask$task$feature_names != input$Task_feature)]
+    updatedfeat <- setdiff(currenttask$task$feature_names, input$Task_feature)
     currenttask$task$select(cols = updatedfeat)
-    
-    ## here we need to update currenttask$features, so that Shiny recognizes that the R6- task - object has changed 
+
+    ## here we need to update currenttask$features, so that Shiny recognizes that the R6- task - object has changed
     currenttask$featTypes <- currenttask$task$feature_types
     currenttask$featNames <- currenttask$task$feature_names
 })

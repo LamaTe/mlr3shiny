@@ -6,15 +6,33 @@ for (i in seq_along(ui_files)) {
 }
 
 ui <- tagList(
+  tags$head(
+    tags$style(
+      HTML(
+        ".well {box-shadow: 0 2px 3px 0
+            rgba(90,97,105,.11), 0 4px 8px 0
+            rgba(90,97,105,.12),0 15px 22px 0
+            rgba(90,97,105,.1),0 7px 35px 0
+            rgba(90,97,105,.1) !important;
+            background-color: #fff !important;}
+          ",
+        ".navbar {background-color: #2FA4E7;}",
+        ".navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover
+        {background-color:}",
+        "h5 {color: black;}",
+        ".ok_button {padding: 10px 32px !important; margin: 26px 5px 0 !important;}"
+      )
+    )
+  ),
   useShinyjs(),
   useShinyalert(),
   circleButton(
     inputId = "Help", icon = icon("question"),
-    status = "white", size = "sm", style = "position:fixed; right:2em; top:0.7em; z-index:1001"
+    status = "white", size = "sm", style = "position:absolute; right:2em; top:0.35em; z-index:1001; color: #2FA4E7;"
   ),
   navbarPage(
-    theme = shinytheme("sandstone"),
-    title = a("mlr3shiny", href = "https://google.com", target = "_blank", style = "color: white;"),
+    theme = shinytheme('cerulean'),
+    title = a("mlr3shiny", href = "https://github.com/LamaTe/mlr3shiny", target = "_blank", style = "color: white;"),
     windowTitle = "mlr3shiny",
     id = "navbar",
     tabPanel("1. Data",

@@ -16,7 +16,7 @@ server <- function(input, output, session) {
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
                        actionButton(inputId = "ok1", label = "OK", `data-dismiss` = "modal",
-                                    style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
+                                    class = 'ok_button')))
       )
     }
     else if (req(input$navbar) == "2. Task") {
@@ -31,7 +31,7 @@ server <- function(input, output, session) {
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
                        actionButton(inputId = "ok2", label = "OK", `data-dismiss` = "modal",
-                                    style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
+                                    class = 'ok_button')))
       )
     }
     else if (req(input$navbar) == "3. Learner") {
@@ -52,7 +52,7 @@ server <- function(input, output, session) {
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
                        actionButton(inputId = "ok3", label = "OK", `data-dismiss` = "modal",
-                                    style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
+                                    class = 'ok_button')))
       )
     }
     else if (req(input$navbar) == "4. Train & Evaluate") {
@@ -68,7 +68,7 @@ server <- function(input, output, session) {
                  easyClose = TRUE,
                  footer = div(style = "display:inline-block;width:100%;text-align: center;",
                               actionButton(inputId = "ok4", label = "OK", `data-dismiss` = "modal",
-                                           style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
+                                           class = 'ok_button')))
              )},
              {
                showModal(
@@ -92,7 +92,7 @@ server <- function(input, output, session) {
                        inputId = "ok5",
                        label = "OK",
                        `data-dismiss` = "modal",
-                       style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;"
+                       class = 'ok_button'
                      )
                    )
                  )
@@ -112,7 +112,7 @@ server <- function(input, output, session) {
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
                        actionButton(inputId = "ok2", label = "OK", `data-dismiss` = "modal",
-                                    style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
+                                    class = 'ok_button')))
       )
     }
     else if (req(input$navbar) == "6. Predict") {
@@ -127,7 +127,7 @@ server <- function(input, output, session) {
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
                        actionButton(inputId = "ok2", label = "OK", `data-dismiss` = "modal",
-                                    style = "background-color: rgb(174, 222, 244); padding: 10px 32px; margin: 26px 5px 0;")))
+                                    class = 'ok_button')))
       )
     }
   })

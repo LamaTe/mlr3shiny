@@ -4,7 +4,7 @@ Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, Trai
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
 
 ## Functions
-# get Learner choices 
+# get Learner choices
 getLearnChoicesUI <- function() {
   if (is.null(LearnerMeta$Learner_Avail)) {
     ui <- tagList(
@@ -277,7 +277,7 @@ observeEvent(input$TrainFit_train_model, {
 # show predict target ui
 output$TrainFit_predict <- renderUI({
   getPredictUi(getWfState())
-})  
+})
 
 # predict target
 observeEvent(input$TrainFit_predict_data, {
@@ -315,8 +315,9 @@ output$TrainFit_score <- renderUI({
 })
 # compute and show scored train/test performance
 observeEvent(input$TrainFit_score_perf, {
-  Wf$Perf_Train <- Wf$Pred_Train$score(measures = input$TrainFit_select_measure)
-  Wf$Perf_Test <- Wf$Pred_Test$score(measures = input$TrainFit_select_measure)
+  measures <- msrs(c(input$TrainFit_select_measure))
+  Wf$Perf_Train <- Wf$Pred_Train$score(measures)
+  Wf$Perf_Test <- Wf$Pred_Test$score(measures)
   Wf$Overview <- createWfOverview()
 })
 
