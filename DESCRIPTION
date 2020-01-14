@@ -7,16 +7,15 @@ Authors@R:
            role = c("aut", "cre"),
            email = "laurens.tetzlaff@outlook.de")
 Description: This application provides the basic steps of a machine learning workflow from a grahpical user interface built with Shiny. It uses the functionalities of the R-package mlr3.
-License: BSD_2_clause
+License: BSD_2_clause + file LICENSE
 Encoding: UTF-8
 Depends:
 	R (>= 3.6)
 Imports:
 	mlr3 (>= 0.1.6),
-	ml3measures (>= 0.1.1)
+	mlr3measures (>= 0.1.1),
 	shiny,
 	shinythemes,
-	shinyBS,
 	shinydashboard,
 	shinyjs,
 	shinyWidgets,
@@ -34,4 +33,3 @@ Remotes:
 	https://github.com/mlr-org/mlr3learners.git
 LazyData: true
 RoxygenNote: 6.1.1
-
