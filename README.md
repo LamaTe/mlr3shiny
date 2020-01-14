@@ -1,6 +1,6 @@
 # mlr3shiny: Machine Learning in Shiny with mlr3
 
-This application provides the basic steps of a machine learning workflow from a grahpical user interface built with Shiny. It uses the functionalities of the R-package [mlr3](https://mlr3.mlr-org.com).
+This application provides the basic steps of a machine learning workflow from a graphical user interface built with Shiny. It uses the functionalities of the R-package [mlr3](https://mlr3.mlr-org.com).
 
 Current functionalities of mlr3shiny are:
 * Data import
@@ -12,11 +12,13 @@ Current functionalities of mlr3shiny are:
 
 ## Installation
 Install the package in R from GitHub.
-```
+``` r
 remotes::install_github("https://github.com/LamaTe/mlr3shiny.git")
 ```
+
+## Example
 Launch the application via:
-```
+``` r
 launchMlr3Shiny()
 ```
 
