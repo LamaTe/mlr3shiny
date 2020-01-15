@@ -26,7 +26,7 @@ tabpanel_Data <- fluidPage(
         selectInput(
           inputId = "Data_train_sep", label = h5("Separator"),
           choices = c(Comma = ",", Semicolon = ";", Tab = "\t", Space = " ", Vertical = "|"),
-          selected = ";"
+          selected = ","
         ),
         selectInput(
           inputId = "Data_train_quote", label = h5("Quote"),

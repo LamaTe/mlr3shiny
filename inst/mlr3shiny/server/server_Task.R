@@ -13,8 +13,10 @@ observe({
     output$Task_make_id <- renderUI({
       textInput(inputId = "Task_id", label = h5("Task ID"), value = "my_task")
     })
+    choices <- colnames(data$traindata)
     output$Task_make_target <- renderUI({
-      selectInput(inputId = "Task_target", label = h5("Task Target"), choices = colnames(data$traindata))
+      selectInput(inputId = "Task_target", label = h5("Task Target"), choices = choices,
+                  selected = choices[length(choices)])
     })
     output$Task_make_task <- renderUI({
       div(style = "display:inline-block; width:100%; text-align: center;",
