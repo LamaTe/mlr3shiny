@@ -10,14 +10,14 @@ tags:
 authors:
   - name: Laurens M. Tetzlaff
     orcid: 0000-0001-9560-2669
-    affiliation: ??
+    affiliation: "1, 2"
   - name: Gero Szepannek
-    orcid:
-    affiliation: ??
+    orcid: 0000-0001-9560-2669
+    affiliation: "1"
 affiliations:
- - name: 
+ - name: Hochschule Stralsund
    index: 1
- - name: 
+ - name: Institution 2
    index: 2
 date: 31 January 2020
 bibliography: paper.bib
