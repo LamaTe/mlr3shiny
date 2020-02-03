@@ -21,7 +21,7 @@ affiliations:
    index: 2
 date: 31 January 2020
 bibliography: paper.bib
-
+---
 
 # Summary
 The R `[@rcore:2010]` package mlr3shiny provides the basic steps of a machine learning (ML) workflow in form of a user-friendly web-application.
