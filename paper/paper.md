@@ -38,7 +38,7 @@ The core functionalities are:
 * Resampling and benchmarking to compare several learners on a task simultaneously
 * Prediction on new data using the final model
 
-![Workflow figure.](workflow.png)
+![Workflow figure.](workflow.pdf)
 
 The different steps of the workflow are accompanied by additional information about the given functionalities and statistical features. Moreover, at each point in time, the generated results and predictions can be downloaded for further inspection, processing and to use them in other research. As a result, a full ML process is supported. To guard new users from committing easy mistakes and to provide orientation, default input values and examples are given in accordance with current practices. On top, it is ensured that conducted experiments are replicable.   
 
