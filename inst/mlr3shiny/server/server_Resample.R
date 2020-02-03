@@ -68,7 +68,7 @@ stratify <- function(id, default) {
 ratio <- function(id, default) {
   ratioui <- tagList(
     column(6,
-           numericInput(inputId = paste0(id, "_ratio"), label = h5("Data split (0, 1)"), value = default, min = 0, max = 1)
+           numericInput(inputId = paste0(id, "_ratio"), label = h5("Fraction in (0, 1) of the data used for training the model"), value = default, min = 0, max = 1)
            )
   )
   return(ratioui)

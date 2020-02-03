@@ -9,7 +9,7 @@ getLearnChoicesUI <- function() {
   if (is.null(LearnerMeta$Learner_Avail)) {
     ui <- tagList(
       column(12,
-             h5("No learner has been created yet.")
+             h5("No learner has been created yet in step 3.")
       )
     )
     return(ui)
@@ -98,7 +98,7 @@ addOverviewLineWf = function(title, body) {
 
 getWfOverviewUi <- function() {
   if (is.null(Wf$Current_Learner)) {
-    return(h5("The basic workflow has not been started yet."))
+    return(h5("The basic workflow has not been started yet. Please define a learner in step 3 and select it."))
   }
   else {
     overviewUi <- tagList(

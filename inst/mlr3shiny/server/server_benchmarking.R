@@ -9,7 +9,7 @@ getLrnsStrtsUI <- function() {
     ui <- tagList(
       fluidRow(
         column(12,
-               h5("No learner has been created yet.")
+               h5("No learner has been created yet. Please go to step 3 to define a learner.")
         )
       )
     )
