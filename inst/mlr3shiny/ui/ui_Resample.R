@@ -8,7 +8,7 @@ resample_ui <- fluidRow(
                     h5("Resampling", style = "font-weight: bold;")
              ),
              column(6,
-                    actionButton(inputId = "TrainFit_Basic", label = "Back to Basic")
+                    actionButton(inputId = "TrainFit_Base", label = "Back to Basic")
              )
            ),
            hr(style = "border-color: #3e3f3a;"),

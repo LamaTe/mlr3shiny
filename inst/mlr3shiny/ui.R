@@ -19,8 +19,7 @@ ui <- tagList(
         ".navbar {background-color: #2FA4E7;}",
         ".navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover
         {background-color:}",
-        "h5 {color: black;}",
-        ".ok_button {padding: 10px 32px !important; margin: 26px 5px 0 !important;}"
+        "h5 {color: black;}"
       )
     )
   ),

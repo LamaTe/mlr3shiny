@@ -1,5 +1,7 @@
 # reactive values for task
 currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, tableOptions = NULL)
+# in case a feature gets dropped make sure to only include the same features when predicting new data
+features_to_use <- reactiveValues(features = NULL)
 
 # render sidebarPanel depending on input for Task
 observe({
@@ -55,9 +57,9 @@ observe({
   allfeat <- currenttask$task$feature_types
   bad <- c("POSIXct", "complex", "Date")
   badfeat <- allfeat[which(allfeat[, 2]$type %in% bad), ]$id
-  goodfeat <- allfeat[!badfeat,]$id
+  features_to_use$features <- allfeat[!badfeat,]$id
   # deactivate unwanted features
-  currenttask$task$select(cols = goodfeat)
+  currenttask$task$select(cols = features_to_use$features)
 
   if (length(badfeat)) {
     shinyalert(title = "Features Dropped", text = userhelp[["Features Dropped"]], closeOnClickOutside = TRUE, animation = FALSE)

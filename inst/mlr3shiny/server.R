@@ -15,8 +15,8 @@ server <- function(input, output, session) {
           HTML(userhelp[["Data"]][2]),
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
-                       actionButton(inputId = "ok1", label = "OK", `data-dismiss` = "modal",
-                                    class = 'ok_button')))
+                       modalButton('OK'))
+          )
       )
     }
     else if (req(input$navbar) == "2. Task") {
@@ -30,8 +30,7 @@ server <- function(input, output, session) {
           HTML(userhelp[["Task"]][2]),
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
-                       actionButton(inputId = "ok2", label = "OK", `data-dismiss` = "modal",
-                                    class = 'ok_button')))
+                       modalButton('OK')))
       )
     }
     else if (req(input$navbar) == "3. Learner") {
@@ -51,8 +50,7 @@ server <- function(input, output, session) {
           HTML(userhelp[["Learner"]][5]),
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
-                       actionButton(inputId = "ok3", label = "OK", `data-dismiss` = "modal",
-                                    class = 'ok_button')))
+                       modalButton('OK')))
       )
     }
     else if (req(input$navbar) == "4. Train & Evaluate") {
@@ -67,8 +65,7 @@ server <- function(input, output, session) {
                  HTML(userhelp[["Evaluate"]][2]),
                  easyClose = TRUE,
                  footer = div(style = "display:inline-block;width:100%;text-align: center;",
-                              actionButton(inputId = "ok4", label = "OK", `data-dismiss` = "modal",
-                                           class = 'ok_button')))
+                              modalButton('OK')))
              )},
              {
                showModal(
@@ -88,12 +85,7 @@ server <- function(input, output, session) {
                    easyClose = TRUE,
                    footer = div(
                      style = "display:inline-block;width:100%;text-align: center;",
-                     actionButton(
-                       inputId = "ok5",
-                       label = "OK",
-                       `data-dismiss` = "modal",
-                       class = 'ok_button'
-                     )
+                     modalButton('OK')
                    )
                  )
                )
@@ -111,8 +103,7 @@ server <- function(input, output, session) {
           HTML(userhelp[["Benchmark"]][2]),
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
-                       actionButton(inputId = "ok2", label = "OK", `data-dismiss` = "modal",
-                                    class = 'ok_button')))
+                       modalButton('OK')))
       )
     }
     else if (req(input$navbar) == "6. Predict") {
@@ -126,8 +117,7 @@ server <- function(input, output, session) {
           HTML(userhelp[["Predict"]][2]),
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
-                       actionButton(inputId = "ok2", label = "OK", `data-dismiss` = "modal",
-                                    class = 'ok_button')))
+                       modalButton('OK')))
       )
     }
   })

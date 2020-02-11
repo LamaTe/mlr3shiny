@@ -58,7 +58,7 @@ getLrnOverview <- function() {
       fluidRow(
         column(12,
                h5("No learner has been selected yet.")
-        ) 
+        )
       )
     )
     return(ui)
@@ -183,14 +183,14 @@ output$Pred_new_data_view <- DT::renderDataTable({
 # make the prediction
 observeEvent(input$Predict_predict, {
   if (is.null(Pred$Learner) || is.null(Pred$New_Data)) {
-    shinyalert(title = "Predicting Failed", 
+    shinyalert(title = "Predicting Failed",
                text = paste("Please train a learner on the entire training data set and import a new dataset prior to predicting.",
                             "the target value", sep = " "),
                closeOnClickOutside = TRUE, animation = FALSE)
   }
   else {
     withCallingHandlers(
-      tryCatch(Pred$Pred <- Pred$Learner$predict_newdata(task = currenttask$task, newdata = Pred$New_Data),
+      tryCatch(Pred$Pred <- Pred$Learner$predict_newdata(task = currenttask$task, newdata = Pred$New_Data[, features_to_use$features]),
                error = errorAlertPredictNew),
       warning = warningAlert)
   }

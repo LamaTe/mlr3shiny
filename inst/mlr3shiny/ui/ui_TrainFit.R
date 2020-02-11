@@ -51,7 +51,7 @@ tabpanel_TrainFit <- fluidPage(
            hidden(
              wellPanel(
                id = "TrainFit_well_train",
-               h5("Predicted Target on Trainings Data", style = "font-weight: bold;"),
+               h5("Predicted Target on Training Data", style = "font-weight: bold;"),
                DT::dataTableOutput(outputId = "TrainFit_pred_view_train")
                )
            )

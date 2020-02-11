@@ -352,7 +352,7 @@ observeEvent(input$TrainFit_resample, {
   Help$Tracker <- 2
 })
 
-observeEvent(input$TrainFit_Basic, {
+observeEvent(input$TrainFit_Base, {
   toggle(id = "TrainFit_Resample")
   toggle(id = "TrainFit_Basic")
   Help$Tracker <- 1
