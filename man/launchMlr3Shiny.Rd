@@ -4,11 +4,17 @@
 \alias{launchMlr3Shiny}
 \title{Title Launch mlr3shiny}
 \usage{
-launchMlr3Shiny(launch = TRUE)
+launchMlr3Shiny(test = FALSE)
 }
 \arguments{
-\item{launch}{Argument used for testing purposes. Default is TRUE.}
+\item{test}{Argument used for testing purposes. Default is FALSE.}
 }
 \description{
 Launch an instance of mlr3shiny to perform machine learning in Shiny using mlr3.
+}
+\examples{
+\dontrun{
+launchMlr3Shiny()
+}
+
 }
