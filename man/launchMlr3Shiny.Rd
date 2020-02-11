@@ -7,7 +7,7 @@
 launchMlr3Shiny(launch = TRUE)
 }
 \arguments{
-\item{launch}{Argument used for testing purposes, Default is TRUE.}
+\item{launch}{Argument used for testing purposes. Default is TRUE.}
 }
 \description{
 Launch an instance of mlr3shiny to perform machine learning in Shiny using mlr3.

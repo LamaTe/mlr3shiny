@@ -3,12 +3,11 @@
 #' @description
 #' Launch an instance of mlr3shiny to perform machine learning in Shiny using mlr3.
 #'
-#' @param launch Argument used for testing purposes, Default is TRUE.
+#' @param launch Argument used for testing purposes. Default is TRUE.
 #'
 #' @example
 #' launchMlr3Shiny()
 #'
-#' Argument
 #' @export
 launchMlr3Shiny <- function(launch = TRUE) {
   appDir <- system.file("mlr3shiny", package = "mlr3shiny")
