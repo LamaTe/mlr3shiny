@@ -1,5 +1,7 @@
 # mlr3shiny: Machine Learning in Shiny with mlr3
 
+[![Build Status](https://travis-ci.com/LamaTe/mlr3shiny.svg?branch=master)](https://travis-ci.com/LamaTe/mlr3shiny)
+
 This application provides the basic steps of a machine learning workflow from a graphical user interface built with Shiny. It uses the functionalities of the R-package [mlr3](https://mlr3.mlr-org.com).
 
 Current functionalities of mlr3shiny are:
