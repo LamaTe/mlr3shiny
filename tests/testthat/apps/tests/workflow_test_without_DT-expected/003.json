@@ -18,7 +18,7 @@
     "Learner1ChangeParams": 1,
     "Learner1Paramcp": 0.01,
     "Learner1Parammaxdepth": 30,
-    "Learner1Paramminsplit": 15,
+    "Learner1Paramminsplit": 10,
     "Learner1PredictTypeChange": 1,
     "Learner1PredictTypeChoice": "prob",
     "Learner2ChangeParams": 0,
@@ -37,18 +37,13 @@
     "Predict_data_type": "csv",
     "Predict_data_xlsx": null,
     "Predict_predict": 0,
-    "Res_learner": "Learner1",
-    "Res_ratio": 0.666666666666667,
-    "Res_resample": 0,
-    "Res_strategy": "holdout",
     "Task_backend": "iris",
     "TrainFit_Base": 0,
     "TrainFit_input_split": 80,
     "TrainFit_learner": "Learner1",
-    "TrainFit_predict_data": 0,
-    "TrainFit_resample": 1,
+    "TrainFit_resample": 0,
     "TrainFit_seed": 42,
-    "TrainFit_train_model": 1
+    "TrainFit_train_model": 0
   },
   "output": {
     "Data_train_view": {
@@ -227,32 +222,6 @@
         }
       ]
     },
-    "Res_download": null,
-    "Res_learner_selection": {
-      "html": "<div class=\"col-sm-6\">\n  <div id=\"Res_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"col-sm-6\">\n  <div id=\"Res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_strategy\">\n      <h5>Select a resampling strategy:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"holdout\" checked=\"checked\"/>\n          <span>holdout<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"cv\"/>\n          <span>cross-validation<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"bootstrap\"/>\n          <span>bootstrap<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Res_measure": null,
-    "Res_overview": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Resampling Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>holdout<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Aggregated Performance: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Res_params": {
-      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_ratio\">\n      <h5>Fraction in (0, 1) of the data used for training the model<\/h5>\n    <\/label>\n    <input id=\"Res_ratio\" type=\"number\" class=\"form-control\" value=\"0.666666666666667\" min=\"0\" max=\"1\"/>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Res_resample_button": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Res_resample\" type=\"button\" class=\"btn btn-default action-button\">Perform Resampling<\/button>\n      <h5>Resampling large datasets may take a while.<\/h5>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
     "TrainFit_learner_selection": {
       "html": "<div class=\"col-sm-6\">\n  <div id=\"TrainFit_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"TrainFit_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
@@ -260,13 +229,13 @@
       ]
     },
     "TrainFit_overview": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Basic Workflow Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>State of Workflow: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>trained<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Model: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Training Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Test Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Basic Workflow Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>State of Workflow: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>defined<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Model: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[missing]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Training Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Test Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
     "TrainFit_predict": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>Use the trained model to predict the target values on the remaining test data of the training-test split as well as on the data partition the model was trained on.<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <button id=\"TrainFit_predict_data\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: left;\">Predict target<\/button>\n  <\/div>\n<\/div>",
+      "html": "<h5>The learner model has not been trained yet.<\/h5>",
       "deps": [
 
       ]

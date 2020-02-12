@@ -18,16 +18,10 @@
     "Learner1ChangeParams": 1,
     "Learner1Paramcp": 0.01,
     "Learner1Parammaxdepth": 30,
-    "Learner1Paramminsplit": 15,
+    "Learner1Paramminsplit": 10,
     "Learner1PredictTypeChange": 1,
     "Learner1PredictTypeChoice": "prob",
-    "Learner2ChangeParams": 0,
-    "Learner2Parammin.node.size": 1,
-    "Learner2Parammtry": null,
-    "Learner2Paramnum.trees": 500,
-    "Learner2PredictTypeChange": 0,
-    "Learner2PredictTypeChoice": "response",
-    "navbar": "4. Train & Evaluate",
+    "navbar": "3. Learner",
     "Predict_data_csv": null,
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
@@ -39,12 +33,7 @@
     "Predict_predict": 0,
     "Task_backend": "iris",
     "TrainFit_Base": 0,
-    "TrainFit_input_split": 80,
-    "TrainFit_learner": "Learner1",
-    "TrainFit_predict_data": 0,
-    "TrainFit_resample": 0,
-    "TrainFit_seed": 42,
-    "TrainFit_train_model": 1
+    "TrainFit_resample": 0
   },
   "output": {
     "Data_train_view": {
@@ -217,66 +206,6 @@
           "script": null,
           "stylesheet": "css/selectize.bootstrap3.css",
           "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
-    "TrainFit_learner_selection": {
-      "html": "<div class=\"col-sm-6\">\n  <div id=\"TrainFit_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"TrainFit_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_overview": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Basic Workflow Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>State of Workflow: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>trained<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Model: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Training Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Test Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_predict": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>Use the trained model to predict the target values on the remaining test data of the training-test split as well as on the data partition the model was trained on.<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <button id=\"TrainFit_predict_data\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: left;\">Predict target<\/button>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_score": {
-      "html": "<h5>A prediction has not been computed yet.<\/h5>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_train": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>Select percentage of training data for model training and evaluation. Set a seed to reproduce the random partitioning anytime. The default value to start sampling the training data from is 42.<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-3\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label shiny-label-null\" for=\"TrainFit_seed\"><\/label>\n      <input id=\"TrainFit_seed\" type=\"number\" class=\"form-control\" value=\"42\"/>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-9\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label shiny-label-null\" for=\"TrainFit_input_split\"><\/label>\n      <input class=\"js-range-slider\" id=\"TrainFit_input_split\" data-min=\"0\" data-max=\"100\" data-from=\"80\" data-step=\"1\" data-grid=\"true\" data-grid-num=\"10\" data-grid-snap=\"false\" data-prettify-separator=\",\" data-prettify-enabled=\"true\" data-keyboard=\"true\" data-data-type=\"number\"/>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <button id=\"TrainFit_train_model\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: left;\">Train model<\/button>\n  <\/div>\n<\/div>",
-      "deps": [
-        {
-          "name": "ionrangeslider",
-          "version": "2.1.6",
-          "src": {
-            "href": "shared/ionrangeslider"
-          },
-          "meta": null,
-          "script": "js/ion.rangeSlider.min.js",
-          "stylesheet": [
-            "css/ion.rangeSlider.css",
-            "css/ion.rangeSlider.skinShiny.css"
-          ],
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        },
-        {
-          "name": "strftime",
-          "version": "0.9.2",
-          "src": {
-            "href": "shared/strftime"
-          },
-          "meta": null,
-          "script": "strftime-min.js",
-          "stylesheet": null,
-          "head": null,
           "attachment": null,
           "package": null,
           "all_files": true

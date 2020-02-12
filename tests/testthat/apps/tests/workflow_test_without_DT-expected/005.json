@@ -1,14 +1,12 @@
 {
   "input": {
-    "Bench_aggr_measure": 0,
-    "Bench_benchmark": 1,
-    "Bench_folds": 10,
+    "Bench_benchmark": 0,
     "Bench_learners": [
       "Learner1",
       "Learner2"
     ],
-    "Bench_measure": "classif.acc",
-    "Bench_res_strategy": "cv",
+    "Bench_ratio": 0.7,
+    "Bench_res_strategy": "holdout",
     "Bench_start": 1,
     "Data_train_csv": null,
     "Data_train_header": true,
@@ -28,7 +26,7 @@
     "Learner1ChangeParams": 1,
     "Learner1Paramcp": 0.01,
     "Learner1Parammaxdepth": 30,
-    "Learner1Paramminsplit": 15,
+    "Learner1Paramminsplit": 10,
     "Learner1PredictTypeChange": 1,
     "Learner1PredictTypeChoice": "prob",
     "Learner2ChangeParams": 0,
@@ -37,9 +35,7 @@
     "Learner2Paramnum.trees": 500,
     "Learner2PredictTypeChange": 0,
     "Learner2PredictTypeChoice": "response",
-    "navbar": "6. Predict",
-    "Pred_learner": "Learner1",
-    "Pred_train_learner": 0,
+    "navbar": "5. Benchmarking",
     "Predict_data_csv": null,
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
@@ -49,18 +45,18 @@
     "Predict_data_type": "csv",
     "Predict_data_xlsx": null,
     "Predict_predict": 0,
+    "Res_folds": 10,
     "Res_learner": "Learner1",
     "Res_ratio": 0.666666666666667,
     "Res_resample": 0,
-    "Res_strategy": "holdout",
+    "Res_strategy": "cv",
     "Task_backend": "iris",
     "TrainFit_Base": 0,
     "TrainFit_input_split": 80,
     "TrainFit_learner": "Learner1",
-    "TrainFit_predict_data": 0,
     "TrainFit_resample": 1,
     "TrainFit_seed": 42,
-    "TrainFit_train_model": 1
+    "TrainFit_train_model": 0
   },
   "output": {
     "Bench_benchmark_button": {
@@ -69,60 +65,22 @@
 
       ]
     },
-    "Bench_download": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div style=\"display:inline-block; width:100%; text-align: center;\">\n  <a id=\"Bench_result_download\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n    <i class=\"fa fa-download\"><\/i>\n    Export Benchmark Result\n  <\/a>\n<\/div>",
-      "deps": [
-        {
-          "name": "font-awesome",
-          "version": "5.3.1",
-          "src": {
-            "href": "font-awesome-5.3.1"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": [
-            "css/all.min.css",
-            "css/v4-shims.min.css"
-          ],
-          "head": null,
-          "attachment": null,
-          "all_files": true
-        }
-      ]
-    },
+    "Bench_download": null,
     "Bench_learner_strats_selection": {
       "html": "<div class=\"row\">\n  <div class=\"col-sm-6\">\n    <div id=\"Bench_learners\" class=\"form-group shiny-input-checkboxgroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Bench_learners\">\n        <h5>Select learners to include in benchmarking:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"checkbox\">\n          <label>\n            <input type=\"checkbox\" name=\"Bench_learners\" value=\"Learner1\"/>\n            <span>Learner1<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"checkbox\">\n          <label>\n            <input type=\"checkbox\" name=\"Bench_learners\" value=\"Learner2\"/>\n            <span>Learner2<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-6\">\n    <div id=\"Bench_res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Bench_res_strategy\">\n        <h5>Select a resampling strategy:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"holdout\" checked=\"checked\"/>\n            <span>holdout<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"cv\"/>\n            <span>cross-validation<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"bootstrap\"/>\n            <span>bootstrap<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<br/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Bench_start\" type=\"button\" class=\"btn btn-default action-button\">Start benchmarking<\/button>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Bench_measures": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<h5 style=\"font-weight: bold;\">Measure Aggregated Performance<\/h5>\n<div class=\"row\">\n  <div class=\"col-sm-6\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label shiny-label-null\" for=\"Bench_measure\"><\/label>\n      <div>\n        <select id=\"Bench_measure\" class=\"form-control\" multiple=\"multiple\"><option value=\"classif.acc\" selected>classif.acc<\/option>\n<option value=\"classif.ce\">classif.ce<\/option><\/select>\n        <script type=\"application/json\" data-for=\"Bench_measure\">{}<\/script>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-6\">\n    <button id=\"Bench_aggr_measure\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Score<\/button>\n  <\/div>\n<\/div>",
-      "deps": [
-        {
-          "name": "selectize",
-          "version": "0.11.2",
-          "src": {
-            "href": "shared/selectize"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "css/selectize.bootstrap3.css",
-          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
+    "Bench_measures": null,
     "Bench_overview": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Benchmarking Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learners: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1: classif.rpart, Learner2: classif.ranger<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>20 iterations in 0 resamplings<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Best Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Benchmarking Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learners: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1: classif.rpart, Learner2: classif.ranger<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>holdout<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Best Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
     "Bench_params": {
-      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Bench_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Bench_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Bench_ratio\">\n      <h5>Fraction in (0, 1) of the data used for training the model<\/h5>\n    <\/label>\n    <input id=\"Bench_ratio\" type=\"number\" class=\"form-control\" value=\"0.666666666666667\" min=\"0\" max=\"1\"/>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
@@ -303,39 +261,6 @@
         }
       ]
     },
-    "Predict_learner_choice": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div id=\"Pred_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Pred_learner\">\n        <h5>Select the best learner to train on the entire training data:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Pred_learner\" value=\"Learner1\"/>\n            <span>Learner1<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Pred_learner\" value=\"Learner2\"/>\n            <span>Learner2<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Predict_learner_overview": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Predict Type<\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>prob<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Target:<\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Species<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Status:<\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not trained]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Predict_learner_train_btn": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <button id=\"Pred_train_learner\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: left;\">Train Learner<\/button>\n    <a class=\"btn btn-default shiny-download-link  shinyjs-hide\" download href=\"\" id=\"Pred_trained_learner\" style=\"float: right;\" target=\"_blank\">\n      <i class=\"fa fa-download\"><\/i>\n      Export learner\n    <\/a>\n  <\/div>\n<\/div>",
-      "deps": [
-        {
-          "name": "font-awesome",
-          "version": "5.3.1",
-          "src": {
-            "href": "font-awesome-5.3.1"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": [
-            "css/all.min.css",
-            "css/v4-shims.min.css"
-          ],
-          "head": null,
-          "attachment": null,
-          "all_files": true
-        }
-      ]
-    },
     "Res_download": null,
     "Res_learner_selection": {
       "html": "<div class=\"col-sm-6\">\n  <div id=\"Res_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"col-sm-6\">\n  <div id=\"Res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_strategy\">\n      <h5>Select a resampling strategy:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"holdout\" checked=\"checked\"/>\n          <span>holdout<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"cv\"/>\n          <span>cross-validation<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"bootstrap\"/>\n          <span>bootstrap<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
@@ -345,13 +270,13 @@
     },
     "Res_measure": null,
     "Res_overview": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Resampling Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>holdout<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Aggregated Performance: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Resampling Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Aggregated Performance: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
     "Res_params": {
-      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_ratio\">\n      <h5>Fraction in (0, 1) of the data used for training the model<\/h5>\n    <\/label>\n    <input id=\"Res_ratio\" type=\"number\" class=\"form-control\" value=\"0.666666666666667\" min=\"0\" max=\"1\"/>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Res_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
@@ -369,13 +294,13 @@
       ]
     },
     "TrainFit_overview": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Basic Workflow Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>State of Workflow: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>trained<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Model: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Training Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Test Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Basic Workflow Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>State of Workflow: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>defined<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Model: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[missing]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Training Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performance Test Set: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not scored]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
     "TrainFit_predict": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>Use the trained model to predict the target values on the remaining test data of the training-test split as well as on the data partition the model was trained on.<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <button id=\"TrainFit_predict_data\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: left;\">Predict target<\/button>\n  <\/div>\n<\/div>",
+      "html": "<h5>The learner model has not been trained yet.<\/h5>",
       "deps": [
 
       ]
