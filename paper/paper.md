@@ -12,12 +12,12 @@ authors:
     orcid: 0000-0001-9560-2669
     affiliation: "1, 2"
   - name: Gero Szepannek
-    orcid: 0000-0001-9560-2669
+    orcid: 0000-0001-8456-1283
     affiliation: "1"
 affiliations:
- - name: Hochschule Stralsund
+ - name: Stralsund University of Applied Sciences 
    index: 1
- - name: Institution 2
+ - name: Jheronimus Academy of Data Science
    index: 2
 date: 31 January 2020
 bibliography: paper.bib

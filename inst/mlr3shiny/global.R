@@ -13,7 +13,6 @@ library(stringr)
 library(plyr)
 library(purrr)
 
-
 userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a machine learning workflow using your own data.",
                                 "You can navigate over the different sections by clicking on each tab. They are chronologically ordered.",
                                 "To get more information on the functionalities and purpose of each section, click on the questionmark in the rop-right corner.",
