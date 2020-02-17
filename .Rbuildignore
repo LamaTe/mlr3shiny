@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^paper$
 ^\.travis\.yml$
+^cran-comments\.md$
