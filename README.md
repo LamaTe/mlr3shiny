@@ -26,7 +26,7 @@ launchMlr3Shiny()
 
 ## Usage Description
 Navigate over the different steps of the workflow using the menu bar. The tabs are chronologically ordered. 
-The questionmark in the rop-right corner provides more information on the functionalities and purpose of each section.
+The question mark in the top-right corner provides more information on the functionalities and purpose of each section.
 Start by importing a dataset. Then define a task (the problem to be solved) in the 'task' tab. Example tasks are already provided. Select different learners (algorithms) in the 'learner' tab and train and evaluate a model in 'train & evaluate'. 
 Resampling strategies can be applied in a sub-section of 'train & evaluate'.
 Alternatively, different learners can be compared in a benchmark.
