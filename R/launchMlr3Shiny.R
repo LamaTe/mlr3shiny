@@ -4,7 +4,7 @@
 #' Launch an instance of mlr3shiny to perform machine learning in Shiny using mlr3.
 #'
 #' @param test Argument used for testing purposes. Default is FALSE.
-#'
+#' @return None
 #' @examples
 #' \dontrun{
 #' launchMlr3Shiny()
