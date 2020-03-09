@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* written R package names in lower case letters in the titel 
+* used title case in Title 
 
 ## Test environments
 * local manjaro 18.1.5, R 3.6.2
