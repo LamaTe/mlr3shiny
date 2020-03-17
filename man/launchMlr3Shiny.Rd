@@ -16,8 +16,8 @@ None
 Launch an instance of mlr3shiny to perform machine learning in Shiny using mlr3.
 }
 \examples{
-\dontrun{
-launchMlr3Shiny()
+if (interactive()) {
+   launchMlr3Shiny()
 }
 
 }
