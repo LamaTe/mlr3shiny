@@ -6,9 +6,9 @@
 #' @param test Argument used for testing purposes. Default is FALSE.
 #' @return None
 #' @examples
-#' \dontrun{
-#' launchMlr3Shiny()
-#'}
+#' if (interactive()) {
+#'    launchMlr3Shiny()
+#' }
 #'
 #' @export
 launchMlr3Shiny <- function(test = FALSE) {
