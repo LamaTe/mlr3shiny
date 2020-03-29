@@ -1,12 +1,12 @@
 {
   "input": {
     "Bench_benchmark": 0,
-    "Bench_folds": 10,
     "Bench_learners": [
       "Learner1",
       "Learner2"
     ],
-    "Bench_res_strategy": "cv",
+    "Bench_ratio": 0.8,
+    "Bench_res_strategy": "holdout",
     "Bench_start": 1,
     "Data_train_csv": null,
     "Data_train_header": true,
@@ -21,7 +21,7 @@
     "Learner_Create1": 1,
     "Learner_Create2": 1,
     "Learner_Learner1": "classif.rpart",
-    "Learner_Learner2": "classif.ranger",
+    "Learner_Learner2": "classif.rpart",
     "Learner_Learners_Tab": "Learner 2",
     "Learner1ChangeParams": 0,
     "Learner1Paramcp": 0.01,
@@ -29,11 +29,11 @@
     "Learner1Paramminsplit": 20,
     "Learner1PredictTypeChange": 0,
     "Learner1PredictTypeChoice": "response",
-    "Learner2ChangeParams": 1,
-    "Learner2Parammin.node.size": 1,
-    "Learner2Parammtry": 2,
-    "Learner2Paramnum.trees": 500,
-    "Learner2PredictTypeChange": 1,
+    "Learner2ChangeParams": 0,
+    "Learner2Paramcp": 0.01,
+    "Learner2Parammaxdepth": 30,
+    "Learner2Paramminsplit": 20,
+    "Learner2PredictTypeChange": 2,
     "Learner2PredictTypeChoice": "prob",
     "navbar": "5. Benchmarking",
     "Predict_data_csv": null,
@@ -66,13 +66,13 @@
     },
     "Bench_measures": null,
     "Bench_overview": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Benchmarking Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learners: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1: classif.rpart, Learner2: classif.ranger<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Best Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Benchmarking Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learners: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1: classif.rpart, Learner2: classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>holdout<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Best Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
     "Bench_params": {
-      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Bench_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Bench_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Bench_ratio\">\n      <h5>Fraction in (0, 1) of the data used for training the model<\/h5>\n    <\/label>\n    <input id=\"Bench_ratio\" type=\"number\" class=\"form-control\" value=\"0.666666666666667\" min=\"0\" max=\"1\"/>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
@@ -227,13 +227,13 @@
       ]
     },
     "Learner2_ov": {
-      "html": "<div class=\"well\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <h5 style=\"font-weight: bold;\">Learner Information<\/h5>\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Algorithm: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>Random Forest<\/h5>\n            <\/div>\n          <\/div>\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Current Predict Type: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>prob<\/h5>\n            <\/div>\n          <\/div>\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Supported Predict Types: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>response, prob<\/h5>\n            <\/div>\n          <\/div>\n        <\/div>\n        <div class=\"col-sm-6\">\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Properties: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>importance, multiclass, oob_error, twoclass, weights<\/h5>\n            <\/div>\n          <\/div>\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Supported Feature Types: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>logical, integer, numeric, character, factor, ordered<\/h5>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"well\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <h5 style=\"font-weight: bold;\">Learner Information<\/h5>\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Algorithm: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>Decision Tree<\/h5>\n            <\/div>\n          <\/div>\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Current Predict Type: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>prob<\/h5>\n            <\/div>\n          <\/div>\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Supported Predict Types: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>response, prob<\/h5>\n            <\/div>\n          <\/div>\n        <\/div>\n        <div class=\"col-sm-6\">\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Properties: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>importance, missings, multiclass, selected_features, twoclass, weights<\/h5>\n            <\/div>\n          <\/div>\n          <div class=\"row\">\n            <div class=\"col-sm-6\">\n              <h5>Supported Feature Types: <\/h5>\n            <\/div>\n            <div class=\"col-sm-6\">\n              <h5>logical, integer, numeric, factor, ordered<\/h5>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
     "Learner2_tab": {
-      "html": "<div class=\"well\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <h5 style=\"font-weight: bold;\">Learner Parameters<\/h5>\n      <div class=\"row\">\n        <div class=\"col-sm-3\">\n          <h5>num.trees<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Lower: 1<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Upper: Inf<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <div class=\"form-group shiny-input-container\">\n            <label class=\"control-label shiny-label-null\" for=\"Learner2Paramnum.trees\"><\/label>\n            <input id=\"Learner2Paramnum.trees\" type=\"number\" class=\"form-control\" value=\"500\" min=\"1\" max=\"Inf\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-3\">\n          <h5>mtry<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Lower: 1<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Upper: 4<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <div class=\"form-group shiny-input-container\">\n            <label class=\"control-label shiny-label-null\" for=\"Learner2Parammtry\"><\/label>\n            <input id=\"Learner2Parammtry\" type=\"number\" class=\"form-control\" value=\"&lt;NoDefault&gt;&#10;  Public:&#10;    clone: function (deep = FALSE) &#10;    initialize: function () \" min=\"1\" max=\"4\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-3\">\n          <h5>min.node.size<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Lower: 1<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Upper: Inf<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <div class=\"form-group shiny-input-container\">\n            <label class=\"control-label shiny-label-null\" for=\"Learner2Parammin.node.size\"><\/label>\n            <input id=\"Learner2Parammin.node.size\" type=\"number\" class=\"form-control\" value=\"1\" min=\"1\" max=\"Inf\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <button id=\"Learner2ChangeParams\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Change Parameters<\/button>\n    <\/div>\n  <\/div>\n  <hr style=\"border-color: #3e3f3a;\"/>\n  <div class=\"row\">\n    <div class=\"col-sm-4\">\n      <h5>Change Predict Type<\/h5>\n    <\/div>\n    <div class=\"col-sm-4\">\n      <div class=\"form-group shiny-input-container\">\n        <label class=\"control-label shiny-label-null\" for=\"Learner2PredictTypeChoice\"><\/label>\n        <div>\n          <select id=\"Learner2PredictTypeChoice\"><option value=\"response\" selected>response<\/option>\n<option value=\"prob\">prob<\/option><\/select>\n          <script type=\"application/json\" data-for=\"Learner2PredictTypeChoice\" data-nonempty=\"\">{}<\/script>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-4\">\n      <button id=\"Learner2PredictTypeChange\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Change<\/button>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"well\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <h5 style=\"font-weight: bold;\">Learner Parameters<\/h5>\n      <div class=\"row\">\n        <div class=\"col-sm-3\">\n          <h5>minsplit<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Lower: 1<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Upper: Inf<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <div class=\"form-group shiny-input-container\">\n            <label class=\"control-label shiny-label-null\" for=\"Learner2Paramminsplit\"><\/label>\n            <input id=\"Learner2Paramminsplit\" type=\"number\" class=\"form-control\" value=\"20\" min=\"1\" max=\"Inf\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-3\">\n          <h5>cp<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Lower: 0<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Upper: 1<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <div class=\"form-group shiny-input-container\">\n            <label class=\"control-label shiny-label-null\" for=\"Learner2Paramcp\"><\/label>\n            <input id=\"Learner2Paramcp\" type=\"number\" class=\"form-control\" value=\"0.01\" min=\"0\" max=\"1\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-3\">\n          <h5>maxdepth<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Lower: 1<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <h5>Upper: 30<\/h5>\n        <\/div>\n        <div class=\"col-sm-3\">\n          <div class=\"form-group shiny-input-container\">\n            <label class=\"control-label shiny-label-null\" for=\"Learner2Parammaxdepth\"><\/label>\n            <input id=\"Learner2Parammaxdepth\" type=\"number\" class=\"form-control\" value=\"30\" min=\"1\" max=\"30\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <button id=\"Learner2ChangeParams\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Change Parameters<\/button>\n    <\/div>\n  <\/div>\n  <hr style=\"border-color: #3e3f3a;\"/>\n  <div class=\"row\">\n    <div class=\"col-sm-4\">\n      <h5>Change Predict Type<\/h5>\n    <\/div>\n    <div class=\"col-sm-4\">\n      <div class=\"form-group shiny-input-container\">\n        <label class=\"control-label shiny-label-null\" for=\"Learner2PredictTypeChoice\"><\/label>\n        <div>\n          <select id=\"Learner2PredictTypeChoice\"><option value=\"response\" selected>response<\/option>\n<option value=\"prob\">prob<\/option><\/select>\n          <script type=\"application/json\" data-for=\"Learner2PredictTypeChoice\" data-nonempty=\"\">{}<\/script>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-4\">\n      <button id=\"Learner2PredictTypeChange\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Change<\/button>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
