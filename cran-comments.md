@@ -1,7 +1,7 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* written R package names in lower case letters in the titel 
+* replaced the \dontrun{}-wrapper with if(interactive()){} in function documentation
 
 ## Test environments
 * local manjaro 18.1.5, R 3.6.2
