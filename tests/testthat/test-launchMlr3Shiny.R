@@ -7,5 +7,5 @@ test_that("launchMlr3Shiny works", {
   # Use compareImages=FALSE because the expected image screenshots were created
   # on a Mac, and they will differ from screenshots taken on the CI platform,
   # which runs on Linux.
-  expect_pass(testApp("apps/full_workflow_test/", compareImages = FALSE))
+  expect_pass(testApp("apps/", compareImages = FALSE))
 })
