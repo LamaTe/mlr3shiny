@@ -6,7 +6,7 @@
 #' @param test Argument used for testing purposes. Default is FALSE.
 #' @return None
 #' @examples
-#' \dontrun{
+#' if(interactive()){
 #' launchMlr3Shiny()
 #'}
 #'
