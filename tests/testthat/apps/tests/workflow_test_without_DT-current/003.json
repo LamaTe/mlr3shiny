@@ -37,7 +37,6 @@
     "Predict_data_type": "csv",
     "Predict_data_xlsx": null,
     "Predict_predict": 0,
-    "Res_strategy": "holdout",
     "Task_backend": "iris",
     "TrainFit_Base": 0,
     "TrainFit_resample": 1
