@@ -1,5 +1,13 @@
 {
   "input": {
+    "Bench_benchmark": 0,
+    "Bench_folds": 10,
+    "Bench_learners": [
+      "Learner1",
+      "Learner2"
+    ],
+    "Bench_res_strategy": "cv",
+    "Bench_start": 1,
     "Data_train_csv": null,
     "Data_train_header": true,
     "Data_train_header_xlsx": true,
@@ -27,7 +35,7 @@
     "Learner2Paramnum.trees": 500,
     "Learner2PredictTypeChange": 1,
     "Learner2PredictTypeChoice": "prob",
-    "navbar": "4. Train & Evaluate",
+    "navbar": "5. Benchmarking",
     "Predict_data_csv": null,
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
@@ -37,16 +45,37 @@
     "Predict_data_type": "csv",
     "Predict_data_xlsx": null,
     "Predict_predict": 0,
-    "Res_folds": 10,
-    "Res_learner": "Learner1",
-    "Res_ratio": 0.666666666666667,
-    "Res_resample": 0,
-    "Res_strategy": "cv",
     "Task_backend": "iris",
     "TrainFit_Base": 0,
-    "TrainFit_resample": 1
+    "TrainFit_resample": 0
   },
   "output": {
+    "Bench_benchmark_button": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Bench_benchmark\" type=\"button\" class=\"btn btn-default action-button\">Benchmark<\/button>\n      <h5>Benchmarking large datasets may take a while.<\/h5>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_download": null,
+    "Bench_learner_strats_selection": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-6\">\n    <div id=\"Bench_learners\" class=\"form-group shiny-input-checkboxgroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Bench_learners\">\n        <h5>Select learners to include in benchmarking:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"checkbox\">\n          <label>\n            <input type=\"checkbox\" name=\"Bench_learners\" value=\"Learner1\"/>\n            <span>Learner1<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"checkbox\">\n          <label>\n            <input type=\"checkbox\" name=\"Bench_learners\" value=\"Learner2\"/>\n            <span>Learner2<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-6\">\n    <div id=\"Bench_res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Bench_res_strategy\">\n        <h5>Select a resampling strategy:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"holdout\" checked=\"checked\"/>\n            <span>holdout<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"cv\"/>\n            <span>cross-validation<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"bootstrap\"/>\n            <span>bootstrap<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<br/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Bench_start\" type=\"button\" class=\"btn btn-default action-button\">Start benchmarking<\/button>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_measures": null,
+    "Bench_overview": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Benchmarking Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learners: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1: classif.rpart, Learner2: classif.ranger<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Best Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_params": {
+      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Bench_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Bench_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
     "Data_train_view": {
       "x": null,
       "evals": [
@@ -219,62 +248,6 @@
           "package": null,
           "all_files": true
         }
-      ]
-    },
-    "Res_download": null,
-    "Res_learner_selection": {
-      "html": "<div class=\"col-sm-6\">\n  <div id=\"Res_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"col-sm-6\">\n  <div id=\"Res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_strategy\">\n      <h5>Select a resampling strategy:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"holdout\" checked=\"checked\"/>\n          <span>holdout<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"cv\"/>\n          <span>cross-validation<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"bootstrap\"/>\n          <span>bootstrap<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Res_measure": null,
-    "Res_overview": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Resampling Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Aggregated Performance: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Res_params": {
-      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Res_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Res_resample_button": {
-      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Res_resample\" type=\"button\" class=\"btn btn-default action-button\">Perform Resampling<\/button>\n      <h5>Resampling large datasets may take a while.<\/h5>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_learner_selection": {
-      "html": "<div class=\"col-sm-6\">\n  <div id=\"TrainFit_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"TrainFit_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_overview": {
-      "html": "<h5>The basic workflow has not been started yet. Please define a learner in step 3 and select it.<\/h5>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_predict": {
-      "html": "<h5>The learner model has not been trained yet.<\/h5>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_score": {
-      "html": "<h5>A prediction has not been computed yet.<\/h5>",
-      "deps": [
-
-      ]
-    },
-    "TrainFit_train": {
-      "html": "<h5>No learner has been selected yet.<\/h5>",
-      "deps": [
-
       ]
     }
   },
