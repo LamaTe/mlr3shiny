@@ -1,5 +1,10 @@
 {
   "input": {
+    "Bench_benchmark": 0,
+    "Bench_folds": 10,
+    "Bench_learners": "Learner1",
+    "Bench_res_strategy": "cv",
+    "Bench_start": 1,
     "Data_train_csv": null,
     "Data_train_header": true,
     "Data_train_header_xlsx": true,
@@ -19,7 +24,7 @@
     "Learner1Paramminsplit": 20,
     "Learner1PredictTypeChange": 1,
     "Learner1PredictTypeChoice": "prob",
-    "navbar": "4. Train & Evaluate",
+    "navbar": "6. Predict",
     "Predict_data_csv": null,
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
@@ -34,6 +39,32 @@
     "TrainFit_resample": 0
   },
   "output": {
+    "Bench_benchmark_button": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Bench_benchmark\" type=\"button\" class=\"btn btn-default action-button\">Benchmark<\/button>\n      <h5>Benchmarking large datasets may take a while.<\/h5>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_download": null,
+    "Bench_learner_strats_selection": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-6\">\n    <div id=\"Bench_learners\" class=\"form-group shiny-input-checkboxgroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Bench_learners\">\n        <h5>Select learners to include in benchmarking:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"checkbox\">\n          <label>\n            <input type=\"checkbox\" name=\"Bench_learners\" value=\"Learner1\"/>\n            <span>Learner1<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-6\">\n    <div id=\"Bench_res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Bench_res_strategy\">\n        <h5>Select a resampling strategy:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"holdout\" checked=\"checked\"/>\n            <span>holdout<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"cv\"/>\n            <span>cross-validation<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Bench_res_strategy\" value=\"bootstrap\"/>\n            <span>bootstrap<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<br/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Bench_start\" type=\"button\" class=\"btn btn-default action-button\">Start benchmarking<\/button>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_measures": null,
+    "Bench_overview": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Benchmarking Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learners: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1: classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Best Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_params": {
+      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Bench_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Bench_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
     "Data_train_view": {
       "x": null,
       "evals": [
@@ -148,6 +179,19 @@
         }
       ]
     },
+    "Predict_learner_choice": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div id=\"Pred_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Pred_learner\">\n        <h5>Select the best learner to train on the entire training data:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Pred_learner\" value=\"Learner1\"/>\n            <span>Learner1<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Predict_learner_overview": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>No learner has been selected yet.<\/h5>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Predict_learner_train_btn": null,
     "TrainFit_learner_selection": {
       "html": "<div class=\"col-sm-6\">\n  <div id=\"TrainFit_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"TrainFit_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
