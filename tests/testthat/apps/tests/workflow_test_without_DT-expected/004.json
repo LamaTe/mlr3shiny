@@ -37,7 +37,7 @@
     "Learner2Paramnum.trees": 500,
     "Learner2PredictTypeChange": 1,
     "Learner2PredictTypeChoice": "prob",
-    "navbar": "5. Benchmarking",
+    "navbar": "6. Predict",
     "Predict_data_csv": null,
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
@@ -47,7 +47,11 @@
     "Predict_data_type": "csv",
     "Predict_data_xlsx": null,
     "Predict_predict": 0,
-    "Res_strategy": "holdout",
+    "Res_folds": 10,
+    "Res_learner": "Learner1",
+    "Res_ratio": 0.666666666666667,
+    "Res_resample": 0,
+    "Res_strategy": "cv",
     "Task_backend": "iris",
     "TrainFit_Base": 0,
     "TrainFit_resample": 1
@@ -291,6 +295,19 @@
         }
       ]
     },
+    "Predict_learner_choice": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div id=\"Pred_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n      <label class=\"control-label\" for=\"Pred_learner\">\n        <h5>Select the best learner to train on the entire training data:<\/h5>\n      <\/label>\n      <div class=\"shiny-options-group\">\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Pred_learner\" value=\"Learner1\"/>\n            <span>Learner1<\/span>\n          <\/label>\n        <\/div>\n        <div class=\"radio\">\n          <label>\n            <input type=\"radio\" name=\"Pred_learner\" value=\"Learner2\"/>\n            <span>Learner2<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Predict_learner_overview": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>No learner has been selected yet.<\/h5>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Predict_learner_train_btn": null,
     "Res_download": null,
     "Res_learner_selection": {
       "html": "<div class=\"col-sm-6\">\n  <div id=\"Res_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"col-sm-6\">\n  <div id=\"Res_strategy\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_strategy\">\n      <h5>Select a resampling strategy:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"holdout\" checked=\"checked\"/>\n          <span>holdout<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"cv\"/>\n          <span>cross-validation<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"Res_strategy\" value=\"bootstrap\"/>\n          <span>bootstrap<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
@@ -299,14 +316,24 @@
       ]
     },
     "Res_measure": null,
-    "Res_overview": null,
-    "Res_params": {
-      "html": "<div class=\"col-sm-12\">\n  <h5>No learner has been selected yet.<\/h5>\n<\/div>",
+    "Res_overview": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5 style=\"font-weight: bold;\">Resampling Overview<\/h5>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Task: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>iris<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Learner: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>Learner1 classif.rpart<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Resampling Strategy: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>cv<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Performed Iterations: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n    <div class=\"row\">\n      <div class=\"col-sm-6\">\n        <h5>Aggregated Performance: <\/h5>\n      <\/div>\n      <div class=\"col-sm-6\">\n        <h5>[not available]<\/h5>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Res_resample_button": null,
+    "Res_params": {
+      "html": "<div class=\"col-sm-6\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Res_folds\">\n      <h5>Iterations<\/h5>\n    <\/label>\n    <input id=\"Res_folds\" type=\"number\" class=\"form-control\" value=\"10\" min=\"1\"/>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Res_resample_button": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <div style=\"display:inline-block; width:100%; text-align: center;\">\n      <button id=\"Res_resample\" type=\"button\" class=\"btn btn-default action-button\">Perform Resampling<\/button>\n      <h5>Resampling large datasets may take a while.<\/h5>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
     "TrainFit_learner_selection": {
       "html": "<div class=\"col-sm-6\">\n  <div id=\"TrainFit_learner\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n    <label class=\"control-label\" for=\"TrainFit_learner\">\n      <h5>Select a new learner:<\/h5>\n    <\/label>\n    <div class=\"shiny-options-group\">\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner1\"/>\n          <span>Learner1<\/span>\n        <\/label>\n      <\/div>\n      <div class=\"radio\">\n        <label>\n          <input type=\"radio\" name=\"TrainFit_learner\" value=\"Learner2\"/>\n          <span>Learner2<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
