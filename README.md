@@ -1,4 +1,4 @@
-# mlr3shiny: Machine Learning in Shiny with mlr3
+# mlr3shiny: Machine Learning in Shiny with mlr3 <img src="man/figures/logo.png" align="right" width = "120" />
 
 [![Build Status](https://travis-ci.com/LamaTe/mlr3shiny.svg?branch=master)](https://travis-ci.com/LamaTe/mlr3shiny)
 
