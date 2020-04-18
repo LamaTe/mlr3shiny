@@ -68,6 +68,6 @@ As such the access to ML for users unfamiliar with R or coding is facilitated an
 # Acknowledgements
 
 We greatly acknowledge Michel Lang and the mlr3 developer team for helpful discussions and feedback on the design and the architecure of the application. 
-We would further like to acknowledge Rabea Aschenbruck for her constructivism and Stralsund University of Applied Sciences.
+We would further like to acknowledge Rabea Aschenbruck for her constructivism and Stralsund University of Applied Sciences for providing the creative environment that led to this development.
 
 # References
