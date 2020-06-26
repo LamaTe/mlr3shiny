@@ -1,11 +1,11 @@
 ---
 title: 'mlr3shiny: A graphical user interface for easy machine learning in R'
 authors:
-- affiliation: 1, 2
-  name: Laurens M. Tetzlaff
+- name: Laurens M. Tetzlaff
+  affiliation: 1, 2
   orcid: 0000-0001-9560-2669
-- affiliation: '1'
-  name: Gero Szepannek
+- name: Gero Szepannek
+  affiliation: '1'
   orcid: 0000-0001-8456-1283
 date: "31 January 2020"
 output: pdf_document
