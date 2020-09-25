@@ -178,7 +178,7 @@ getResButton <- function() {
 
 getResTable <- function() {
   if (!is.null(Res$R_Res)) {
-    ui <- DT::datatable(Res$R_Res$prediction()$data$tab,
+    ui <- DT::datatable(as.data.table(Res$R_Res$prediction()),
                 options = list(scrollX = TRUE,searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
   }
   else {

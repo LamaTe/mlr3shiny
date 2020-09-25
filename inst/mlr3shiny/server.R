@@ -4,6 +4,7 @@ server <- function(input, output, session) {
   for (i in seq_along(server_files)) {
     source(server_files[i], local = TRUE)
   }
+  options(shiny.maxRequestSize=1000*1024^2)
   observeEvent(input$Help, {
     if (req(input$navbar) == "1. Data") {
       showModal(
