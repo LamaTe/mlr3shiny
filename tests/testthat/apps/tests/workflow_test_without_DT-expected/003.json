@@ -107,9 +107,9 @@
         },
         {
           "name": "font-awesome",
-          "version": "5.3.1",
+          "version": "5.13.0",
           "src": {
-            "href": "font-awesome-5.3.1"
+            "href": "font-awesome-5.13.0"
           },
           "meta": null,
           "script": null,
