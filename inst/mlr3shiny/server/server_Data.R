@@ -1,7 +1,7 @@
 # generate data.table when a fitting file is uploaded
 data <- reactiveValues(traindata = NULL, predictdata = NULL)
 
-### TO-DO make sure that missings are loaded as na to be counted correctly later on 
+### TO-DO make sure that missings are loaded as na to be counted correctly later on
 
 # training data
 observe({
@@ -9,7 +9,7 @@ observe({
      filepath <-  input$Data_train_csv$datapath
      if (!is.null(filepath) && (str_sub(filepath, -4, -1) == ".csv" || (str_sub(filepath, -4, -1) == ".txt" ))) {
        data$traindata <- read.csv(file = filepath, header = input$Data_train_header,
-                               sep = input$Data_train_sep, quote = input$Data_train_quote)
+                               sep = input$Data_train_sep, quote = input$Data_train_quote, stringsAsFactors = TRUE)
      }
   } else if (input$Data_train_type == "xlsx") {
       filepath <-  input$Data_train_xlsx$datapath
@@ -17,8 +17,8 @@ observe({
          traintibble <- read_excel(path = filepath, col_names = input$Data_train_header_xlsx,
                                          sheet = input$Data_train_sheet)
          traindf <- as.data.frame(traintibble)
-         data$traindata <- modify_at(traindf, 
-                                     which(as.character(sapply(traindf, class)) == "character"), 
+         data$traindata <- modify_at(traindf,
+                                     which(as.character(sapply(traindf, class)) == "character"),
                                      as.factor)
         }
   }
