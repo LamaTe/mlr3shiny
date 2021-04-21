@@ -1,8 +1,8 @@
 # reactive values for task
-currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, tableOptions = NULL)
+currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, positive = NULL, tableOptions = NULL)
 # in case a feature gets dropped make sure to only include the same features when predicting new data
 features_to_use <- reactiveValues(features = NULL)
-t
+
 # render sidebarPanel depending on input for Task
 observe({
   if (input$Task_backend == "iris" || input$Task_backend == "mtcars") {
@@ -69,6 +69,10 @@ observe({
   ### to ensure that the table still updates when the features are removed later on, assign it an extra reactive value
   currenttask$featTypes <- currenttask$task$feature_types
   currenttask$featNames <- currenttask$task$feature_names
+  if (!identical(currenttask$task$properties, character(0)) && currenttask$task$properties == "twoclass") {
+    currenttask$positive <- currenttask$task$positive
+  }
+  # add positive label if twoclass
   currenttask$overview <- list(
     task_id <- currenttask$task$id,
     task_property = currenttask$task$properties,
@@ -109,6 +113,9 @@ printTaskOverviewUI = function() {
             addOverviewLineTask("Data: ", paste(currenttask$overview[[4]], "Variables with",
                                             currenttask$overview[[5]], "Observations", sep = " ")),
             addOverviewLineTask("Target: ", currenttask$overview[[6]]),
+            if (!identical(currenttask$task$properties, character(0)) && currenttask$task$properties == "twoclass") {
+            addOverviewLineTask("Positive Class: ", currenttask$positive)
+              },
             addOverviewLineTask("Features: ", renderDataTable(expr = as.data.table(currenttask$overview[[7]]), rownames = FALSE,
                                                           options = currenttask$tableOptions)
                             )
@@ -135,6 +142,8 @@ observeEvent(input$Task_feat_deactivate, {
 
 observeEvent(input$Task_change_pos_class, {
   currenttask$task$positive <- input$Positive_class
+  ## here we need to update currenttask$positive, so that Shiny recognizes that the R6- task - object has changed
+  currenttask$positive <- currenttask$task$positive
 })
 
 printTaskProcessingUI <- function(){
