@@ -12,6 +12,7 @@ library(readxl)
 library(stringr)
 library(plyr)
 library(purrr)
+requireNamespace("mlr3measures")
 
 userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a machine learning workflow using your own data.",
                                 "You can navigate over the different sections by clicking on each tab. They are chronologically ordered.",
@@ -148,8 +149,19 @@ learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      supportvm = c("kernel", "cost", "gamma", "degree")
                       )
 
-possiblemeasures <- list(classif = c("classif.acc", "classif.ce"),
-                         regr = c("regr.mae", "regr.mse"))
+basic_classif_msrs <-  c("accuracy" = "acc", "classification error" = "ce")
+possiblemeasures <- list(classif = list('twoclass' = c(basic_classif_msrs, "precision"),
+                                        'multiclass' = basic_classif_msrs
+                                        ),
+                         regr = c("mean absolute error" = "regr.mae", "mean squared error" = "regr.mse"))
+score_with_measure <- function() {
+  # generic function to calculate performance with a given measure
+  # input: measure, true target, predicted target, positive class (twoclass)
+  # output: score
+
+
+}
+
 
 
 # condition handling

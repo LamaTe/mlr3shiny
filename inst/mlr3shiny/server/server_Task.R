@@ -2,7 +2,7 @@
 currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, tableOptions = NULL)
 # in case a feature gets dropped make sure to only include the same features when predicting new data
 features_to_use <- reactiveValues(features = NULL)
-
+t
 # render sidebarPanel depending on input for Task
 observe({
   if (input$Task_backend == "iris" || input$Task_backend == "mtcars") {
@@ -133,11 +133,25 @@ observeEvent(input$Task_feat_deactivate, {
     currenttask$featNames <- currenttask$task$feature_names
 })
 
-
+observeEvent(input$Task_change_pos_class, {
+  currenttask$task$positive <- input$Positive_class
+})
 
 printTaskProcessingUI <- function(){
   tagList(
     h5("Task Processing", style = "font-weight: bold;"),
+    if (!identical(currenttask$task$properties, character(0)) && currenttask$task$properties == "twoclass") {
+      fluidRow(column(4,
+                      h5('Set Positive Class:')),
+               column(4,selectizeInput(inputId = "Positive_class", label = NULL,
+                                       choices = c(currenttask$task$class_names),
+                                       options = list(
+                                         placeholder = 'Nothing selected',
+                                         onInitialize = I('function() { this.setValue(""); }')
+                                       ),
+                                       multiple = FALSE)),
+               column(4, actionButton(inputId = "Task_change_pos_class", label = "Change", style = "float: right;")))
+    },
     fluidRow(
       column(4, h5("Drop Features: ")),
       column(4, selectizeInput(inputId = "Task_feature", label = NULL,
@@ -157,3 +171,6 @@ printTaskProcessingUI <- function(){
 output$Task_processing <- renderUI({
   printTaskProcessingUI()
 })
+
+
+
