@@ -212,7 +212,7 @@ getScoreUi <- function(Wfstate){
       fluidRow(
         column(6,
                selectizeInput(inputId = "TrainFit_select_measure", label = NULL,
-                              choices = possiblemeasures[[currenttask$task$task_type]],
+                              choices = get_msrs(currenttask$task, Wf$Current_Learner, avail_msrs, msr_translations),
                               options = list(
                                 placeholder = 'Nothing selected',
                                 onInitialize = I('function() { this.setValue(""); }')

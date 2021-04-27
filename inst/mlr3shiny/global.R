@@ -57,7 +57,7 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                                    "are available for both.", "Each learner has hyperparameters of wich an extract is available under 'parameter settings'",
                                    "to adjust the learner during the training phase to the present dataset for a better model.",
                                    "The predict type can be changed to align with the requirements for certain measures and more.",
-                                   "If further information are needed, visist the GitHub repository in which all packages and algorithms are referenced",
+                                   "If further information are needed, visit the GitHub repository in which all packages and algorithms are referenced",
                                    sep = " "),
                              paste("Decision Trees are adjustable via:",
                                    "xval - number of cross validations while computing the tree (set as static parameter)",
@@ -149,20 +149,43 @@ learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      supportvm = c("kernel", "cost", "gamma", "degree")
                       )
 
-basic_classif_msrs <-  c("accuracy" = "acc", "classification error" = "ce")
-possiblemeasures <- list(classif = list('twoclass' = c(basic_classif_msrs, "precision"),
-                                        'multiclass' = basic_classif_msrs
-                                        ),
-                         regr = c("mean absolute error" = "regr.mae", "mean squared error" = "regr.mse"))
-score_with_measure <- function() {
-  # generic function to calculate performance with a given measure
-  # input: measure, true target, predicted target, positive class (twoclass)
-  # output: score
+msr_translations <- data.table(key_msr = c('classif.acc', 'classif.bacc', 'classif.ce', 'classif.logloss',
+                                           'classif.auc', 'classif.fnr', 'classif.fpr', 'classif.npv',
+                                           'classif.precision', 'classif.specificity', 'classif.recall',
+                                           'regr.mae', 'regr.mse', 'regr.rmse', 'regr.rsq'),
+                               name = c('accuracy', 'balanced accuracy', 'classification error', 'log loss',
+                                        'area under the ROC curve', 'false negative rate', 'false positive rate', 'negative predictive value',
+                                        'positive predictive value (precision)', 'true negative rate (specificity)', 'true positive rate (recall/sensitivity)',
+                                        'mean absolute error', 'mean squared error', 'root mean squared error', 'r squared'
+))
 
 
+get_msrs <- function(current_task, current_learner, available_measures, measure_translations){
+  # Checks for task type and subtype and returns available measures for input selection option
+  # parameters: current task, all measures, measure translations
+  # output: mlr3 measure and real name
+
+  make_named_vec <- function(options) {
+    temp_opts <- as.list(options[[1]])
+    names(temp_opts) <- options[[2]]
+    return(temp_opts)
+  }
+  if (current_task$task_type == 'regr'){
+    keys <- available_measures[which(available_measures$task_type == current_task$task_type)][['key']]
+  }
+  # check for classif as regression has no subtypes (properties)
+  else if (current_task$task_type == 'classif' & current_task$properties == 'twoclass') {
+    keys <- available_measures[which(available_measures$task_type == current_task$task_type &
+                                       available_measures$predict_type == current_learner$predict_type)][['key']]
+  }
+  else  {
+    keys <- intersect(available_measures[which(available_measures$task_type == current_task$task_type &
+                                                 available_measures$predict_type == current_learner$predict_type)][['key']],
+                      available_measures[which(sapply(available_measures$task_properties, function(x) !is.element('twoclass', x)))][['key']])
+  }
+  options <- measure_translations[which(measure_translations$key_msr %in% keys), ]
+  return(make_named_vec(options))
 }
-
-
 
 # condition handling
 errorModal <- function(title, description, id, err) {
@@ -223,6 +246,17 @@ errorAlertBench <- function(error) {
                                  "one of the selected learners is incompatible with some of the training data or",
                                  "the test data contain new factor levels that the model cannot handle.",
                                  "Otherwise, please have a look at the error message to get insight into the cause.", sep = " "),
+             err = error$message,
+             id = "okBench")
+}
+
+errorAlertBenchAggr <- function(error) {
+  errorModal(title = "Benchmark Aggregation Failed",
+             description = paste("Sorry, calculating an aggregated performance for the benchmark failed.",
+                                 "Most likely, the selected learners have different prediction types.",
+                                 "For the calculation to succeed, all learners need the same prediction type - response or probability.",
+                                 "You can set the prediction type in the Learner-Tab.",
+                                 sep = " "),
              err = error$message,
              id = "okBench")
 }

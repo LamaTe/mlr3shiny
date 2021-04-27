@@ -150,6 +150,7 @@ getBenchParams <- function() {
   }
 }
 
+
 # get available measures (not nicest solution since is.null check only necessary to toggle measure ui)
 getBenchMeasuresUi <- function() {
   if (!is.null(Bench$Bench_Rslt)) {
@@ -159,12 +160,12 @@ getBenchMeasuresUi <- function() {
       fluidRow(
         column(6,
                selectizeInput(inputId = "Bench_measure", label = NULL,
-                              choices = possiblemeasures[[currenttask$task$task_type]],
-                              # options = list(
-                              #   placeholder = 'Nothing selected',
-                              #   onInitialize = I('function() { this.setValue(""); }')
-                              # ),
-                              selected = possiblemeasures[[currenttask$task$task_type]][[1]],
+                              choices = get_msrs(currenttask$task, Bench$Current_Learners[[1]], avail_msrs, msr_translations),
+                               options = list(
+                                 placeholder = 'Nothing selected',
+                                 onInitialize = I('function() { this.setValue(""); }')
+                               ),
+                              #selected = possiblemeasures[[currenttask$task$task_type]][[1]],
                               multiple = TRUE)
         ),
         column(6,
@@ -292,9 +293,17 @@ observeEvent(input$Bench_benchmark, {
 })
 
 observeEvent(input$Bench_aggr_measure, {
-  # aggreagte the results and find the best learner based on the last measure provided
-  aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
-  Bench$Best <- getBestLrn(aggr_rslt)
+  # aggregate the results and find the best learner based on the last measure provided
+  # try catch since learners require same predict type for measure -> easy error handling
+  withCallingHandlers(
+    tryCatch({
+      aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
+      Bench$Best <- getBestLrn(aggr_rslt)
+    },
+    error = errorAlertBenchAggr
+    ),
+    warning = warningAlert
+  )
 
   output$Bench_rslt_view <- DT::renderDataTable({
     getBenchTable(aggr_rslt)
