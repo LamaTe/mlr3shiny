@@ -1,4 +1,4 @@
-app <- ShinyDriver$new("../", seed = 42, loadTimeout = 1e+05, shinyOptions = list(port = 8000))
+app <- ShinyDriver$new("../../", seed = 42, loadTimeout = 1e+05, shinyOptions = list(port = 8000))
 app$snapshotInit("workflow_test_without_DT")
 
 app$snapshot()
