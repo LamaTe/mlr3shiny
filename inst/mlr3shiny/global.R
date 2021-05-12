@@ -149,6 +149,7 @@ learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      supportvm = c("kernel", "cost", "gamma", "degree")
                       )
 
+
 msr_translations <- data.table(key_msr = c('classif.acc', 'classif.bacc', 'classif.ce', 'classif.logloss',
                                            'classif.auc', 'classif.fnr', 'classif.fpr', 'classif.npv',
                                            'classif.precision', 'classif.specificity', 'classif.recall',
@@ -159,10 +160,10 @@ msr_translations <- data.table(key_msr = c('classif.acc', 'classif.bacc', 'class
                                         'mean absolute error', 'mean squared error', 'root mean squared error', 'r squared'
 ))
 
-
+avail_msrs <- as.data.table(mlr_measures) # get all mlr3 measures
 get_msrs <- function(current_task, current_learner, available_measures, measure_translations){
   # Checks for task type and subtype and returns available measures for input selection option
-  # parameters: current task, all measures, measure translations
+  # parameters: current task, current_learner, all measures, measure translations
   # output: mlr3 measure and real name
 
   make_named_vec <- function(options) {

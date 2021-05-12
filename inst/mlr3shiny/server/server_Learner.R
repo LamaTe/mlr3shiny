@@ -1,4 +1,4 @@
-# each Learner has its own reactive values 
+# each Learner has its own reactive values
 LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL)
 Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
@@ -8,11 +8,16 @@ Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Pre
 Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 
-# check whether it is a regression or classification and the give possible learners for each
+# check whether it is a regression or classification and then give possible learners for each
 observe({
    if (!is.null(currenttask$task) && currenttask$task$task_type == "classif") {
-      LearnerMeta$learner_choice <- c("decision tree" = "classif.rpart", "logistic regression" = "classif.log_reg", "random forest" = "classif.ranger",
-                                      "support vector machine" = "classif.svm")
+      basic_choice <- c("decision tree" = "classif.rpart", "random forest" = "classif.ranger", "support vector machine" = "classif.svm")
+      if (currenttask$task$properties == 'multiclass') {
+         LearnerMeta$learner_choice <- basic_choice
+      }
+      else {
+         LearnerMeta$learner_choice <- c(basic_choice,  "logistic regression" = "classif.log_reg")
+      }
    }
    else if (!is.null(currenttask$task) && currenttask$task$task_type == "regr") {
       LearnerMeta$learner_choice <- c("decision tree" = "regr.rpart", "linear regression" = "regr.lm", "random forest" = "regr.ranger",
@@ -112,7 +117,7 @@ getLearnerOverview <- function(learnerobject) {
    overview <- list(
       "name" = names(which(possiblelearners == learnerobject$Learner$id)),
       "predict type" = learnerobject$Predict_Type,
-      # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not 
+      # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not
       # used in linear kernel -> confusing for user
       "params" = getCurrentParams(learnerobject = learnerobject),
       "predit types" = learnerobject$Learner$predict_types,
@@ -184,18 +189,26 @@ addFactorParam <- function(id, levels, learnername, default) {
    )
 }
 
-# for svm to restrict parameter choice for now (e1071 drops unused params automatically, but confusing for newbies and users)
-# however, now this is not a good expandable solution - just a quick one; otherwise just offer all params and drop unused ones silently
+# for svm to restrict parameter choice for now
+# however, now this is not a good expandable solution - just a quick one; better to just offer all params and drop unused ones silently
+
 getKernelParams <- function(learnerobject, learnername, selectedkernel) {
+   # Input: current mlr3 learner, learner name (learner1, learner2 etc), user input for kernel
+   # Generates a ui taglist to display additional hyperparameter that are available for selected kernel
+   # Implicitly updates available hyperparameters depending on kernel for later hyperparameter adjustment (not ideal - function with side effects!)
+   # Returns: taglist for kernelparamet
+
    if (selectedkernel == "polynomial") {
       kernelparams <- tagList(
          addNumericParam(id = "gamma", lower = learnerobject$Learner$param_set$params$gamma$lower,
                          upper = learnerobject$Learner$param_set$params$gamma$upper,
                          learnername = learnername, default = learnerobject$Learner$param_set$params$gamma$default),
-         addNumericParam(id = "degree", lower = learnerobject$Learner$param_set$params$degree$lower, 
+         addNumericParam(id = "degree", lower = learnerobject$Learner$param_set$params$degree$lower,
                          upper = learnerobject$Learner$param_set$params$degree$upper,
                          learnername = learnername, default = learnerobject$Learner$param_set$params$degree$default)
       )
+      # update learnerobject$Params so that only the hyperparams are set that are actually available
+      learnerobject$Params <- c('kernel', 'cost', 'gamma', 'degree')
       return(kernelparams)
    }
    else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
@@ -203,22 +216,35 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
          addNumericParam(id = "gamma", lower = learnerobject$Learner$param_set$params$gamma$lower, upper = learnerobject$Learner$param_set$params$gamma$upper,
                         learnername = learnername, default = learnerobject$Learner$param_set$params$gamma$default)
       )
+      learnerobject$Params <- c('kernel', 'cost', 'gamma')
       return(kernelparams)
-   } 
+   }
+   else{
+      learnerobject$Params <- c('kernel', 'cost')
+      return(NULL)
+   }
 }
 
-# get params that are available (defined in global)
 getAvailableParams <- function(algorithm, learnerobject) {
+   # Input: Selected algorithm as defined in global, learnerobject that refers to an mlr3 learner
+   # Selects available parameters for given algorithm from global and gets parameter details through mlr3
+   # Implicitly assigns available hyperparameter to learner$Params for later reference when setting hyperparams
+   # Output: list of parameters with id, lower and upper levels, defaults
+
    learnerobject$Params <- learnerparams[[algorithm]]
    params <- list()
-   for (i in 1:length(learnerobject$Params)) {
-      params[[i]] <- learnerobject$Learner$param_set$params[[learnerobject$Params[i]]]
+   for (i in 1:length(learnerparams[[algorithm]])) {
+      params[[i]] <- learnerobject$Learner$param_set$params[[learnerparams[[algorithm]][i]]]
    }
    return(params)
 }
 
-# define the parameter settings UI for each learner depending on the selected algorithm 
+# define the parameter settings UI for each learner depending on the selected algorithm
 makeParamUi <- function(learnerobject, learnername) {
+   # Input: mlr3 learner object, name of currently selected learner (learner1, learner2 etc)
+   # Creates layout for hyperparameters as a taglist depending on the algorithm
+   # Returns: taglist of inputs for Learner hyperparameters
+
    if (learnerobject$Learner$param_set$is_empty) {
       return(h5("No Parameters available to be set.", style = "text-align: center;"))
    }
@@ -261,12 +287,13 @@ makeParamUi <- function(learnerobject, learnername) {
          addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
                          default = params[[2]]$default),
-         uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")),
+         uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       return(parameterSvmUi)
       }
 }
+
 # make the overview for each learner
 makeLearnerOvTab <- function(learnerobject) {
    learnerov <- tagList(
@@ -309,6 +336,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
    return(learnerparams)
 }
 
+
 # add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
@@ -335,22 +363,25 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
    })
-   
+
    # kernel params for svm
-   observeEvent(input[[paste0(learnername, "Param", "kernel")]], {
-      output[[paste0(learnername, "KernelParam", "kernel")]] <- renderUI({
+   output[[paste0(learnername, "KernelParam", "kernel")]] <- renderUI({
+
+      # if statement necessary to avoid strange shiny internal warning about empty condition when generating HTML
+      if(input[[selectedlearner]] %in% c('classif.svm', 'regr.svm')) {
          getKernelParams(learnerobject = learnerobject, learnername = learnername,
-                         selectedkernel = input[[paste0(learnername, "Param", "kernel")]])
-      })
+                          selectedkernel = input[[paste0(learnername, "Param", "kernel")]])
+         }
    })
-   
+
    # # To-Do: get a prettier solution
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
       for (i in learnerobject$Params) {
          currentinput <- input[[paste0(learnername, "Param", i)]]
+         # validate input value
          if (!is.na(currentinput) && !is.null(currentinput)) {
-            if ((!is.na(learnerobject$Learner$param_set$params[[i]]$upper) && 
+            if ((!is.na(learnerobject$Learner$param_set$params[[i]]$upper) &&
                  currentinput > learnerobject$Learner$param_set$params[[i]]$upper) ||
                 (!is.na(learnerobject$Learner$param_set$params[[i]]$lower) &&
                 currentinput < learnerobject$Learner$param_set$params[[i]]$lower) ||
@@ -358,13 +389,22 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
                   shinyalert(title = "Invalid Parameter Input",
                              text = "It seems that you tried to set a parameter that is not within its parameter range. Please set a valid value.",
                              animation = FALSE, closeOnClickOutside = TRUE)
-            } 
+            }
             else {
                paramlist[[i]] <- currentinput
                }
          }
       }
-      learnerobject$Learner$param_set$values <- paramlist
+
+      # explicit defaults for svm type to be used
+      if (learnerobject$Learner$id == 'classif.svm') {
+         paramlist[['type']] <- 'C-classification'
+      }
+      else if (learnerobject$Learner$id == 'regr.svm') {
+         paramlist[['type']] <- 'eps-regression'
+      }
+
+      learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
       #learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
    })
@@ -372,25 +412,25 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
 
 
 # TO-DO: ugly code, think of better solution eg add simple for loop
-makeLearner(learnerobject = Learner1, learnername = "Learner1", trigger = "Learner_Create1", selectedlearner = "Learner_Learner1", 
+makeLearner(learnerobject = Learner1, learnername = "Learner1", trigger = "Learner_Create1", selectedlearner = "Learner_Learner1",
             learnerparamoutput = "Learner1_tab", learnerovoutput = "Learner1_ov")
 
-makeLearner(learnerobject = Learner2, learnername = "Learner2", trigger = "Learner_Create2", selectedlearner = "Learner_Learner2", 
+makeLearner(learnerobject = Learner2, learnername = "Learner2", trigger = "Learner_Create2", selectedlearner = "Learner_Learner2",
             learnerparamoutput = "Learner2_tab", learnerovoutput = "Learner2_ov")
 
-makeLearner(learnerobject = Learner3, learnername = "Learner3", trigger = "Learner_Create3", selectedlearner = "Learner_Learner3", 
+makeLearner(learnerobject = Learner3, learnername = "Learner3", trigger = "Learner_Create3", selectedlearner = "Learner_Learner3",
             learnerparamoutput = "Learner3_tab", learnerovoutput = "Learner3_ov")
 
-makeLearner(learnerobject = Learner4, learnername = "Learner4", trigger = "Learner_Create4", selectedlearner = "Learner_Learner4", 
+makeLearner(learnerobject = Learner4, learnername = "Learner4", trigger = "Learner_Create4", selectedlearner = "Learner_Learner4",
             learnerparamoutput = "Learner4_tab", learnerovoutput = "Learner4_ov")
 
-makeLearner(learnerobject = Learner5, learnername = "Learner5", trigger = "Learner_Create5", selectedlearner = "Learner_Learner5", 
+makeLearner(learnerobject = Learner5, learnername = "Learner5", trigger = "Learner_Create5", selectedlearner = "Learner_Learner5",
             learnerparamoutput = "Learner5_tab", learnerovoutput = "Learner5_ov")
 
-makeLearner(learnerobject = Learner6, learnername = "Learner6", trigger = "Learner_Create6", selectedlearner = "Learner_Learner6", 
+makeLearner(learnerobject = Learner6, learnername = "Learner6", trigger = "Learner_Create6", selectedlearner = "Learner_Learner6",
             learnerparamoutput = "Learner6_tab", learnerovoutput = "Learner6_ov")
 
-makeLearner(learnerobject = Learner7, learnername = "Learner7", trigger = "Learner_Create7", selectedlearner = "Learner_Learner7", 
+makeLearner(learnerobject = Learner7, learnername = "Learner7", trigger = "Learner_Create7", selectedlearner = "Learner_Learner7",
             learnerparamoutput = "Learner7_tab", learnerovoutput = "Learner7_ov")
 
 
