@@ -107,29 +107,29 @@ get_learner_list <- function() {
 # display a tabPanel with PDP and VI plots
 display_plot_tabs <- function() {
   if (!is.null(eval_meta$feature_importance) || !is.null(eval_meta$feature_effect)) {
-  output$eval_learner_plot_tabs <- renderUI({
-    output$pdp_plot <- renderPlot({
-      plot(eval_meta$feature_effect, features = eval_meta$selected_features)
-    })
-    output$vi_plot <- renderPlot({
-      plot(eval_meta$feature_importance)
-    }) 
+    output$eval_learner_plot_tabs <- renderUI({
+      output$pdp_plot <- renderPlot({
+        plot(eval_meta$feature_effect, features = eval_meta$selected_features)
+      })
+      output$vi_plot <- renderPlot({
+        plot(eval_meta$feature_importance, features = eval_meta$selected_features)
+      })
       ui <- tabsetPanel(
         type = "tabs",
+        tabPanel(
+          "Variable Importance",
+          wellPanel(
+            plotOutput(outputId = "vi_plot")
+          )
+        ),
         tabPanel(
           "PD-Plot",
           wellPanel(
             plotOutput(outputId = "pdp_plot")
           )
-        ),
-          tabPanel(
-            "Variable Importance",
-            wellPanel(
-              plotOutput(outputId = "vi_plot")
-            )
-          )
+        )
       )
-  })
+    })
   }
 }
 
