@@ -112,12 +112,12 @@ display_plot_tabs <- function() {
         plot(eval_meta$feature_effect, features = eval_meta$selected_features)
       })
       output$vi_plot <- renderPlot({
-        plot(eval_meta$feature_importance, features = eval_meta$selected_features)
+        plot(eval_meta$feature_importance)
       })
       ui <- tabsetPanel(
         type = "tabs",
         tabPanel(
-          "Variable Importance",
+          "Feature Importance",
           wellPanel(
             plotOutput(outputId = "vi_plot")
           )
