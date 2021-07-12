@@ -1,5 +1,5 @@
 # reactive values for the chosen learner, the features selected and the iml objects used for explaining the model
-eval_meta <- reactiveValues(current_learner = NULL, selected_features = NULL, feature_effect = NULL, feature_importance = NULL)
+eval_meta <- reactiveValues(current_learner = NULL, selected_features = NULL, feature_effect = NULL, feature_importance = NULL, feature_importance_compare = NULL)
 
 # available losses for multiclass/twoclass classification and regression tasks
 classif_losses <- c("ce", "f1")
