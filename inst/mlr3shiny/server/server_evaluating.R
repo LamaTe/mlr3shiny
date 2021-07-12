@@ -126,14 +126,27 @@ get_feature_list <- function() {
   }
 }
 
+# of all existing learners return a list of the already trained ones
+# this loop is necessary as it's not possible to loop through a reactiveValue like "trained_learner_list"
+get_trained_learners <- function() {
+  list_of_learners <- list()
+  for (learner in LearnerMeta$Learner_Avail) {
+    if (!is.null(trained_learner_list[[learner]])) {
+      list_of_learners <- append(list_of_learners, learner)
+    }
+  }
+  return(list_of_learners)
+}
+
+
 # get all possible learners
-get_learner_list <- function() {
-  if (is.null(LearnerMeta$Learner_Avail)) {
+get_learner_list <- function(list_of_learners) {
+  if (length(reactiveValuesToList(trained_learner_list)) == 0) {
     ui <- tagList(
       fluidRow(
         column(
           12,
-          h5("No learner has been created yet. Please go to step 3 to define a learner.")
+          h5("No learner has been trained on the whole dataset, go back to the previous tab to train on the whole dataset")
         )
       )
     )
@@ -147,7 +160,7 @@ get_learner_list <- function() {
           radioButtons(
             inputId = "selected_learner",
             label = h5("Select a learner to evaluate its performance."),
-            choices = LearnerMeta$Learner_Avail,
+            choices = get_trained_learners(),
             selected = character(0)
           )
         ),
