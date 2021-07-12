@@ -106,7 +106,7 @@ get_feature_list <- function() {
         fluidRow(
           column(
             12,
-            h5("Selected Features: ")
+            h5("Select Features to show in PD-Plot: (max. 6)")
           )
         ),
         fluidRow(
