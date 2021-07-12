@@ -19,13 +19,21 @@ output$eval_learner_feat_selection <- renderUI({
   get_feature_list()
 })
 
+output$eval_loss_function_picker <- renderUI({
+  get_loss_function_list()
+})
+
+output$eval_learner_plot_tabs <- renderUI({
+  display_plot_tabs()
+})
+
 # observe "start evaluation" button and start iml workflow
 observeEvent(input$evaluate_start, {
   model <- Predictor$new(eval_meta$current_learner, data = currenttask$task$data(), y = currenttask$task$target_names)
   # saving iml calculations in meta object
-  eval_meta$feature_importance <- FeatureImp$new(model, loss = "ce")
+  eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker)
   eval_meta$feature_effect <- FeatureEffects$new(model)
-  display_plot_tabs()
+  calculate_plots()
 })
 
 # observe choosen learner in ui and change meta object
@@ -33,6 +41,7 @@ observeEvent(input$selected_learner, {
   reset_evaluation()
   eval_meta$current_learner <- get(input$selected_learner)$Learner$clone(deep = TRUE)
   eval_meta$current_learner$train(task = currenttask$task)
+  # showing only relevant loss functions
   reset_plots()
 })
 
@@ -41,6 +50,53 @@ observeEvent(input$feat_picker, {
   reset_plots()
   eval_meta$selected_features <- input$feat_picker
 })
+
+# get relevant loss functions for current task
+get_loss_function_list <- function() {
+  if (!is.null(input$selected_learner)) {
+    if (currenttask$task$task_type == "classif") {
+      if (currenttask$task$properties == "twoclass") {
+        ui <- loss_ui_builder(twoclass_losses)
+      } else {
+        ui <- loss_ui_builder(classif_losses)
+      }
+    } else if (currenttask$task$task_type == "regr") {
+      ui <- loss_ui_builder(regr_losses)
+    }
+    return(ui)
+  }
+}
+
+
+# builder for loss function selection
+# ch
+loss_ui_builder <- function(choices) {
+  wellPanel(
+    tagList(
+      fluidRow(
+        column(
+          12,
+          h5("Select loss function for Feature Importance: "),
+        ),
+        column(
+          12,
+          h5("Current Task Type:", currenttask$task$task_type)
+        )
+      ),
+      fluidRow(
+        column(
+          12,
+          pickerInput("loss_picker",
+            choices = choices,
+            options = pickerOptions(
+              "actions-box" = TRUE
+            )
+          )
+        )
+      )
+    )
+  )
+}
 
 # get all possible features from the selected learner
 get_feature_list <- function() {
@@ -112,32 +168,34 @@ get_learner_list <- function() {
   }
 }
 
-# display a tabPanel with PDP and VI plots
+calculate_plots <- function() {
+  output$pdp_plot <- renderPlot({
+    plot(eval_meta$feature_effect, features = eval_meta$selected_features)
+  })
+  output$vi_plot <- renderPlot({
+    plot(eval_meta$feature_importance)
+  })
+}
+
+# display a tabPanel for the PDP and VI plots
 display_plot_tabs <- function() {
-  if (!is.null(eval_meta$feature_importance) || !is.null(eval_meta$feature_effect)) {
-    output$eval_learner_plot_tabs <- renderUI({
-      output$pdp_plot <- renderPlot({
-        plot(eval_meta$feature_effect, features = eval_meta$selected_features)
-      })
-      output$vi_plot <- renderPlot({
-        plot(eval_meta$feature_importance)
-      })
-      ui <- tabsetPanel(
-        type = "tabs",
-        tabPanel(
-          "Feature Importance",
-          wellPanel(
-            plotOutput(outputId = "vi_plot")
-          )
-        ),
-        tabPanel(
-          "PD-Plot",
-          wellPanel(
-            plotOutput(outputId = "pdp_plot")
-          )
+  if (!is.null(eval_meta$feature_importance) && !is.null(eval_meta$feature_effect) && !is.null(input$selected_learner)) {
+    ui <- tabsetPanel(
+      type = "tabs",
+      tabPanel(
+        "Feature Importance",
+        wellPanel(
+          plotOutput(outputId = "vi_plot")
+        )
+      ),
+      tabPanel(
+        "PD-Plot",
+        wellPanel(
+          plotOutput(outputId = "pdp_plot")
         )
       )
-    })
+    )
+    return(ui)
   }
 }
 
