@@ -1,5 +1,7 @@
 # reactive values for the predict tab
 Pred <- reactiveValues(Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
+# list of trained learners (will be dynamically filled in the training process)
+trained_learner_list <- reactiveValues()
 
 ## Functions
 # learner selection and overview
@@ -132,7 +134,10 @@ output$Predict_learner_train_btn <- renderUI({
 observeEvent(input$Pred_train_learner, {
     withProgress(message = "Training model on all data", {
       withCallingHandlers(
-        tryCatch(Pred$Learner$train(task = currenttask$task), error = errorAlertTrain),
+        tryCatch({
+          trained_learner_list[[input$Pred_learner]] <- Pred$Learner$train(task = currenttask$task)
+        }
+        , error = errorAlertTrain),
         warning = warningAlert)
       incProgress(0.8)
       show(id = "Pred_trained_learner")
