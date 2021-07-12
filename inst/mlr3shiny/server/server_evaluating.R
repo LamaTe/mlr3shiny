@@ -115,8 +115,7 @@ get_feature_list <- function() {
             pickerInput("feat_picker",
               choices = c(currenttask$featNames),
               multiple = TRUE,
-              options = list(
-                "actions-box" = TRUE,
+              options = pickerOptions(
                 maxOptions = 6
               )
             )
