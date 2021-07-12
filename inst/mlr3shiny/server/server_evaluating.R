@@ -11,20 +11,24 @@ twoclass_losses <- c("logLoss")
 
 # displaying the learner selection in the ui
 output$eval_learner_selection <- renderUI({
-  get_learner_list()
+  get_learner_selection()
 })
 
 # if a learner is selected display a list of possible features to select
 output$eval_learner_feat_selection <- renderUI({
-  get_feature_list()
+  get_feature_selection()
 })
 
-output$eval_loss_function_picker <- renderUI({
+output$eval_loss_function_selection <- renderUI({
   get_loss_function_list()
 })
 
 output$eval_learner_plot_tabs <- renderUI({
   display_plot_tabs()
+})
+
+output$eval_compare_method_selection <- renderUI({
+
 })
 
 # observe "start evaluation" button and start iml workflow
@@ -67,7 +71,6 @@ get_loss_function_list <- function() {
   }
 }
 
-
 # builder for loss function selection
 # ch
 loss_ui_builder <- function(choices) {
@@ -99,7 +102,7 @@ loss_ui_builder <- function(choices) {
 }
 
 # get all possible features from the selected learner
-get_feature_list <- function() {
+get_feature_selection <- function() {
   if (!is.null(input$selected_learner)) {
     ui <- wellPanel(
       tagList(
@@ -140,7 +143,7 @@ get_trained_learners <- function() {
 
 
 # get all possible learners
-get_learner_list <- function(list_of_learners) {
+get_learner_selection <- function(list_of_learners) {
   if (length(reactiveValuesToList(trained_learner_list)) == 0) {
     ui <- tagList(
       fluidRow(
