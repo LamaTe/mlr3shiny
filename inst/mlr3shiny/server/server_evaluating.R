@@ -1,6 +1,14 @@
 # reactive values for the chosen learner, the features selected and the iml objects used for explaining the model
 eval_meta <- reactiveValues(current_learner = NULL, selected_features = NULL, feature_effect = NULL, feature_importance = NULL)
 
+# available losses for multiclass/twoclass classification and regression tasks
+classif_losses <- c("ce", "f1")
+regr_losses <- c(
+  "mae", "mse", "rsme", "mape",
+  "mdae", "msle", "percent_bias", "rae", "rmsle", "rse", "rrse", "smape"
+)
+twoclass_losses <- c("logLoss")
+
 # displaying the learner selection in the ui
 output$eval_learner_selection <- renderUI({
   get_learner_list()
