@@ -13,7 +13,7 @@ tabpanel_evaluating <- fluidRow(
         fluidRow(
             column(
                 12,
-                uiOutput(outputId = "eval_learner_plot_tabs")
+                uiOutput(outputId = "eval_compare_method_selection")
             )
         ),
         fluidRow(
