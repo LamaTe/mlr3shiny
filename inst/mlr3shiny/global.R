@@ -138,9 +138,15 @@ userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a
                                    "The resulting object can be downloaded for future use",
                                    "A new dataset can be imported with the same procedure as before.",
                                    "Afterwards, the trained model can be used to make a prediction which is displayed on the left-hand side.",
-                                   "The prediction can be downloaded either as a csv-file or as a rds-file if it is to be included directly in another R session."))
-                 )
+                                   "The prediction can be downloaded either as a csv-file or as a rds-file if it is to be included directly in another R session.")),
+                 Explain = c(paste("For further use in different domains, it can be of considerable advantage to understand the internal \"ways of thinking\" of the algorithms used, which lead to the eventual calculation of the results. Following the Explainable AI approach, model agnostic methods are used here via the <a href='https://github.com/christophM/iml'>iml</a> framework to graphically represent the Feature Importance and Partial Dependence (PD)-Plots.
+As a result, even more complex models can be made relatively easy to understand, which can be particularly useful in arguing for the use of machine learning in newer application areas. <p> More information regarding PD-Plots and Variable Importance can be found in <a href=\"https://christophm.github.io/interpretable-ml-book/index.html\">Interpretable Machine Learning</a> which is in close relation to iml itself.</p>",
+                                   sep = " "),
+                             paste("After selecting a learner that has been trained on all data in advance, the loss function can be selected that is to be used in the calculation of the feature importance. Additionally, the compare method can be used to select whether the importance should be displayed as a difference (error.permutation-error.original) or as a ratio (error.permutation/error.original). Finally, the features to be displayed in the PD plot can also be selected.
+                             <p>Further information on the used loss functions can be found in the <a href=\"https://github.com/mfrasco/Metrics\">Metrics Github-Repository</a></p>")
 
+                 )
+)
 
 #future TO-DO: implement additional learners, ultimately replace vector with as.data.table(mlr_learners)
 possiblelearners <- c("Logistic Regression" = "classif.log_reg",

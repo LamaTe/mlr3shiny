@@ -60,7 +60,7 @@ ui <- tagList(
     ),
     tabPanel("7. Explain",
     tabpanel_evaluating,
-    icon = icon("search")
+    icon = icon("chalkboard-teacher")
     )
   )
 )
