@@ -116,30 +116,29 @@ loss_ui_builder <- function(choices) {
 
 # get all possible features from the selected learner
 get_feature_selection <- function() {
-  if (!is.null(input$selected_learner)) {
-    ui <- wellPanel(
-      tagList(
-        fluidRow(
-          column(
-            12,
-            h5("Select Features to show in PD-Plot: (max. 6)")
-          )
-        ),
-        fluidRow(
-          column(
-            12,
-            pickerInput("feat_picker",
-              choices = c(currenttask$featNames),
-              multiple = TRUE,
-              options = pickerOptions(
-                maxOptions = 6
-              )
+  ui <- hidden(wellPanel(
+    id = "feature_selection_panel",
+    tagList(
+      fluidRow(
+        column(
+          12,
+          h5("Select Features to show in PD-Plot: (max. 6)")
+        )
+      ),
+      fluidRow(
+        column(
+          12,
+          pickerInput("feat_picker",
+            choices = c(currenttask$featNames),
+            multiple = TRUE,
+            options = pickerOptions(
+              maxOptions = 6
             )
           )
-        ),
-      )
+        )
+      ),
     )
-  }
+  ))
 }
 
 # of all existing learners return a list of the already trained ones
@@ -242,6 +241,12 @@ reset_plots <- function() {
   output$pdp_plot <- NULL
   output$vi_plot <- NULL
 }
+
+observe({
+  if (!is.null(input$selected_learner)) {
+    show("feature_selection_panel")
+  }
+})
 
 # disabling the start button if no feature is selected
 observe({
