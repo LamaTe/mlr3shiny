@@ -250,7 +250,7 @@ observe({
 
 # disabling the start button if no feature is selected
 observe({
-  if (is.null(input$feat_picker)) {
+  if (length(input$feat_picker) == 0) {
     disable("evaluate_start")
   } else {
     enable("evaluate_start")
