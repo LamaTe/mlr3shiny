@@ -28,7 +28,7 @@ output$eval_learner_plot_tabs <- renderUI({
 })
 
 output$eval_compare_method_selection <- renderUI({
-
+  get_compare_method_list()
 })
 
 # observe "start evaluation" button and start iml workflow
@@ -55,6 +55,27 @@ observeEvent(input$feat_picker, {
   eval_meta$selected_features <- input$feat_picker
 })
 
+# builder for compare method selection
+get_compare_method_list <- function() {
+  ui <- wellPanel(
+    tagList(
+      fluidRow(
+        column(
+          12,
+          h5("Select compare method for Feature Importance:")
+        ),
+        column(
+          12,
+          pickerInput("compare_picker",
+          choices = c("ratio", "difference"))
+        )
+      )
+    )
+  )
+  return(ui)
+}
+
+
 # get relevant loss functions for current task
 get_loss_function_list <- function() {
   if (!is.null(input$selected_learner)) {
@@ -72,7 +93,6 @@ get_loss_function_list <- function() {
 }
 
 # builder for loss function selection
-# ch
 loss_ui_builder <- function(choices) {
   wellPanel(
     tagList(
@@ -90,10 +110,7 @@ loss_ui_builder <- function(choices) {
         column(
           12,
           pickerInput("loss_picker",
-            choices = choices,
-            options = pickerOptions(
-              "actions-box" = TRUE
-            )
+            choices = choices
           )
         )
       )

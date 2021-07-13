@@ -13,6 +13,12 @@ tabpanel_evaluating <- fluidRow(
         fluidRow(
             column(
                 12,
+                uiOutput(outputId = "eval_learner_plot_tabs")
+            )
+        ),
+        fluidRow(
+            column(
+                12,
                 uiOutput(outputId = "eval_learner_feat_selection")
             )
         )
