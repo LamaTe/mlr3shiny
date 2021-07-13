@@ -9,12 +9,11 @@ regr_losses <- c(
 )
 twoclass_losses <- c("logLoss")
 
-# displaying the learner selection in the ui
+# shiny outputs for the ui
 output$eval_learner_selection <- renderUI({
   get_learner_selection()
 })
 
-# if a learner is selected display a list of possible features to select
 output$eval_learner_feat_selection <- renderUI({
   get_feature_selection()
 })
@@ -197,6 +196,7 @@ get_learner_selection <- function(list_of_learners) {
   }
 }
 
+# printing the pdp and vi plot to output
 calculate_plots <- function() {
   output$pdp_plot <- renderPlot({
     plot(eval_meta$feature_effect, features = eval_meta$selected_features)
@@ -242,6 +242,8 @@ reset_plots <- function() {
   output$pdp_plot <- NULL
   output$vi_plot <- NULL
 }
+
+# disabling the start button if no feature is selected
 observe({
   if (is.null(input$feat_picker)) {
     disable("evaluate_start")
