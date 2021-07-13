@@ -4,7 +4,7 @@ eval_meta <- reactiveValues(current_learner = NULL, selected_features = NULL, fe
 # available losses for multiclass/twoclass classification and regression tasks
 classif_losses <- c("ce", "f1")
 regr_losses <- c(
-  "mae", "mse", "rsme", "mape",
+  "mae", "mse", "rmse", "mape",
   "mdae", "msle", "percent_bias", "rae", "rmsle", "rse", "rrse", "smape"
 )
 twoclass_losses <- c("logLoss")
@@ -35,7 +35,7 @@ output$eval_compare_method_selection <- renderUI({
 observeEvent(input$evaluate_start, {
   model <- Predictor$new(eval_meta$current_learner, data = currenttask$task$data(), y = currenttask$task$target_names)
   # saving iml calculations in meta object
-  eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker)
+  eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker, compare = input$compare_picker)
   eval_meta$feature_effect <- FeatureEffects$new(model)
   calculate_plots()
 })
@@ -43,36 +43,37 @@ observeEvent(input$evaluate_start, {
 # observe choosen learner in ui and change meta object
 observeEvent(input$selected_learner, {
   reset_evaluation()
-  eval_meta$current_learner <- get(input$selected_learner)$Learner$clone(deep = TRUE)
-  eval_meta$current_learner$train(task = currenttask$task)
+  eval_meta$current_learner <- trained_learner_list[[input$selected_learner]]
   # showing only relevant loss functions
   reset_plots()
 })
 
 # save selected features and reset plot diagrams
 observeEvent(input$feat_picker, {
-  reset_plots()
   eval_meta$selected_features <- input$feat_picker
 })
 
 # builder for compare method selection
 get_compare_method_list <- function() {
-  ui <- wellPanel(
-    tagList(
-      fluidRow(
-        column(
-          12,
-          h5("Select compare method for Feature Importance:")
-        ),
-        column(
-          12,
-          pickerInput("compare_picker",
-          choices = c("ratio", "difference"))
+  if (!is.null(input$selected_learner)) {
+    ui <- wellPanel(
+      tagList(
+        fluidRow(
+          column(
+            12,
+            h5("Select compare method for Feature Importance:")
+          ),
+          column(
+            12,
+            pickerInput("compare_picker",
+              choices = c("ratio", "difference")
+            )
+          )
         )
       )
     )
-  )
-  return(ui)
+    return(ui)
+  }
 }
 
 
@@ -100,10 +101,6 @@ loss_ui_builder <- function(choices) {
         column(
           12,
           h5("Select loss function for Feature Importance: "),
-        ),
-        column(
-          12,
-          h5("Current Task Type:", currenttask$task$task_type)
         )
       ),
       fluidRow(
@@ -245,3 +242,10 @@ reset_plots <- function() {
   output$pdp_plot <- NULL
   output$vi_plot <- NULL
 }
+observe({
+  if (is.null(input$feat_picker)) {
+    disable("evaluate_start")
+  } else {
+    enable("evaluate_start")
+  }
+})
