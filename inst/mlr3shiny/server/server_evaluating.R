@@ -14,20 +14,20 @@ output$eval_learner_selection <- renderUI({
   get_learner_selection()
 })
 
-output$eval_learner_feat_selection <- renderUI({
-  get_feature_selection()
-})
-
 output$eval_loss_function_selection <- renderUI({
   get_loss_function_list()
 })
 
-output$eval_learner_plot_tabs <- renderUI({
-  display_plot_tabs()
-})
-
 output$eval_compare_method_selection <- renderUI({
   get_compare_method_list()
+})
+
+output$eval_learner_feat_selection <- renderUI({
+  get_feature_selection()
+})
+
+output$eval_learner_plot_tabs <- renderUI({
+  display_plot_tabs()
 })
 
 # observe "start evaluation" button and start iml workflow
@@ -55,18 +55,16 @@ observeEvent(input$feat_picker, {
 # builder for compare method selection
 get_compare_method_list <- function() {
   if (!is.null(input$selected_learner)) {
-    ui <- wellPanel(
-      tagList(
-        fluidRow(
-          column(
-            12,
-            h5("Select compare method for Feature Importance:")
-          ),
-          column(
-            12,
-            pickerInput("compare_picker",
-              choices = c("ratio", "difference")
-            )
+    ui <- tagList(
+      fluidRow(
+        column(
+          12,
+          h5("Select compare method for Feature Importance:")
+        ),
+        column(
+          12,
+          pickerInput("compare_picker",
+            choices = c("ratio", "difference")
           )
         )
       )
@@ -94,20 +92,18 @@ get_loss_function_list <- function() {
 
 # builder for loss function selection
 loss_ui_builder <- function(choices) {
-  wellPanel(
-    tagList(
-      fluidRow(
-        column(
-          12,
-          h5("Select loss function for Feature Importance: "),
-        )
-      ),
-      fluidRow(
-        column(
-          12,
-          pickerInput("loss_picker",
-            choices = choices
-          )
+  tagList(
+    fluidRow(
+      column(
+        12,
+        h5("Select loss function for Feature Importance: "),
+      )
+    ),
+    fluidRow(
+      column(
+        12,
+        pickerInput("loss_picker",
+          choices = choices
         )
       )
     )
@@ -116,29 +112,26 @@ loss_ui_builder <- function(choices) {
 
 # get all possible features from the selected learner
 get_feature_selection <- function() {
-  ui <- hidden(wellPanel(
-    id = "feature_selection_panel",
-    tagList(
-      fluidRow(
-        column(
-          12,
-          h5("Select Features to show in PD-Plot: (max. 6)")
-        )
-      ),
-      fluidRow(
-        column(
-          12,
-          pickerInput("feat_picker",
-            choices = c(currenttask$featNames),
-            multiple = TRUE,
-            options = pickerOptions(
-              maxOptions = 6
-            )
+  ui <- tagList(
+    fluidRow(
+      column(
+        12,
+        h5("Select Features to show in PD-Plot: (max. 6)")
+      )
+    ),
+    fluidRow(
+      column(
+        12,
+        pickerInput("feat_picker",
+          choices = c(currenttask$featNames),
+          multiple = TRUE,
+          options = pickerOptions(
+            maxOptions = 6
           )
         )
-      ),
-    )
-  ))
+      )
+    ),
+  )
 }
 
 # of all existing learners return a list of the already trained ones
@@ -177,16 +170,6 @@ get_learner_selection <- function(list_of_learners) {
             label = h5("Select a learner to evaluate its performance."),
             choices = get_trained_learners(),
             selected = character(0)
-          )
-        ),
-        HTML("<br/>"),
-        fluidRow(
-          column(
-            12,
-            div(
-              style = "display:inline-block; width:100%; text-align: center;",
-              actionButton(inputId = "evaluate_start", label = "Start evaluating")
-            )
           )
         )
       )
