@@ -11,7 +11,7 @@ Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Pre
 # check whether it is a regression or classification and then give possible learners for each
 observe({
    if (!is.null(currenttask$task) && currenttask$task$task_type == "classif") {
-      basic_choice <- c("decision tree" = "classif.rpart", "random forest" = "classif.ranger", "support vector machine" = "classif.svm")
+      basic_choice <- c("decision tree" = "classif.rpart", "random forest" = "classif.ranger", "support vector machine" = "classif.svm", "xgboost" = "classif.xgboost")
       if (currenttask$task$properties == 'multiclass') {
          LearnerMeta$learner_choice <- basic_choice
       }
@@ -21,7 +21,7 @@ observe({
    }
    else if (!is.null(currenttask$task) && currenttask$task$task_type == "regr") {
       LearnerMeta$learner_choice <- c("decision tree" = "regr.rpart", "linear regression" = "regr.lm", "random forest" = "regr.ranger",
-                                      "support vector machine" = "regr.svm")
+                                      "support vector machine" = "regr.svm", "xgboost" = "regr.xgboost")
    }
 })
 
@@ -292,6 +292,13 @@ makeParamUi <- function(learnerobject, learnername) {
       )
       return(parameterSvmUi)
       }
+   else if (learnerobject$Learner$id == "classif.xgboost" || learnerobject$Learner$id == "regr.xgboost") {
+      params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
+      parameterXgboostUi <- tagList(
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
+      )
+   }
 }
 
 # make the overview for each learner

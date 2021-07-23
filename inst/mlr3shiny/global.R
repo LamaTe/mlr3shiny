@@ -153,12 +153,14 @@ possiblelearners <- c("Logistic Regression" = "classif.log_reg",
                       "Random Forest" = "classif.ranger", "Random Forest" = "regr.ranger",
                       "Decision Tree" = "classif.rpart",  "Decision Tree" = "regr.rpart",
                       "Support Vector Machine" = "classif.svm", "Support Vector Machine" = "regr.svm",
-                      "Linear Regression" = "regr.lm")
+                      "Linear Regression" = "regr.lm",
+                      "Extreme Gradient Boosting (xgboost)" = "classif.xgboost")
 
 #log_reg and lm without params
 learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      rpart = c("minsplit", "cp", "maxdepth"),
-                     supportvm = c("kernel", "cost", "gamma", "degree")
+                     supportvm = c("kernel", "cost", "gamma", "degree"),
+                     xgboost = c("eta", "max_depth", "nrounds")
                       )
 
 
