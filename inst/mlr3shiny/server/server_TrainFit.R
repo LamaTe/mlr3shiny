@@ -245,6 +245,7 @@ getPredTable <- function(currentpred) {
 
 # reset Workflow
 resetWf <- function() {
+  Wf$Graph <- NULL
   Wf$Current_Learner <- NULL
   Wf$TrainIds <- NULL
   Wf$ValidIds <- NULL
