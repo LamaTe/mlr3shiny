@@ -1,6 +1,6 @@
 ### Basic Workflow reactive values
 Help <- reactiveValues(Tracker = 1)
-Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
+Wf <- reactiveValues(Graph = NULL, Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
 
 ## Functions
@@ -127,9 +127,16 @@ trainModel <- function(inputsplit, inputseed) {
     Wf$TestIds <- setdiff(currenttask$task$row_ids, Wf$TrainIds)
     incProgress(0.3)
     withCallingHandlers(
-      tryCatch(Wf$Current_Learner$train(task = currenttask$task, row_ids = Wf$TrainIds),
-               error = errorAlertTrain),
-      warning = warningAlert)
+      tryCatch({
+          Wf$Graph <- Graph$new()
+          Wf$Graph$add_pipeop(Wf$Current_Learner)
+          Wf$Graph$train(currenttask$task)
+          Wf$Current_Learner <- as_learner(Wf$Graph)
+        },
+        error = errorAlertTrain,
+        warning = warningAlert
+      )
+    )
     incProgress(0.5)
     Wf$Overview <- createWfOverview()
     #toggle(id = "TrainPred_model_download", condition = (!is.null(Exp$Model)))
