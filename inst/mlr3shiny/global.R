@@ -1,6 +1,7 @@
 library(shiny)
 library(mlr3)
 library(mlr3learners)
+library(mlr3pipelines)
 library(DT)
 library(shinythemes)
 library(shinydashboard)
