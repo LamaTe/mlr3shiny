@@ -56,12 +56,12 @@ getLrnModel <- function() {
     return("[missing]")
   }
   else {
-    return(class(Wf$Current_Learner$model)[[1L]])
+    return(str_replace(Wf$Current_Learner$id, "^(.+?)\\.",""))
   }
 }
 
 getWfState <- function() {
-  if (is.null(Wf$Current_Learner$model)) {
+  if (is.null(Wf$Graph)) {
     Wf$State <- "defined"
   }
   else if (is.null(Wf$Pred_Test)) {
@@ -69,9 +69,6 @@ getWfState <- function() {
   }
   else if (is.null(Wf$Perf_Test)) {
     Wf$State <- "predicted"
-  }
-  else {
-    Wf$State <- "scored"
   }
   return(Wf$State)
 }
@@ -130,8 +127,8 @@ trainModel <- function(inputsplit, inputseed) {
       tryCatch({
           Wf$Graph <- Graph$new()
           Wf$Graph$add_pipeop(Wf$Current_Learner)
-          Wf$Graph$train(currenttask$task)
           Wf$Current_Learner <- as_learner(Wf$Graph)
+          Wf$Current_Learner$train(currenttask$task)
         },
         error = errorAlertTrain,
         warning = warningAlert
@@ -291,8 +288,8 @@ output$TrainFit_predict <- renderUI({
 observeEvent(input$TrainFit_predict_data, {
   withCallingHandlers(
     tryCatch({
-      Wf$Pred_Train <- Wf$Current_Learner$predict(task = currenttask$task, row_ids = Wf$TrainIds)
-      Wf$Pred_Test <- Wf$Current_Learner$predict(task = currenttask$task, row_ids = Wf$TestIds)},
+      Wf$Pred_Train <- Wf$Current_Learner$predict(currenttask$task)
+      Wf$Pred_Test <- Wf$Current_Learner$predict(currenttask$task)},
       error = errorAlertPredict
     ),
     warning = warningAlert
@@ -336,15 +333,6 @@ observeEvent(input$TrainFit_learner, {
   resetWf()
   Wf$Current_Learner <- get(input$TrainFit_learner)$Learner$clone(deep = TRUE)
   Wf$Overview <- createWfOverview()
-})
-
-# didn't find a decent solution yet (compare hash values of input learner and Wf$Current_Learner)
-observe({
-  if (!is.null(Wf$Current_Learner) && get(input$TrainFit_learner)$Hash != Wf$Current_Learner$hash) {
-    resetWf()
-    Wf$Current_Learner <- get(input$TrainFit_learner)$Learner$clone(deep = TRUE)
-    Wf$Overview <- createWfOverview()
-  }
 })
 
 # reset Workflow when task changes
