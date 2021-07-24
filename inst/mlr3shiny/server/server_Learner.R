@@ -113,16 +113,17 @@ getCurrentParams <- function(learnerobject) {
 }
 
 getLearnerOverview <- function(learnerobject) {
-   learnerobject$Predict_Type <- learnerobject$Learner$predict_type
    overview <- list(
       "name" = names(which(possiblelearners == learnerobject$Learner$id)),
-      "predict type" = learnerobject$Predict_Type,
+      "predict type" = learnerobject$Learner$predict_type,
       # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not
       # used in linear kernel -> confusing for user
       "params" = getCurrentParams(learnerobject = learnerobject),
-      "predit types" = learnerobject$Learner$predict_types,
-      "properties" = learnerobject$Learner$properties,
-      "feature types" = learnerobject$Learner$feature_types
+      # using the original learner object because "predict_types" 
+      # cant be retrieved from a learner returned from as_learner()
+      "predict types" = lrn(learnerobject$Learner$id)$predict_types,
+      "properties" = as_learner(learnerobject$Learner)$properties,
+      "feature types" = as_learner(learnerobject$Learner)$feature_types
    )
    return(overview)
 }
@@ -297,6 +298,7 @@ makeParamUi <- function(learnerobject, learnername) {
       parameterXgboostUi <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
+         actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
    }
 }
@@ -331,8 +333,8 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
                                      h5("Change Predict Type")
                               ),
                               column(4,
-                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = learnerobject$Learner$predict_types,
-                                                 selected = learnerobject$Learner$predict_type[1])
+                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = lrn(learnerobject$Learner$id)$predict_types,
+                                                 selected = learnerobject$Learner$predict_type)
                               ),
                               column(4,
                                      actionButton(inputId = paste0(learnername, "PredictTypeChange"), label = "Change", style = "float: right;")
@@ -348,7 +350,8 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
    observeEvent(input[[trigger]], {
-      learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
+      learnerobject$Learner <- po("learner", lrn(input[[selectedlearner]]))
+      # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
       output[[learnerparamoutput]] <- renderUI({
