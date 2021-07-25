@@ -135,7 +135,10 @@ observeEvent(input$Pred_train_learner, {
     withProgress(message = "Training model on all data", {
       withCallingHandlers(
         tryCatch({
-          trained_learner_list[[input$Pred_learner]] <- Pred$Learner$train(task = currenttask$task)
+          Pred$Graph <- Graph$new()
+          Pred$Graph$add_pipeop(Pred$Learner)
+          trained_learner_list[[input$Pred_learner]] <- as_learner(Pred$Graph)$train(currenttask$task)
+          Pred$Learner <- trained_learner_list[[input$Pred_learner]]
         }
         , error = errorAlertTrain),
         warning = warningAlert)
@@ -242,12 +245,4 @@ observeEvent(input$Pred_learner, {
 
 observeEvent(currenttask$task, {
   resetPredLrn()
-})
-
-observe({
-  if (!is.null(Pred$Learner) && get(input$Pred_learner)$Hash != Pred$Learner$hash) {
-    resetPredLrn()
-    Pred$Learner <- get(input$Pred_learner)$Learner$clone(deep = TRUE)
-    Pred$Learner_Ov <- createPredLrnOv()
-  }
 })
