@@ -128,7 +128,7 @@ trainModel <- function(inputsplit, inputseed) {
           Wf$Graph <- Graph$new()
           Wf$Graph$add_pipeop(Wf$Current_Learner)
           Wf$Current_Learner <- as_learner(Wf$Graph)
-          Wf$Current_Learner$train(currenttask$task)
+          Wf$Current_Learner$train(task = currenttask$task, row_ids = Wf$TrainIds)
         },
         error = errorAlertTrain,
         warning = warningAlert
