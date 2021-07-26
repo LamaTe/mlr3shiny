@@ -288,8 +288,8 @@ output$TrainFit_predict <- renderUI({
 observeEvent(input$TrainFit_predict_data, {
   withCallingHandlers(
     tryCatch({
-      Wf$Pred_Train <- Wf$Current_Learner$predict(currenttask$task)
-      Wf$Pred_Test <- Wf$Current_Learner$predict(currenttask$task)},
+      Wf$Pred_Train <- Wf$Current_Learner$predict(task = currenttask$task, row_ids = Wf$TrainIds)
+      Wf$Pred_Test <- Wf$Current_Learner$predict(task = currenttask$task, row_ids = Wf$TestIds)},
       error = errorAlertPredict
     ),
     warning = warningAlert
