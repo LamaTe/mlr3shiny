@@ -55,7 +55,7 @@ getItersOv <- function() {
     return("[not available]")
   }
   else {
-    return(paste(nrow(Bench$Bench_Rslt$data), "iterations in", uniqueN(Bench$Bench_Rslt$data$hash),"resamplings", sep = " "))
+    return(paste((Bench$Bench_Rslt$data$iterations()), "iterations in", nrow(Bench$Bench_Rslt$data$resamplings()),"resamplings", sep = " "))
   }
 }
 

@@ -1,6 +1,6 @@
 ### Basic Workflow reactive values
 Help <- reactiveValues(Tracker = 1)
-Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
+Wf <- reactiveValues(Graph = NULL, Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
 
 ## Functions
@@ -56,12 +56,12 @@ getLrnModel <- function() {
     return("[missing]")
   }
   else {
-    return(class(Wf$Current_Learner$model)[[1L]])
+    return(str_replace(Wf$Current_Learner$id, "^(.+?)\\.",""))
   }
 }
 
 getWfState <- function() {
-  if (is.null(Wf$Current_Learner$model)) {
+  if (is.null(Wf$Graph)) {
     Wf$State <- "defined"
   }
   else if (is.null(Wf$Pred_Test)) {
@@ -69,9 +69,6 @@ getWfState <- function() {
   }
   else if (is.null(Wf$Perf_Test)) {
     Wf$State <- "predicted"
-  }
-  else {
-    Wf$State <- "scored"
   }
   return(Wf$State)
 }
@@ -127,9 +124,16 @@ trainModel <- function(inputsplit, inputseed) {
     Wf$TestIds <- setdiff(currenttask$task$row_ids, Wf$TrainIds)
     incProgress(0.3)
     withCallingHandlers(
-      tryCatch(Wf$Current_Learner$train(task = currenttask$task, row_ids = Wf$TrainIds),
-               error = errorAlertTrain),
-      warning = warningAlert)
+      tryCatch({
+          Wf$Graph <- Graph$new()
+          Wf$Graph$add_pipeop(Wf$Current_Learner)
+          Wf$Current_Learner <- as_learner(Wf$Graph)
+          Wf$Current_Learner$train(task = currenttask$task, row_ids = Wf$TrainIds)
+        },
+        error = errorAlertTrain,
+        warning = warningAlert
+      )
+    )
     incProgress(0.5)
     Wf$Overview <- createWfOverview()
     #toggle(id = "TrainPred_model_download", condition = (!is.null(Exp$Model)))
@@ -238,6 +242,7 @@ getPredTable <- function(currentpred) {
 
 # reset Workflow
 resetWf <- function() {
+  Wf$Graph <- NULL
   Wf$Current_Learner <- NULL
   Wf$TrainIds <- NULL
   Wf$ValidIds <- NULL
@@ -328,15 +333,6 @@ observeEvent(input$TrainFit_learner, {
   resetWf()
   Wf$Current_Learner <- get(input$TrainFit_learner)$Learner$clone(deep = TRUE)
   Wf$Overview <- createWfOverview()
-})
-
-# didn't find a decent solution yet (compare hash values of input learner and Wf$Current_Learner)
-observe({
-  if (!is.null(Wf$Current_Learner) && get(input$TrainFit_learner)$Hash != Wf$Current_Learner$hash) {
-    resetWf()
-    Wf$Current_Learner <- get(input$TrainFit_learner)$Learner$clone(deep = TRUE)
-    Wf$Overview <- createWfOverview()
-  }
 })
 
 # reset Workflow when task changes

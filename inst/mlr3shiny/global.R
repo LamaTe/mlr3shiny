@@ -1,6 +1,7 @@
 library(shiny)
 library(mlr3)
 library(mlr3learners)
+library(mlr3pipelines)
 library(DT)
 library(shinythemes)
 library(shinydashboard)
@@ -13,6 +14,7 @@ library(stringr)
 library(plyr)
 library(purrr)
 library(iml)
+library(stringr)
 requireNamespace("mlr3measures")
 
 userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a machine learning workflow using your own data.",
@@ -153,12 +155,14 @@ possiblelearners <- c("Logistic Regression" = "classif.log_reg",
                       "Random Forest" = "classif.ranger", "Random Forest" = "regr.ranger",
                       "Decision Tree" = "classif.rpart",  "Decision Tree" = "regr.rpart",
                       "Support Vector Machine" = "classif.svm", "Support Vector Machine" = "regr.svm",
-                      "Linear Regression" = "regr.lm")
+                      "Linear Regression" = "regr.lm",
+                      "Extreme Gradient Boosting (xgboost)" = "classif.xgboost")
 
 #log_reg and lm without params
 learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      rpart = c("minsplit", "cp", "maxdepth"),
-                     supportvm = c("kernel", "cost", "gamma", "degree")
+                     supportvm = c("kernel", "cost", "gamma", "degree"),
+                     xgboost = c("eta", "max_depth", "nrounds", "colsample_bytree", "booster")
                       )
 
 

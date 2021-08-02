@@ -1,5 +1,5 @@
 # reactive values for resampling
-Res <- reactiveValues(Current_Learner = NULL, Strat = NULL, R_Res = NULL, Perf_Aggr = NULL, Overview = NULL)
+Res <- reactiveValues(Graph = NULL, Current_Learner = NULL, Strat = NULL, R_Res = NULL, Perf_Aggr = NULL, Overview = NULL)
 
 ## Functions
 # get Resampling Workflow data
@@ -244,6 +244,9 @@ observeEvent(input$Res_resample, {
       tryCatch({Res$Strat$param_set$values <- paramsres
       set.seed(42)
       incProgress(0.2)
+      Res$Graph <- Graph$new()
+      Res$Graph$add_pipeop(Res$Current_Learner)
+      Res$Current_Learner <- as_learner(Res$Graph)
       Res$R_Res <- resample(task = currenttask$task, learner = Res$Current_Learner, resampling = Res$Strat)
       incProgress(0.5)
       },
@@ -300,14 +303,6 @@ observeEvent(input$Res_learner, {
   resetRes()
   Res$Current_Learner <- get(input$Res_learner)$Learner$clone(deep = TRUE)
   Res$Overview <- createResOverview()
-})
-
-observe({
-  if (!is.null(Res$Current_Learner) && get(input$Res_learner)$Hash != Res$Current_Learner$hash) {
-    resetRes()
-    Res$Current_Learner <- get(input$Res_learner)$Learner$clone(deep = TRUE)
-    Res$Overview <- createResOverview()
-  }
 })
 
 observeEvent(currenttask$task, {

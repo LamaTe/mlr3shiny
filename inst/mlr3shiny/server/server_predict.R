@@ -1,5 +1,5 @@
 # reactive values for the predict tab
-Pred <- reactiveValues(Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
+Pred <- reactiveValues(Graph = NULL, Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
 # list of trained learners (will be dynamically filled in the training process)
 trained_learner_list <- reactiveValues()
 
@@ -89,10 +89,14 @@ getLrnTrainBtn <- function() {
       fluidRow(
         column(12,
                actionButton(inputId = "Pred_train_learner", label = "Train Learner", style = "float: left;"),
-               hidden(
-                 downloadButton(outputId  = "Pred_trained_learner", label = "Export learner", style = "float: right;")
-                 )
-               )
+               if (!is.null(Pred$Learner$model)) {
+                  downloadButton(outputId  = "Pred_trained_learner", label = "Export learner", style = "float: right;")
+               } else {
+                 hidden (
+                  downloadButton(outputId  = "Pred_trained_learner", label = "Export learner", style = "float: right;")
+                  )
+                  }
+        )
       )
     )
   }
@@ -135,7 +139,10 @@ observeEvent(input$Pred_train_learner, {
     withProgress(message = "Training model on all data", {
       withCallingHandlers(
         tryCatch({
-          trained_learner_list[[input$Pred_learner]] <- Pred$Learner$train(task = currenttask$task)
+          graph <- Graph$new()
+          graph$add_pipeop(Pred$Learner)
+          trained_learner_list[[input$Pred_learner]] <- as_learner(graph)$train(currenttask$task)
+          Pred$Learner <- trained_learner_list[[input$Pred_learner]]
         }
         , error = errorAlertTrain),
         warning = warningAlert)
@@ -229,25 +236,21 @@ output$Pred_prediction_download_rds <- downloadHandler(
 
 # reset Learner
 resetPredLrn <- function() {
+  str(Pred$Learner)
   Pred$Learner <- NULL
   Pred$Learner_Ov <- NULL
-  hide(id = "Pred_trained_learner")
 }
 
 observeEvent(input$Pred_learner, {
-  resetPredLrn()
-  Pred$Learner <- get(input$Pred_learner)$Learner$clone(deep = TRUE)
+  str(input$Pred_learner)
+  if (!is.null(trained_learner_list[[input$Pred_learner]])) {
+    Pred$Learner <- trained_learner_list[[input$Pred_learner]]
+  } else {
+    Pred$Learner <- get(input$Pred_learner)$Learner$clone(deep = TRUE)
+  }
   Pred$Learner_Ov <- createPredLrnOv()
 })
 
 observeEvent(currenttask$task, {
   resetPredLrn()
-})
-
-observe({
-  if (!is.null(Pred$Learner) && get(input$Pred_learner)$Hash != Pred$Learner$hash) {
-    resetPredLrn()
-    Pred$Learner <- get(input$Pred_learner)$Learner$clone(deep = TRUE)
-    Pred$Learner_Ov <- createPredLrnOv()
-  }
 })
