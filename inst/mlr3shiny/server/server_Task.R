@@ -5,7 +5,7 @@ features_to_use <- reactiveValues(features = NULL)
 
 # render sidebarPanel depending on input for Task
 observe({
-  if (input$Task_backend == "iris" || input$Task_backend == "mtcars") {
+  if (input$Task_backend == "iris" || input$Task_backend == "mtcars" || input$Task_backend == "german_credit") {
     currenttask$task <- mlr_tasks$get(input$Task_backend)
   }
   else if (is.null(data$traindata) && input$Task_backend == "imported training data" ) {
