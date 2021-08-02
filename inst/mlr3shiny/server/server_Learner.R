@@ -298,6 +298,8 @@ makeParamUi <- function(learnerobject, learnername) {
       parameterXgboostUi <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[2]]$default),
+         addFactorParam(id = params[[4]]$id, levels = c("gblinear", "gbtree","dart"), learnername = learnername, default = params[[4]]$default),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
    }
