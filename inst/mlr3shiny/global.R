@@ -162,7 +162,7 @@ possiblelearners <- c("Logistic Regression" = "classif.log_reg",
 learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
                      rpart = c("minsplit", "cp", "maxdepth"),
                      supportvm = c("kernel", "cost", "gamma", "degree"),
-                     xgboost = c("eta", "max_depth", "nrounds","booster")
+                     xgboost = c("eta", "max_depth", "nrounds", "colsample_bytree", "booster")
                       )
 
 
