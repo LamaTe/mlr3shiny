@@ -353,7 +353,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
    observeEvent(input[[trigger]], {
-      learnerobject$Learner <- po("learner", lrn(input[[selectedlearner]]))
+      learnerobject$Learner <- as_learner(po("learner", lrn(input[[selectedlearner]])))
       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
