@@ -234,8 +234,11 @@ getAvailableParams <- function(algorithm, learnerobject) {
 
    learnerobject$Params <- learnerparams[[algorithm]]
    params <- list()
-   for (i in 1:length(learnerparams[[algorithm]])) {
-      params[[i]] <- learnerobject$Learner$param_set$params[[learnerparams[[algorithm]][i]]]
+   for (i in 1:length(learnerobject$Params)) {
+      # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
+      # this is required because the graph learner stores all parameters in this format 
+      # example: "classif.rpart.maxdepth"
+      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner$id, ".", learnerobject$Params[i])]]
    }
    return(params)
 }
