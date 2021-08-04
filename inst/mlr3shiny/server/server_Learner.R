@@ -1,5 +1,5 @@
 # each Learner has its own reactive values
-LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL)
+LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL, TwoClass = NULL)
 Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
 Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
@@ -16,6 +16,7 @@ observe({
          LearnerMeta$learner_choice <- basic_choice
       }
       else {
+         LearnerMeta$TwoClass <- TRUE
          LearnerMeta$learner_choice <- c(basic_choice,  "logistic regression" = "classif.log_reg")
       }
    }
@@ -121,9 +122,9 @@ getLearnerOverview <- function(learnerobject) {
       "params" = getCurrentParams(learnerobject = learnerobject),
       # using the original learner object because "predict_types" 
       # cant be retrieved from a learner returned from as_learner()
-      "predict types" = lrn(learnerobject$Learner$id)$predict_types,
-      "properties" = as_learner(learnerobject$Learner)$properties,
-      "feature types" = as_learner(learnerobject$Learner)$feature_types
+      "predict types" = learnerobject$Learner$predict_types,
+      "properties" = learnerobject$Learner$properties,
+      "feature types" = learnerobject$Learner$feature_types
    )
    return(overview)
 }
@@ -280,6 +281,9 @@ makeParamUi <- function(learnerobject, learnername) {
                          default = params[[2]]$default),
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                          default = params[[3]]$default),
+         hidden(
+               actionButton(inputId = paste0(learnername, "ThresholdSwitch"), label = "Use Binary-Threshold", style = "float: left;")
+         ),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       return(parameterRpartUi)
@@ -339,7 +343,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
                                      h5("Change Predict Type")
                               ),
                               column(4,
-                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = lrn(learnerobject$Learner$id)$predict_types,
+                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices =learnerobject$Learner$predict_types,
                                                  selected = learnerobject$Learner$predict_type)
                               ),
                               column(4,
@@ -378,6 +382,11 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       learnerobject$Learner$predict_type <- input[[paste0(learnername, "PredictTypeChoice")]]
       learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
+      if (learnerobject$Learner$predict_type == "prob"){
+         if (!is.null(LearnerMeta$TwoClass)) {
+            show(paste0(learnername, "ThresholdSwitch"))
+         }
+      }
    })
 
    # kernel params for svm
@@ -448,7 +457,6 @@ makeLearner(learnerobject = Learner6, learnername = "Learner6", trigger = "Learn
 
 makeLearner(learnerobject = Learner7, learnername = "Learner7", trigger = "Learner_Create7", selectedlearner = "Learner_Learner7",
             learnerparamoutput = "Learner7_tab", learnerovoutput = "Learner7_ov")
-
 
 # reset Learners when Task changes
 observeEvent(currenttask$task, {
