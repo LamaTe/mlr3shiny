@@ -61,7 +61,7 @@ getLrnModel <- function() {
 }
 
 getWfState <- function() {
-  if (is.null(Wf$Graph)) {
+  if (is.null(Wf$Current_Learner$model)) {
     Wf$State <- "defined"
   }
   else if (is.null(Wf$Pred_Test)) {
