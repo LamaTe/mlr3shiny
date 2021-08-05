@@ -244,18 +244,36 @@ getAvailableParams <- function(algorithm, learnerobject) {
    return(params)
 }
 
+# display a button to activate binary thresholding when the task is twoclass
+# and the predict_type is prob
+makeThreshHoldButton <- function(learnerobject, learnername) {
+   if (currenttask$task$properties == "twoclass") {
+      if (learnerobject$Learner$predict_type == "prob") {
+         threshold <- actionButton(inputId = paste0(learnername, "ThresholdSwitch"), label = "Use Binary-Threshold", style = "float: left;")
+      } else {
+         threshold <- disabled(
+            actionButton(inputId = paste0(learnername, "ThresholdSwitch"), label = "Use Binary-Threshold", style = "float: left;")
+         )
+      }
+      return(threshold)
+   }
+}
+
+makeThresholdUi <- function(learnerobject, learnername) {
+   
+}
+
 # define the parameter settings UI for each learner depending on the selected algorithm
 makeParamUi <- function(learnerobject, learnername) {
    # Input: mlr3 learner object, name of currently selected learner (learner1, learner2 etc)
    # Creates layout for hyperparameters as a taglist depending on the algorithm
    # Returns: taglist of inputs for Learner hyperparameters
-
+   print("starting param ui")
    if (learnerobject$Learner$param_set$is_empty) {
       return(h5("No Parameters available to be set.", style = "text-align: center;"))
    }
    else if (learnerobject$Learner$id == "classif.ranger" || learnerobject$Learner$id == "regr.ranger") {
        params <- getAvailableParams(algorithm = "ranger", learnerobject = learnerobject)
-
       #TO-DO: Get a better solution - ugly and repetitive
       parameterRangerUi <- tagList(
          #num.trees
@@ -281,9 +299,6 @@ makeParamUi <- function(learnerobject, learnername) {
                          default = params[[2]]$default),
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                          default = params[[3]]$default),
-         hidden(
-               actionButton(inputId = paste0(learnername, "ThresholdSwitch"), label = "Use Binary-Threshold", style = "float: left;")
-         ),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       return(parameterRpartUi)
@@ -334,8 +349,11 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
                            fluidRow(
                               column(12,
                                      h5("Learner Parameters", style = "font-weight: bold;"),
-                                     makeParamUi(learnerobject = learnerobject, learnername = learnername)
-                              )
+                                     makeParamUi(learnerobject = learnerobject, learnername = learnername),
+                                     makeThreshHoldButton(learnerobject = learnerobject, learnername = learnername),
+                                     makeThresholdUi(learnerobject = learnerobject, learnername = learnername)
+                              ),
+                              
                            ),
                            hr(style = "border-color: #3e3f3a;"),
                            fluidRow(
@@ -360,7 +378,11 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
    observeEvent(input[[trigger]], {
-      learnerobject$Learner <- as_learner(po("learner", lrn(input[[selectedlearner]])))
+      if (currenttask$task$properties == "twoclass") {
+         learnerobject$Learner <- as_learner(po("learner", lrn(input[[selectedlearner]])) %>>% po("threshold"))
+      } else {
+         learnerobject$Learner <- as_learner(po("learner", lrn(input[[selectedlearner]])))
+      }
       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
@@ -383,10 +405,10 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
       if (learnerobject$Learner$predict_type == "prob"){
-         if (!is.null(LearnerMeta$TwoClass)) {
-            show(paste0(learnername, "ThresholdSwitch"))
-         }
-      }
+         enable(paste0(learnername, "ThresholdSwitch"))
+      } else {
+         disable(paste0(learnername, "ThresholdSwitch"))
+      } 
    })
 
    # kernel params for svm
