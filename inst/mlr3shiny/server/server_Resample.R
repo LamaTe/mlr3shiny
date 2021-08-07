@@ -243,7 +243,7 @@ observeEvent(input$Res_resample, {
     withCallingHandlers(
       tryCatch({Res$Strat$param_set$values <- paramsres
       set.seed(42)
-      incProgress(0.2
+      incProgress(0.2)
       Res$R_Res <- resample(task = currenttask$task, learner = Res$Current_Learner, resampling = Res$Strat)
       incProgress(0.5)
       },
