@@ -115,7 +115,7 @@ getCurrentParams <- function(learnerobject) {
 
 getLearnerOverview <- function(learnerobject) {
    overview <- list(
-      "name" = names(which(possiblelearners == learnerobject$Learner$id)),
+      "name" = getDisplayLearnerName(learnerobject),
       "predict type" = learnerobject$Learner$predict_type,
       # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not
       # used in linear kernel -> confusing for user
@@ -127,6 +127,14 @@ getLearnerOverview <- function(learnerobject) {
       "feature types" = learnerobject$Learner$feature_types
    )
    return(overview)
+}
+
+getDisplayLearnerName <- function(learnerobject) {
+   for (learnername in possiblelearners) {
+      if (grepl(learnername, learnerobject$Learner$id, fixed = TRUE)) {
+         return(names(which(possiblelearners == learnername)))
+      }
+   }
 }
 
 addOverviewLineLearner = function(title, body) {
@@ -232,15 +240,19 @@ getAvailableParams <- function(algorithm, learnerobject) {
    # Selects available parameters for given algorithm from global and gets parameter details through mlr3
    # Implicitly assigns available hyperparameter to learner$Params for later reference when setting hyperparams
    # Output: list of parameters with id, lower and upper levels, defaults
-
    learnerobject$Params <- learnerparams[[algorithm]]
    params <- list()
+   stripped_id <- str_extract(learnerobject$Learner$id, "^\\w+\\.\\w+")
    for (i in 1:length(learnerobject$Params)) {
       # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
       # this is required because the graph learner stores all parameters in this format 
       # example: "classif.rpart.maxdepth"
-      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner$id, ".", learnerobject$Params[i])]]
+      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(stripped_id, ".", learnerobject$Params[i])]]
    }
+   if (grepl("threshold", learnerobject$Learner$id)) {
+      params[[length(params)+1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
+   }
+   str(params)
    return(params)
 }
 
@@ -268,14 +280,15 @@ makeParamUi <- function(learnerobject, learnername) {
    # Input: mlr3 learner object, name of currently selected learner (learner1, learner2 etc)
    # Creates layout for hyperparameters as a taglist depending on the algorithm
    # Returns: taglist of inputs for Learner hyperparameters
-   print("starting param ui")
+   parameterui <- NULL
+
    if (learnerobject$Learner$param_set$is_empty) {
       return(h5("No Parameters available to be set.", style = "text-align: center;"))
    }
-   else if (learnerobject$Learner$id == "classif.ranger" || learnerobject$Learner$id == "regr.ranger") {
-       params <- getAvailableParams(algorithm = "ranger", learnerobject = learnerobject)
+   else if (grepl("ranger", learnerobject$Learner$id, fixed = TRUE)) {
+      params <- getAvailableParams(algorithm = "ranger", learnerobject = learnerobject)
       #TO-DO: Get a better solution - ugly and repetitive
-      parameterRangerUi <- tagList(
+      parameterui <- tagList(
          #num.trees
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                        default = params[[1]]$default),
@@ -287,12 +300,10 @@ makeParamUi <- function(learnerobject, learnername) {
                        default = params[[3]]$default),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
-      return(parameterRangerUi)
    }
    else if (learnerobject$Learner$id == "classif.rpart" || learnerobject$Learner$id == "regr.rpart") {
       params <- getAvailableParams(algorithm = "rpart", learnerobject = learnerobject)
-
-      parameterRpartUi <- tagList(
+      parameterui <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                          default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
@@ -301,11 +312,10 @@ makeParamUi <- function(learnerobject, learnername) {
                          default = params[[3]]$default),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
-      return(parameterRpartUi)
    }
    else if (learnerobject$Learner$id == "classif.svm" || learnerobject$Learner$id == "regr.svm") {
       params <- getAvailableParams(algorithm = "supportvm", learnerobject = learnerobject)
-      parameterSvmUi <- tagList(
+      parameterui <- tagList(
          # sigmoid kernel removed for explanatory reasons
          addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
@@ -313,11 +323,10 @@ makeParamUi <- function(learnerobject, learnername) {
          uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
-      return(parameterSvmUi)
       }
    else if (learnerobject$Learner$id == "classif.xgboost" || learnerobject$Learner$id == "regr.xgboost") {
       params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
-      parameterXgboostUi <- tagList(
+      parameterui <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default),
@@ -326,6 +335,10 @@ makeParamUi <- function(learnerobject, learnername) {
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
    }
+   if (grepl("threshold", learnerobject$Learner$id)) {
+      addNumericParam(id = params[[length(params)]]$id, lower = params[[length(params)]]$lower, upper = params[[length(params)]]$upper, learnername = learnername, default = params[[length(params)]]$default)
+   }
+   return(parameterui)
 }
 
 # make the overview for each learner
