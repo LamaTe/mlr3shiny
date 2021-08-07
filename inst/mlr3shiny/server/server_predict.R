@@ -1,5 +1,5 @@
 # reactive values for the predict tab
-Pred <- reactiveValues(Graph = NULL, Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
+Pred <- reactiveValues(Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
 # list of trained learners (will be dynamically filled in the training process)
 trained_learner_list <- reactiveValues()
 
@@ -139,9 +139,7 @@ observeEvent(input$Pred_train_learner, {
     withProgress(message = "Training model on all data", {
       withCallingHandlers(
         tryCatch({
-          graph <- Graph$new()
-          graph$add_pipeop(Pred$Learner)
-          trained_learner_list[[input$Pred_learner]] <- as_learner(graph)$train(currenttask$task)
+          trained_learner_list[[input$Pred_learner]] <- Pred$Learner$train(currenttask$task)
           Pred$Learner <- trained_learner_list[[input$Pred_learner]]
         }
         , error = errorAlertTrain),
@@ -236,13 +234,11 @@ output$Pred_prediction_download_rds <- downloadHandler(
 
 # reset Learner
 resetPredLrn <- function() {
-  str(Pred$Learner)
   Pred$Learner <- NULL
   Pred$Learner_Ov <- NULL
 }
 
 observeEvent(input$Pred_learner, {
-  str(input$Pred_learner)
   if (!is.null(trained_learner_list[[input$Pred_learner]])) {
     Pred$Learner <- trained_learner_list[[input$Pred_learner]]
   } else {

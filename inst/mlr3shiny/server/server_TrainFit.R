@@ -1,6 +1,6 @@
 ### Basic Workflow reactive values
 Help <- reactiveValues(Tracker = 1)
-Wf <- reactiveValues(Graph = NULL, Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
+Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
 
 ## Functions
@@ -125,9 +125,6 @@ trainModel <- function(inputsplit, inputseed) {
     incProgress(0.3)
     withCallingHandlers(
       tryCatch({
-          Wf$Graph <- Graph$new()
-          Wf$Graph$add_pipeop(Wf$Current_Learner)
-          Wf$Current_Learner <- as_learner(Wf$Graph)
           Wf$Current_Learner$train(task = currenttask$task, row_ids = Wf$TrainIds)
         },
         error = errorAlertTrain,
@@ -242,7 +239,6 @@ getPredTable <- function(currentpred) {
 
 # reset Workflow
 resetWf <- function() {
-  Wf$Graph <- NULL
   Wf$Current_Learner <- NULL
   Wf$TrainIds <- NULL
   Wf$ValidIds <- NULL
