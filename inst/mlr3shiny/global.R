@@ -151,12 +151,12 @@ As a result, even more complex models can be made relatively easy to understand,
 )
 
 #future TO-DO: implement additional learners, ultimately replace vector with as.data.table(mlr_learners)
-possiblelearners <- c("Logistic Regression" = "classif.log_reg",
-                      "Random Forest" = "classif.ranger", "Random Forest" = "regr.ranger",
-                      "Decision Tree" = "classif.rpart",  "Decision Tree" = "regr.rpart",
-                      "Support Vector Machine" = "classif.svm", "Support Vector Machine" = "regr.svm",
-                      "Linear Regression" = "regr.lm",
-                      "Extreme Gradient Boosting (xgboost)" = "classif.xgboost")
+possiblelearners <- c("Logistic Regression" = "log_reg",
+                      "Random Forest" = "ranger",
+                      "Decision Tree" = "rpart",
+                      "Support Vector Machine" = "svm",
+                      "Linear Regression" = "lm",
+                      "Extreme Gradient Boosting (xgboost)" = "xgboost")
 
 #log_reg and lm without params
 learnerparams <- list(ranger = c("num.trees", "mtry", "min.node.size"),
