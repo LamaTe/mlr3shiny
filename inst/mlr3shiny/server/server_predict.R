@@ -45,7 +45,6 @@ createPredLrnOv <- function() {
   overview <- list(
     Learner <- paste(input$Pred_learner, Pred$Learner$id, sep = " "),
     # from server_Learner
-    Params <- getCurrentParams(Pred),
     PredType <- Pred$Learner$predict_type,
     Target <- currenttask$task$target_names,
     Status <- getLrnStatus()
@@ -72,9 +71,9 @@ getLrnOverview <- function() {
         column(12,
                addOverviewLineWf("Learner: ", Pred$Learner_Ov[[1]]),
                #addOverviewLineWf("Parameter: ", Pred$Learner_Ov[[2]]),
-               addOverviewLineWf("Predict Type", Pred$Learner_Ov[[3]]),
-               addOverviewLineWf("Target:", Pred$Learner_Ov[[4]]),
-               addOverviewLineWf("Status:", Pred$Learner_Ov[[5]])
+               addOverviewLineWf("Predict Type", Pred$Learner_Ov[[2]]),
+               addOverviewLineWf("Target:", Pred$Learner_Ov[[3]]),
+               addOverviewLineWf("Status:", Pred$Learner_Ov[[4]])
         )
       )
     )
@@ -236,7 +235,9 @@ output$Pred_prediction_download_rds <- downloadHandler(
 resetPredLrn <- function() {
   Pred$Learner <- NULL
   Pred$Learner_Ov <- NULL
+  trained_learner_list <- reactiveValues()
 }
+
 
 observeEvent(input$Pred_learner, {
   if (!is.null(trained_learner_list[[input$Pred_learner]])) {
