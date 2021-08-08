@@ -219,6 +219,10 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
       )
       # update learnerobject$Params so that only the hyperparams are set that are actually available
       learnerobject$Params <- c('kernel', 'cost', 'gamma', 'degree')
+      learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]])
       return(kernelparams)
    }
    else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
@@ -227,6 +231,9 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
                         learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default)
       )
       learnerobject$Params <- c('kernel', 'cost', 'gamma')
+      learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]])
       return(kernelparams)
    }
    else{
@@ -419,20 +426,22 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 # if xgboost is selected the factor variables will be converted into numerals
 # furthermore ordered variables will also be converted to integers
 createGraphLearner <- function(selectedlearner) {
-   graph <- NULL
-   learner <- NULL
-   if (isTRUE(currenttask$task$properties == "twoclass")) {
-      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob")) %>>% po("threshold")
-   } else {
+   graph <- Graph$new()
+   if (!isTRUE(currenttask$task$properties == "twoclass")) {
       learner <- po("learner", lrn(input[[selectedlearner]]))
-   }
-   if (grepl("xgboost",input[[selectedlearner]], fixed = TRUE)) {
-      factor_enc <- po("encode", method = "treatment", affect_columns = selector_type("factor"))
-      order_to_int = po("colapply", applicator = as.integer, affect_columns = selector_type("ordered"))
-      graph <- factor_enc %>>% order_to_int %>>% learner
+      graph$add_pipeop(learner)
    } else {
-      graph <- learner
+      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob"))
+      graph$add_pipeop(learner)
+      graph <- graph %>>% po("threshold")
    }
+   if (any(grepl("factor", unique(currenttask$task$feature_types$type))) && !any(grepl("factor", lrn(input[[selectedlearner]])$feature_types))) {
+      graph <- po("encode", method = "treatment", affect_columns = selector_type("factor")) %>>% graph
+   }
+   if (any(grepl("ordered", unique(currenttask$task$feature_types$type))) && !any(grepl("ordered", lrn(input[[selectedlearner]])$feature_types))) {
+      graph <- po("colapply", applicator = as.integer, affect_columns = selector_type("ordered")) %>>% graph
+   }
+   print(graph)
    return(as_learner(graph))
 }
 
@@ -479,6 +488,8 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
       for (i in learnerobject$Params) {
+         print(i)
+         print(typeof(i))
          currentinput <- input[[paste0(learnername, "Param", i$id)]]
          # validate input value
          if (!is.na(currentinput) && !is.null(currentinput)) {
@@ -498,12 +509,12 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       }
 
       # explicit defaults for svm type to be used
-      if (learnerobject$Learner$id == 'classif.svm') {
-         paramlist[['type']] <- 'C-classification'
+      if (grepl("classif.svm", learnerobject$Learner$id)) {
+         paramlist[[paste0(learnerobject$Learner_Name,".","type")]] <- 'C-classification'
+      } else if (grepl("regr.svm", learnerobject$Learner$id)) {
+         paramlist[[paste0(learnerobject$Learner_Name,".","type")]] <- 'eps-regression'
       }
-      else if (learnerobject$Learner$id == 'regr.svm') {
-         paramlist[['type']] <- 'eps-regression'
-      }
+
       learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
       #learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
