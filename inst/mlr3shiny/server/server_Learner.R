@@ -1,12 +1,12 @@
 # each Learner has its own reactive values
 LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL, TwoClass = NULL)
-Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner4 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
+Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner4 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
 
 # check whether it is a regression or classification and then give possible learners for each
 observe({
@@ -119,7 +119,7 @@ getLearnerOverview <- function(learnerobject) {
       "predict type" = learnerobject$Learner$predict_type,
       # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not
       # used in linear kernel -> confusing for user
-      "params" = getCurrentParams(learnerobject = learnerobject),
+      # "params" = getCurrentParams(learnerobject = learnerobject),
       # using the original learner object because "predict_types" 
       # cant be retrieved from a learner returned from as_learner()
       "predict types" = learnerobject$Learner$predict_types,
@@ -151,12 +151,12 @@ makeOverviewUi <- function(learnerobject) {
                 addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
                 addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
                 #addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-                addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", "))
+                addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", "))
                 ),
          column(6,
                 #addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
-                addOverviewLineLearner("Properties: ", paste(learnerobject$Overview[[5]], collapse = ", ")),
-                addOverviewLineLearner("Supported Feature Types: ", paste(learnerobject$Overview[[6]], collapse = ", "))
+                addOverviewLineLearner("Properties: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
+                addOverviewLineLearner("Supported Feature Types: ", paste(learnerobject$Overview[[5]], collapse = ", "))
                 )
       )
    )
@@ -241,12 +241,11 @@ getAvailableParams <- function(algorithm, learnerobject) {
    # Implicitly assigns available hyperparameter to learner$Params for later reference when setting hyperparams
    # Output: list of parameters with id, lower and upper levels, defaults
    params <- list()
-   stripped_id <- str_extract(learnerobject$Learner$id, "^\\w+\\.\\w+")
    for (i in 1:length(learnerparams[[algorithm]])) {
       # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
       # this is required because the graph learner stores all parameters in this format 
       # example: "classif.rpart.maxdepth"
-      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(stripped_id, ".", learnerparams[[algorithm]][i])]]
+      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]]
    }
    if (grepl("threshold", learnerobject$Learner$id)) {
       params[[length(params)+1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
@@ -423,7 +422,7 @@ createGraphLearner <- function(selectedlearner) {
    graph <- NULL
    learner <- NULL
    if (isTRUE(currenttask$task$properties == "twoclass")) {
-      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob") %>>% po("threshold"))
+      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob")) %>>% po("threshold")
    } else {
       learner <- po("learner", lrn(input[[selectedlearner]]))
    }
@@ -434,7 +433,6 @@ createGraphLearner <- function(selectedlearner) {
    } else {
       graph <- learner
    }
-   print(as_learner(graph))
    return(as_learner(graph))
 }
 
@@ -443,6 +441,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
 
    observeEvent(input[[trigger]], {
       learnerobject$Learner <- createGraphLearner(selectedlearner)
+      learnerobject$Learner_Name <- input[[selectedlearner]]
       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
