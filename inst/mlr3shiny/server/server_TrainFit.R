@@ -127,8 +127,7 @@ trainModel <- function(inputsplit, inputseed) {
       tryCatch({
           Wf$Current_Learner$train(task = currenttask$task, row_ids = Wf$TrainIds)
         },
-        error = errorAlertTrain,
-        warning = warningAlert
+        error = errorAlertTrain
       )
     )
     incProgress(0.5)
