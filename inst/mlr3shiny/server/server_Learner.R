@@ -415,15 +415,34 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 }
 
 
+# create GraphLearner object
+# for twoclass the threshold-po is added
+# if xgboost is selected the factor variables will be converted into numerals
+# furthermore ordered variables will also be converted to integers
+createGraphLearner <- function(selectedlearner) {
+   graph <- NULL
+   learner <- NULL
+   if (isTRUE(currenttask$task$properties == "twoclass")) {
+      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob") %>>% po("threshold"))
+   } else {
+      learner <- po("learner", lrn(input[[selectedlearner]]))
+   }
+   if (grepl("xgboost",input[[selectedlearner]], fixed = TRUE)) {
+      factor_enc <- po("encode", method = "treatment", affect_columns = selector_type("factor"))
+      order_to_int = po("colapply", applicator = as.integer, affect_columns = selector_type("ordered"))
+      graph <- factor_enc %>>% order_to_int %>>% learner
+   } else {
+      graph <- learner
+   }
+   print(as_learner(graph))
+   return(as_learner(graph))
+}
+
 # add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
    observeEvent(input[[trigger]], {
-      if (isTRUE(currenttask$task$properties == "twoclass")) {
-         learnerobject$Learner <- as_learner(po("learner", lrn(input[[selectedlearner]])) %>>% po("threshold"))
-      } else {
-         learnerobject$Learner <- as_learner(po("learner", lrn(input[[selectedlearner]])))
-      }
+      learnerobject$Learner <- createGraphLearner(selectedlearner)
       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
