@@ -79,7 +79,7 @@ get_loss_function_list <- function() {
   if (!is.null(input$selected_learner)) {
     if (currenttask$task$task_type == "classif") {
       if (currenttask$task$properties == "twoclass") {
-        ui <- loss_ui_builder(twoclass_losses)
+        ui <- loss_ui_builder(c(twoclass_losses, classif_losses))
       } else {
         ui <- loss_ui_builder(classif_losses)
       }
