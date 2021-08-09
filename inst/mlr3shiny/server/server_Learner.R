@@ -194,7 +194,7 @@ addFactorParam <- function(id, levels, learnername, default) {
              h5(paste("Levels:", paste(levels, collapse = ", "), sep = " "))
       ),
       column(3,
-             selectInput(inputId = paste0(learnername, "kernel"), label = NULL, choices = levels, selected = default)
+             selectInput(inputId = paste0(learnername, "factor"), label = NULL, choices = levels, selected = default)
       )
    )
 }
@@ -210,15 +210,14 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
 
    if (selectedkernel == "polynomial") {
       kernelparams <- tagList(
-         addNumericParam(id = "gamma", lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower,
+         addNumericParam(id = paste0(learnerobject$Learner_Name,".","gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower,
                          upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
                          learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default),
-         addNumericParam(id = "degree", lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$lower,
+         addNumericParam(id = paste0(learnerobject$Learner_Name,".","degree"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$lower,
                          upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$upper,
                          learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$default)
       )
       # update learnerobject$Params so that only the hyperparams are set that are actually available
-      learnerobject$Params <- c('kernel', 'cost', 'gamma', 'degree')
       learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
                                  learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
                                  learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]],
@@ -227,17 +226,17 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
    }
    else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
       kernelparams <- tagList(
-         addNumericParam(id = "gamma", lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower, upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
+         addNumericParam(id = paste0(learnerobject$Learner_Name,".","gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower, upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
                         learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default)
       )
-      learnerobject$Params <- c('kernel', 'cost', 'gamma')
       learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
                                  learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
                                  learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]])
       return(kernelparams)
    }
    else{
-      learnerobject$Params <- c('kernel', 'cost')
+      learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]])
       return(NULL)
    }
 }
@@ -480,17 +479,17 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # if statement necessary to avoid strange shiny internal warning about empty condition when generating HTML
       if(input[[selectedlearner]] %in% c('classif.svm', 'regr.svm')) {
          getKernelParams(learnerobject = learnerobject, learnername = learnername,
-                          selectedkernel = input[[paste0(learnername, "kernel")]])
+                          selectedkernel = input[[paste0(learnername, "factor")]])
          }
    })
 
    # # To-Do: get a prettier solution
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
+      print(learnerobject$Learner$param_set)
       paramlist <- list()
       for (i in learnerobject$Params) {
-         print(i)
-         print(typeof(i))
          currentinput <- input[[paste0(learnername, "Param", i$id)]]
+         print(currentinput)
          # validate input value
          if (!is.na(currentinput) && !is.null(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
@@ -507,11 +506,29 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
                }
          }
       }
+      #TODO: need to find better solution to add factor params to paramlist
+      # a solution could be to distinguish between a display name and the internal one
+      # so the ChangeParams-Routine could be used
+
+      
+      svm_kernel <- c("radial", "polynomial", "linear")
+
+      if (grepl("xgboost", learnerobject$Learner_Name)) {
+         xgboost_booster <- c("gblinear", "gbtree", "dart")
+         if (input[[paste0(learnername, "factor")]] %in% xgboost_booster) {
+            paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor")]]
+         }
+      }
+      if (grepl("svm", learnerobject$Learner_Name)) {
+         if (input[[paste0(learnername, "factor")]] %in% svm_kernel) {
+            paramlist[[paste0(learnerobject$Learner_Name, ".kernel")]] <- input[[paste0(learnername, "factor")]]
+         }
+      }
 
       # explicit defaults for svm type to be used
-      if (grepl("classif.svm", learnerobject$Learner$id)) {
+      if (grepl("classif.svm", learnerobject$Learner_Name)) {
          paramlist[[paste0(learnerobject$Learner_Name,".","type")]] <- 'C-classification'
-      } else if (grepl("regr.svm", learnerobject$Learner$id)) {
+      } else if (grepl("regr.svm", learnerobject$Learner_Name)) {
          paramlist[[paste0(learnerobject$Learner_Name,".","type")]] <- 'eps-regression'
       }
 
