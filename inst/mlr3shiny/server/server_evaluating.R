@@ -32,11 +32,17 @@ output$eval_learner_plot_tabs <- renderUI({
 
 # observe "start evaluation" button and start iml workflow
 observeEvent(input$evaluate_start, {
-  model <- Predictor$new(eval_meta$current_learner, data = currenttask$task$data(), y = currenttask$task$target_names)
-  # saving iml calculations in meta object
-  eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker, compare = input$compare_picker)
-  eval_meta$feature_effect <- FeatureEffects$new(model, method = "pdp")
-  calculate_plots()
+  withCallingHandlers(
+    tryCatch({
+        model <- Predictor$new(eval_meta$current_learner, data = currenttask$task$data(), y = currenttask$task$target_names)
+        # saving iml calculations in meta object
+        eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker, compare = input$compare_picker)
+        eval_meta$feature_effect <- FeatureEffects$new(model, method = "pdp")
+        calculate_plots()
+      },
+      error = errorAlertTrain
+    )
+  )
 })
 
 # observe choosen learner in ui and change meta object
@@ -159,8 +165,7 @@ get_learner_selection <- function(list_of_learners) {
       )
     )
     return(ui)
-  }
-  else {
+  } else {
     ui <- tagList(
       fluidRow(
         column(
