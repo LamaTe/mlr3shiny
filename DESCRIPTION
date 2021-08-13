@@ -1,6 +1,6 @@
 Package: mlr3shiny
 Title: Machine Learning in 'shiny' with 'mlr3'
-Version: 0.1.2
+Version: 0.2.0R
 Authors@R: 
     c(person(given = "Laurens",
            family = "Tetzlaff",
