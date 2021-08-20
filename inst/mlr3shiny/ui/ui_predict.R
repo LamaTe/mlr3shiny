@@ -8,7 +8,8 @@ tabpanel_predict <- fluidPage(
              uiOutput(outputId = "Predict_learner_choice"),
              uiOutput(outputId = "Predict_learner_overview"),
              uiOutput(outputId = "Predict_learner_train_btn"),
-             uiOutput(outputId = "Predict_learner_download_btn")
+             uiOutput(outputId = "Predict_learner_download_btn"),
+             uiOutput(outputId = "Predict_codegen_btn")
            )
            ),
     column(3,
