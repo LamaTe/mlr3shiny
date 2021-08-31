@@ -249,7 +249,7 @@ getAvailableParams <- function(algorithm, learnerobject) {
    params <- list()
    for (i in 1:length(learnerparams[[algorithm]])) {
       # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
-      # this is required because the graph learner stores all parameters in this format 
+      # this is required because the graph learner stores all parameters in this format
       # example: "classif.rpart.maxdepth"
       params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]]
    }
@@ -485,11 +485,9 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
 
    # # To-Do: get a prettier solution
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
-      print(learnerobject$Learner$param_set)
       paramlist <- list()
       for (i in learnerobject$Params) {
          currentinput <- input[[paste0(learnername, "Param", i$id)]]
-         print(currentinput)
          # validate input value
          if (!is.na(currentinput) && !is.null(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
