@@ -1,0 +1,46 @@
+
+R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(testthat)
+> library(mlr3shiny)
+> library(shinytest)
+> 
+> test_check("mlr3shiny")
+══ Failed tests ════════════════════════════════════════════════════════════════
+── Failure (test-launchMlr3Shiny.R:11:3): mlr3shiny app works ──────────────────
+Not all shinytest scripts passed for /home/laurens/RProjects/mlr3shiny/mlr3shiny.Rcheck/mlr3shiny/mlr3shiny: mytest
+
+Diff output:
+==== mytest ====
+diff /tmp/RtmpToCP7a/working_dir/RtmpAYmXQT/shinytest-diff-1093b638f8f44/mytest-expected/001.json /tmp/RtmpToCP7a/working_dir/RtmpAYmXQT/shinytest-diff-1093b638f8f44/mytest-current/001.json
+12d11
+<     "Learner_add": 0,
+14c13
+<     "navbar": "1. Data",
+---
+>     "Learner_add": 0,
+26c25,26
+<     "TrainFit_resample": 0
+---
+>     "TrainFit_resample": 0,
+>     "navbar": "1. Data"
+
+If this is expected, use `snapshotUpdate('/home/laurens/RProjects/mlr3shiny/mlr3shiny.Rcheck/mlr3shiny/mlr3shiny')` to update
+
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+Error: Test failures
+Execution halted
