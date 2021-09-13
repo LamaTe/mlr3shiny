@@ -1,8 +1,3 @@
-## Resubmission
-This is a resubmission. In this version I have:
-
-* 
-
 ## Test environments
 * local manjaro 21.1.0, R 4.1.0
 * ubuntu 16.04.6 LTS (on travis-ci), R 4.0.2

@@ -2,6 +2,7 @@
 tabpanel_Data <- fluidPage(
   sidebarLayout(
     sidebarPanel(
+      id = "data_panel",  # just an id for shinytest
       width = 3,
       # import training data
       helpText("Welcome to mlr3shiny!", style = "text-align: center;"),

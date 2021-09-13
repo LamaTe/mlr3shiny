@@ -36,27 +36,33 @@ ui <- tagList(
     id = "navbar",
     tabPanel("1. Data",
       tabpanel_Data,
-      icon = icon("database")
+      icon = icon("database"),
+      id = 'data'
     ),
     tabPanel("2. Task",
       tabpanel_Task,
-      icon = icon("bookmark")
+      icon = icon("bookmark"),
+      id = 'task'
     ),
     tabPanel("3. Learner",
       tabpanel_Learner,
-      icon = icon("filter")
+      icon = icon("filter"),
+      id = 'learner'
     ),
     tabPanel("4. Train & Evaluate",
       tabpanel_TrainFit,
-      icon = icon("cogs")
+      icon = icon("cogs"),
+      id = 'train'
     ),
     tabPanel("5. Benchmarking",
       tabpanel_benchmarking,
-      icon = icon("chart-bar")
+      icon = icon("chart-bar"),
+      id = 'benchmark'
     ),
     tabPanel("6. Predict",
       tabpanel_predict,
-      icon = icon("search")
+      icon = icon("search"),
+      id = 'predict'
     )
   )
 )
