@@ -1,5 +1,5 @@
 # generate data.table when a fitting file is uploaded
-data <- reactiveValues(traindata = NULL, predictdata = NULL)
+data <- reactiveValues(traindata = NULL)
 
 ### TO-DO make sure that missings are loaded as na to be counted correctly later on
 

@@ -1,27 +1,28 @@
 # each Learner has its own reactive values
-LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL)
-Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner4 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
-Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL)
+LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL, TwoClass = NULL)
+Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner4 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
 
 # check whether it is a regression or classification and then give possible learners for each
 observe({
    if (!is.null(currenttask$task) && currenttask$task$task_type == "classif") {
-      basic_choice <- c("decision tree" = "classif.rpart", "random forest" = "classif.ranger", "support vector machine" = "classif.svm")
+      basic_choice <- c("decision tree" = "classif.rpart", "random forest" = "classif.ranger", "support vector machine" = "classif.svm", "xgboost" = "classif.xgboost")
       if (currenttask$task$properties == 'multiclass') {
          LearnerMeta$learner_choice <- basic_choice
       }
       else {
+         LearnerMeta$TwoClass <- TRUE
          LearnerMeta$learner_choice <- c(basic_choice,  "logistic regression" = "classif.log_reg")
       }
    }
    else if (!is.null(currenttask$task) && currenttask$task$task_type == "regr") {
       LearnerMeta$learner_choice <- c("decision tree" = "regr.rpart", "linear regression" = "regr.lm", "random forest" = "regr.ranger",
-                                      "support vector machine" = "regr.svm")
+                                      "support vector machine" = "regr.svm", "xgboost" = "regr.xgboost")
    }
 })
 
@@ -113,18 +114,27 @@ getCurrentParams <- function(learnerobject) {
 }
 
 getLearnerOverview <- function(learnerobject) {
-   learnerobject$Predict_Type <- learnerobject$Learner$predict_type
    overview <- list(
-      "name" = names(which(possiblelearners == learnerobject$Learner$id)),
-      "predict type" = learnerobject$Predict_Type,
+      "name" = getDisplayLearnerName(learnerobject),
+      "predict type" = learnerobject$Learner$predict_type,
       # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not
       # used in linear kernel -> confusing for user
-      "params" = getCurrentParams(learnerobject = learnerobject),
-      "predit types" = learnerobject$Learner$predict_types,
+      # "params" = getCurrentParams(learnerobject = learnerobject),
+      # using the original learner object because "predict_types" 
+      # cant be retrieved from a learner returned from as_learner()
+      "predict types" = learnerobject$Learner$predict_types,
       "properties" = learnerobject$Learner$properties,
       "feature types" = learnerobject$Learner$feature_types
    )
    return(overview)
+}
+
+getDisplayLearnerName <- function(learnerobject) {
+   for (learnername in possiblelearners) {
+      if (grepl(learnername, learnerobject$Learner$id, fixed = TRUE)) {
+         return(names(which(possiblelearners == learnername)))
+      }
+   }
 }
 
 addOverviewLineLearner = function(title, body) {
@@ -141,12 +151,12 @@ makeOverviewUi <- function(learnerobject) {
                 addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
                 addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
                 #addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-                addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", "))
+                addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", "))
                 ),
          column(6,
                 #addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
-                addOverviewLineLearner("Properties: ", paste(learnerobject$Overview[[5]], collapse = ", ")),
-                addOverviewLineLearner("Supported Feature Types: ", paste(learnerobject$Overview[[6]], collapse = ", "))
+                addOverviewLineLearner("Properties: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
+                addOverviewLineLearner("Supported Feature Types: ", paste(learnerobject$Overview[[5]], collapse = ", "))
                 )
       )
    )
@@ -184,7 +194,7 @@ addFactorParam <- function(id, levels, learnername, default) {
              h5(paste("Levels:", paste(levels, collapse = ", "), sep = " "))
       ),
       column(3,
-             selectInput(inputId = paste0(learnername, "Param", id), label = NULL, choices = levels, selected = default)
+             selectInput(inputId = paste0(learnername, "factor"), label = NULL, choices = levels, selected = default)
       )
    )
 }
@@ -200,27 +210,33 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
 
    if (selectedkernel == "polynomial") {
       kernelparams <- tagList(
-         addNumericParam(id = "gamma", lower = learnerobject$Learner$param_set$params$gamma$lower,
-                         upper = learnerobject$Learner$param_set$params$gamma$upper,
-                         learnername = learnername, default = learnerobject$Learner$param_set$params$gamma$default),
-         addNumericParam(id = "degree", lower = learnerobject$Learner$param_set$params$degree$lower,
-                         upper = learnerobject$Learner$param_set$params$degree$upper,
-                         learnername = learnername, default = learnerobject$Learner$param_set$params$degree$default)
+         addNumericParam(id = paste0(learnerobject$Learner_Name,".","gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower,
+                         upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
+                         learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default),
+         addNumericParam(id = paste0(learnerobject$Learner_Name,".","degree"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$lower,
+                         upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$upper,
+                         learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$default)
       )
       # update learnerobject$Params so that only the hyperparams are set that are actually available
-      learnerobject$Params <- c('kernel', 'cost', 'gamma', 'degree')
+      learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]])
       return(kernelparams)
    }
    else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
       kernelparams <- tagList(
-         addNumericParam(id = "gamma", lower = learnerobject$Learner$param_set$params$gamma$lower, upper = learnerobject$Learner$param_set$params$gamma$upper,
-                        learnername = learnername, default = learnerobject$Learner$param_set$params$gamma$default)
+         addNumericParam(id = paste0(learnerobject$Learner_Name,".","gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower, upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
+                        learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default)
       )
-      learnerobject$Params <- c('kernel', 'cost', 'gamma')
+      learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]])
       return(kernelparams)
    }
    else{
-      learnerobject$Params <- c('kernel', 'cost')
+      learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
+                                 learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]])
       return(NULL)
    }
 }
@@ -230,12 +246,17 @@ getAvailableParams <- function(algorithm, learnerobject) {
    # Selects available parameters for given algorithm from global and gets parameter details through mlr3
    # Implicitly assigns available hyperparameter to learner$Params for later reference when setting hyperparams
    # Output: list of parameters with id, lower and upper levels, defaults
-
-   learnerobject$Params <- learnerparams[[algorithm]]
    params <- list()
    for (i in 1:length(learnerparams[[algorithm]])) {
-      params[[i]] <- learnerobject$Learner$param_set$params[[learnerparams[[algorithm]][i]]]
+      # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
+      # this is required because the graph learner stores all parameters in this format
+      # example: "classif.rpart.maxdepth"
+      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]]
    }
+   if (grepl("threshold", learnerobject$Learner$id)) {
+      params[[length(params)+1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
+   }
+   learnerobject$Params <- params
    return(params)
 }
 
@@ -244,15 +265,30 @@ makeParamUi <- function(learnerobject, learnername) {
    # Input: mlr3 learner object, name of currently selected learner (learner1, learner2 etc)
    # Creates layout for hyperparameters as a taglist depending on the algorithm
    # Returns: taglist of inputs for Learner hyperparameters
+   parameterui <- NULL
 
    if (learnerobject$Learner$param_set$is_empty) {
       return(h5("No Parameters available to be set.", style = "text-align: center;"))
    }
-   else if (learnerobject$Learner$id == "classif.ranger" || learnerobject$Learner$id == "regr.ranger") {
-       params <- getAvailableParams(algorithm = "ranger", learnerobject = learnerobject)
-
+   else if (grepl("ranger", learnerobject$Learner$id, fixed = TRUE)) {
+      params <- getAvailableParams(algorithm = "ranger", learnerobject = learnerobject)
       #TO-DO: Get a better solution - ugly and repetitive
-      parameterRangerUi <- tagList(
+      if (grepl("threshold", learnerobject$Learner$id)) {
+      parameterui <- tagList(
+         #num.trees
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
+                       default = params[[1]]$default),
+         #mtry upper needs to be restricted to number of features since mlr ships with Inf as upper value
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = length(currenttask$task$feature_names), learnername = learnername,
+                       default = params[[2]]$default),
+         #min.node.size
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
+                       default = params[[3]]$default),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+         actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
+      )
+      } else {     
+         parameterui <- tagList(  
          #num.trees
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                        default = params[[1]]$default),
@@ -263,13 +299,24 @@ makeParamUi <- function(learnerobject, learnername) {
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                        default = params[[3]]$default),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
-      )
-      return(parameterRangerUi)
+         )
+      }
    }
-   else if (learnerobject$Learner$id == "classif.rpart" || learnerobject$Learner$id == "regr.rpart") {
+   else if (grepl("rpart", learnerobject$Learner$id, fixed = TRUE)) {
       params <- getAvailableParams(algorithm = "rpart", learnerobject = learnerobject)
-
-      parameterRpartUi <- tagList(
+      if (grepl("threshold", learnerobject$Learner$id)) {
+         parameterui <- tagList(
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
+                         default = params[[1]]$default),
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
+                         default = params[[2]]$default),
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
+                         default = params[[3]]$default),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+         actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
+      )
+      } else {
+         parameterui <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                          default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
@@ -278,20 +325,55 @@ makeParamUi <- function(learnerobject, learnername) {
                          default = params[[3]]$default),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
-      return(parameterRpartUi)
+      }
    }
-   else if (learnerobject$Learner$id == "classif.svm" || learnerobject$Learner$id == "regr.svm") {
+   else if (grepl("svm", learnerobject$Learner$id, fixed = TRUE)) {
       params <- getAvailableParams(algorithm = "supportvm", learnerobject = learnerobject)
-      parameterSvmUi <- tagList(
+      if (grepl("threshold", learnerobject$Learner$id)) {
+      parameterui <- tagList(
          # sigmoid kernel removed for explanatory reasons
          addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
                          default = params[[2]]$default),
          uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
-      return(parameterSvmUi)
+      } else {
+      parameterui <- tagList(
+      # sigmoid kernel removed for explanatory reasons
+      addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
+      addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
+                      default = params[[2]]$default),
+      uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
+      actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
+      )
       }
+   }
+   else if (grepl("xgboost", learnerobject$Learner$id, fixed = TRUE)) {
+      params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
+      if (grepl("threshold", learnerobject$Learner$id)) {
+      parameterui <- tagList(
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default),
+         addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default),
+         addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree","dart"), learnername = learnername, default = params[[5]]$default),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+         actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
+      )
+      } else {
+      parameterui <- tagList(
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default),
+         addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default),
+         addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree","dart"), learnername = learnername, default = params[[5]]$default),
+         actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
+      )
+      }
+   }
+   return(parameterui)
 }
 
 # make the overview for each learner
@@ -316,7 +398,8 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
                               column(12,
                                      h5("Learner Parameters", style = "font-weight: bold;"),
                                      makeParamUi(learnerobject = learnerobject, learnername = learnername)
-                              )
+                              ),
+                              
                            ),
                            hr(style = "border-color: #3e3f3a;"),
                            fluidRow(
@@ -324,8 +407,8 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
                                      h5("Change Predict Type")
                               ),
                               column(4,
-                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = learnerobject$Learner$predict_types,
-                                                 selected = learnerobject$Learner$predict_type[1])
+                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices =learnerobject$Learner$predict_types,
+                                                 selected = learnerobject$Learner$predict_type)
                               ),
                               column(4,
                                      actionButton(inputId = paste0(learnername, "PredictTypeChange"), label = "Change", style = "float: right;")
@@ -337,11 +420,37 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 }
 
 
+# create GraphLearner object
+# for twoclass the threshold-po is added
+# if xgboost is selected the factor variables will be converted into numerals
+# furthermore ordered variables will also be converted to integers
+createGraphLearner <- function(selectedlearner) {
+   graph <- Graph$new()
+   if (!isTRUE(currenttask$task$properties == "twoclass")) {
+      learner <- po("learner", lrn(input[[selectedlearner]]))
+      graph$add_pipeop(learner)
+   } else {
+      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob"))
+      graph$add_pipeop(learner)
+      graph <- graph %>>% po("threshold")
+   }
+   if (any(grepl("factor", unique(currenttask$task$feature_types$type))) && !any(grepl("factor", lrn(input[[selectedlearner]])$feature_types))) {
+      graph <- po("encode", method = "treatment", affect_columns = selector_type("factor")) %>>% graph
+   }
+   if (any(grepl("ordered", unique(currenttask$task$feature_types$type))) && !any(grepl("ordered", lrn(input[[selectedlearner]])$feature_types))) {
+      graph <- po("colapply", applicator = as.integer, affect_columns = selector_type("ordered")) %>>% graph
+   }
+   print(graph)
+   return(as_learner(graph))
+}
+
 # add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
 
    observeEvent(input[[trigger]], {
-      learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
+      learnerobject$Learner <- createGraphLearner(selectedlearner)
+      learnerobject$Learner_Name <- input[[selectedlearner]]
+      # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
       output[[learnerparamoutput]] <- renderUI({
@@ -370,7 +479,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # if statement necessary to avoid strange shiny internal warning about empty condition when generating HTML
       if(input[[selectedlearner]] %in% c('classif.svm', 'regr.svm')) {
          getKernelParams(learnerobject = learnerobject, learnername = learnername,
-                          selectedkernel = input[[paste0(learnername, "Param", "kernel")]])
+                          selectedkernel = input[[paste0(learnername, "factor")]])
          }
    })
 
@@ -378,30 +487,47 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
       for (i in learnerobject$Params) {
-         currentinput <- input[[paste0(learnername, "Param", i)]]
+         currentinput <- input[[paste0(learnername, "Param", i$id)]]
          # validate input value
          if (!is.na(currentinput) && !is.null(currentinput)) {
-            if ((!is.na(learnerobject$Learner$param_set$params[[i]]$upper) &&
-                 currentinput > learnerobject$Learner$param_set$params[[i]]$upper) ||
-                (!is.na(learnerobject$Learner$param_set$params[[i]]$lower) &&
-                currentinput < learnerobject$Learner$param_set$params[[i]]$lower) ||
-                (i == "mtry" && currentinput > length(currenttask$task$feature_names))) {
+            if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
+                 currentinput > learnerobject$Learner$param_set$params[[i$id]]$upper) ||
+                (!is.na(learnerobject$Learner$param_set$params[[i$id]]$lower) &&
+                currentinput < learnerobject$Learner$param_set$params[[i$id]]$lower) ||
+                (i$id == "mtry" && currentinput > length(currenttask$task$feature_names))) {
                   shinyalert(title = "Invalid Parameter Input",
                              text = "It seems that you tried to set a parameter that is not within its parameter range. Please set a valid value.",
                              animation = FALSE, closeOnClickOutside = TRUE)
             }
             else {
-               paramlist[[i]] <- currentinput
+               paramlist[[i$id]] <- currentinput
                }
+         }
+      }
+      #TODO: need to find better solution to add factor params to paramlist
+      # a solution could be to distinguish between a display name and the internal one
+      # so the ChangeParams-Routine could be used
+
+      
+      svm_kernel <- c("radial", "polynomial", "linear")
+
+      if (grepl("xgboost", learnerobject$Learner_Name)) {
+         xgboost_booster <- c("gblinear", "gbtree", "dart")
+         if (input[[paste0(learnername, "factor")]] %in% xgboost_booster) {
+            paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor")]]
+         }
+      }
+      if (grepl("svm", learnerobject$Learner_Name)) {
+         if (input[[paste0(learnername, "factor")]] %in% svm_kernel) {
+            paramlist[[paste0(learnerobject$Learner_Name, ".kernel")]] <- input[[paste0(learnername, "factor")]]
          }
       }
 
       # explicit defaults for svm type to be used
-      if (learnerobject$Learner$id == 'classif.svm') {
-         paramlist[['type']] <- 'C-classification'
-      }
-      else if (learnerobject$Learner$id == 'regr.svm') {
-         paramlist[['type']] <- 'eps-regression'
+      if (grepl("classif.svm", learnerobject$Learner_Name)) {
+         paramlist[[paste0(learnerobject$Learner_Name,".","type")]] <- 'C-classification'
+      } else if (grepl("regr.svm", learnerobject$Learner_Name)) {
+         paramlist[[paste0(learnerobject$Learner_Name,".","type")]] <- 'eps-regression'
       }
 
       learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
@@ -432,7 +558,6 @@ makeLearner(learnerobject = Learner6, learnername = "Learner6", trigger = "Learn
 
 makeLearner(learnerobject = Learner7, learnername = "Learner7", trigger = "Learner_Create7", selectedlearner = "Learner_Learner7",
             learnerparamoutput = "Learner7_tab", learnerovoutput = "Learner7_ov")
-
 
 # reset Learners when Task changes
 observeEvent(currenttask$task, {

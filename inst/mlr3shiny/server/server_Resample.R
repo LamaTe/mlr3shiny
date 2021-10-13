@@ -302,14 +302,6 @@ observeEvent(input$Res_learner, {
   Res$Overview <- createResOverview()
 })
 
-observe({
-  if (!is.null(Res$Current_Learner) && get(input$Res_learner)$Hash != Res$Current_Learner$hash) {
-    resetRes()
-    Res$Current_Learner <- get(input$Res_learner)$Learner$clone(deep = TRUE)
-    Res$Overview <- createResOverview()
-  }
-})
-
 observeEvent(currenttask$task, {
   resetRes()
 })
