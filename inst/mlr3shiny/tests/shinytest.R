@@ -1,2 +1,3 @@
 library(shinytest)
 shinytest::testApp("../")
+
