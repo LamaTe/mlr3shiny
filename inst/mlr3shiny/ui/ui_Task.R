@@ -8,7 +8,7 @@ tabpanel_Task <- fluidPage(
                       h5("Define a Task", style = "font-weight: bold;"),
                       hr(style = "border-color: #3e3f3a;"),
                       selectInput(inputId = "Task_backend", label = h5("Select Data Backend"),
-                                  choices = list( "imported training data", examples = c("iris", "mtcars")),
+                                  choices = list( "imported training data", examples = c("iris", "mtcars", "german_credit")),
                                   selected = "iris", multiple = FALSE),
                       uiOutput(outputId = "Task_make_id"),
                       uiOutput(outputId = "Task_make_target"),

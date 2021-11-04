@@ -121,5 +121,19 @@ server <- function(input, output, session) {
                        modalButton('OK')))
       )
     }
+    else if (req(input$navbar) == "7. Explain") {
+      showModal(
+        modalDialog(
+          title = h2("Explain your Learners", style = "text-align: center;"),
+          h4("Description:"),
+          HTML(userhelp[["Explain"]][1]),
+          hr(),
+          h4("Functionalities:"),
+          HTML(userhelp[["Explain"]][2]),
+          easyClose = TRUE,
+          footer = div(style = "display:inline-block;width:100%;text-align: center;",
+                       modalButton('OK')))
+      )
+    }
   })
 }

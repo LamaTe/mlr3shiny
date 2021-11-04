@@ -63,6 +63,10 @@ ui <- tagList(
       tabpanel_predict,
       icon = icon("search"),
       id = 'predict'
+    ),
+    tabPanel("7. Explain",
+    tabpanel_evaluating,
+    icon = icon("chalkboard-teacher")
     )
   )
 )
