@@ -277,8 +277,7 @@ output$Pred_prediction_download_rds <- downloadHandler(
 resetPredLrn <- function() {
   Pred$Learner <- NULL
   Pred$Learner_Ov <- NULL
-  trained_learner_list <- NULL
-  trained_learner_list <- reactiveValues()
+  reset_trained_learner_list()
 }
 
 
@@ -421,4 +420,13 @@ get_final_training_code <- function(task, learner) {
   final_train_code <- paste0(final_train_code, "learner$predict(task) <br>")
   }
   return(final_train_code)
+}
+
+reset_trained_learner_list <- function () {
+  # iterating over all trained learners and resetting them
+  # See: https://stackoverflow.com/questions/61887112/how-to-reset-reactivevalues
+  for (trained_learner in names(trained_learner_list)) {
+    trained_learner_list[[trained_learner]] <- NULL
+  }
+  print(trained_learner_list)
 }
