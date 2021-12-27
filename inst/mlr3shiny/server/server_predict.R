@@ -1,7 +1,5 @@
 # reactive values for the predict tab
 Pred <- reactiveValues(Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
-# list of trained learners (will be dynamically filled in the training process)
-trained_learner_list <- reactiveValues()
 
 ## Functions
 # learner selection and overview
@@ -422,11 +420,3 @@ get_final_training_code <- function(task, learner) {
   return(final_train_code)
 }
 
-reset_trained_learner_list <- function () {
-  # iterating over all trained learners and resetting them
-  # See: https://stackoverflow.com/questions/61887112/how-to-reset-reactivevalues
-  for (trained_learner in names(trained_learner_list)) {
-    trained_learner_list[[trained_learner]] <- NULL
-  }
-  print(trained_learner_list)
-}

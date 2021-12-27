@@ -8,6 +8,26 @@ Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Pre
 Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
 Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
 
+# list of trained learners (will be dynamically filled in the training process)
+trained_learner_list <- reactiveValues()
+
+# reset a single trained learner
+# used when the learner type or params are changed
+reset_single_trained_learner <- function(learner_name) {
+  if (!is.null(trained_learner_list)) {
+    trained_learner_list[[learner_name]] <- NULL
+  }
+}
+
+# reset the whole list of trained learners
+reset_trained_learner_list <- function () {
+  # iterating over all trained learners and resetting them
+  # See: https://stackoverflow.com/questions/61887112/how-to-reset-reactivevalues
+  for (trained_learner in names(trained_learner_list)) {
+    trained_learner_list[[trained_learner]] <- NULL
+  }
+}
+
 # check whether it is a regression or classification and then give possible learners for each
 observe({
    if (!is.null(currenttask$task) && currenttask$task$task_type == "classif") {
@@ -440,7 +460,6 @@ createGraphLearner <- function(selectedlearner) {
    if (any(grepl("ordered", unique(currenttask$task$feature_types$type))) && !any(grepl("ordered", lrn(input[[selectedlearner]])$feature_types))) {
       graph <- po("colapply", applicator = as.integer, affect_columns = selector_type("ordered")) %>>% graph
    }
-   print(graph)
    return(as_learner(graph))
 }
 
@@ -459,6 +478,8 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       output[[learnerovoutput]] <- renderUI({
          makeLearnerOvTab(learnerobject = learnerobject)
       })
+      # resetting the trained learner on learner creation
+      reset_single_trained_learner(learnername)
    })
 
    observe({if (!is.null(learnerobject$Learner)) {
@@ -533,6 +554,9 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
       #learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
+
+   # resetting trained learner when params change
+   reset_single_trained_learner(learnername)
    })
 }
 
