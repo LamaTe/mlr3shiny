@@ -56,7 +56,13 @@ getLrnModel <- function() {
     return("[missing]")
   }
   else {
-    return(str_replace(Wf$Current_Learner$id, "^(.+?)\\.",""))
+    # cutting down model names like "colapply.encode.classif.svm.threshold" to "classif.svm"
+    # by iterating over LearnerMeta$learner_choice and using this model name 
+    for (learner in LearnerMeta$learner_choice) {
+      if (grepl(learner, Wf$Current_Learner$id)) {
+        return(learner)
+      }
+    }
   }
 }
 
