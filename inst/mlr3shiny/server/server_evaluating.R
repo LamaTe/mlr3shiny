@@ -15,7 +15,7 @@ output$eval_learner_selection <- renderUI({
 })
 
 output$eval_loss_function_selection <- renderUI({
-  get_loss_function_list()
+  get_loss_function_list(currenttask$task, input$selected_learner)
 })
 
 output$eval_compare_method_selection <- renderUI({
@@ -81,15 +81,15 @@ get_compare_method_list <- function() {
 
 
 # get relevant loss functions for current task
-get_loss_function_list <- function() {
-  if (!is.null(input$selected_learner)) {
-    if (currenttask$task$task_type == "classif") {
-      if (currenttask$task$properties == "twoclass") {
+get_loss_function_list <- function(task, learner) {
+  if (!is.null(lesarner)) {
+    if (task$task_type == "classif") {
+      if (task$properties == "twoclass") {
         ui <- loss_ui_builder(c(twoclass_losses, classif_losses))
       } else {
         ui <- loss_ui_builder(classif_losses)
       }
-    } else if (currenttask$task$task_type == "regr") {
+    } else if (task$task_type == "regr") {
       ui <- loss_ui_builder(regr_losses)
     }
     return(ui)
