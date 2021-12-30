@@ -82,7 +82,7 @@ get_compare_method_list <- function() {
 
 # get relevant loss functions for current task
 get_loss_function_list <- function(task, learner) {
-  if (!is.null(lesarner)) {
+  if (!is.null(learner)) {
     if (task$task_type == "classif") {
       if (task$properties == "twoclass") {
         ui <- loss_ui_builder(c(twoclass_losses, classif_losses))
