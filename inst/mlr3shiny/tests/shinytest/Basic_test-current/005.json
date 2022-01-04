@@ -1,0 +1,341 @@
+{
+  "input": {
+    "Data_train_csv": null,
+    "Data_train_header": true,
+    "Data_train_header_xlsx": true,
+    "Data_train_quote": "\"",
+    "Data_train_sep": ",",
+    "Data_train_sheet": 1,
+    "Data_train_type": "csv",
+    "Data_train_xlsx": null,
+    "evaluate_start": 0,
+    "Help": 0,
+    "Learner_add": 0,
+    "Learner_Create1": 0,
+    "Learner_Learner1": "classif.rpart",
+    "Learner_Learners_Tab": null,
+    "navbar": "5. Benchmarking",
+    "out2755124813da8833_cell_clicked": {
+
+    },
+    "out2755124813da8833_cells_selected": [
+
+    ],
+    "out2755124813da8833_columns_selected": null,
+    "out2755124813da8833_rows_all": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "out2755124813da8833_rows_current": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "out2755124813da8833_rows_selected": null,
+    "out2755124813da8833_search": "",
+    "out2755124813da8833_state": {
+      "time": 1641289636574,
+      "start": 0,
+      "length": 10,
+      "order": [
+
+      ],
+      "search": {
+        "search": "",
+        "smart": true,
+        "regex": false,
+        "caseInsensitive": true
+      },
+      "columns": [
+        {
+          "visible": true,
+          "search": {
+            "search": "",
+            "smart": true,
+            "regex": false,
+            "caseInsensitive": true
+          }
+        },
+        {
+          "visible": true,
+          "search": {
+            "search": "",
+            "smart": true,
+            "regex": false,
+            "caseInsensitive": true
+          }
+        }
+      ]
+    },
+    "Predict_data_csv": null,
+    "Predict_data_header": true,
+    "Predict_data_header_xlsx": true,
+    "Predict_data_quote": "\"",
+    "Predict_data_sep": ",",
+    "Predict_data_sheet": 1,
+    "Predict_data_type": "csv",
+    "Predict_data_xlsx": null,
+    "Predict_predict": 0,
+    "Task_backend": "iris",
+    "Task_feat_deactivate": 0,
+    "Task_feature": null,
+    "TrainFit_Base": 0,
+    "TrainFit_resample": 0
+  },
+  "output": {
+    "Bench_benchmark_button": null,
+    "Bench_download": null,
+    "Bench_learner_strats_selection": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>No learner has been created yet. Please go to step 3 to define a learner.<\/h5>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_measures": null,
+    "Bench_overview": {
+      "html": "<hr style=\"border-color: #3e3f3a;\"/>\n<div class=\"row\">\n  <div class=\"col-sm-12\">\n    <h5>Benchmarking has not been started yet.<\/h5>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Bench_params": {
+      "html": "<div class=\"col-sm-12\">\n  <h5>Benchmarking has not been started yet.<\/h5>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Data_train_view": {
+      "x": null,
+      "evals": [
+
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+        {
+          "name": "jquery",
+          "version": "3.6.0",
+          "src": {
+            "href": "jquery-3.6.0"
+          },
+          "meta": null,
+          "script": "jquery-3.6.0.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        },
+        {
+          "name": "dt-core",
+          "version": "1.11.3",
+          "src": {
+            "href": "dt-core-1.11.3"
+          },
+          "meta": null,
+          "script": "js/jquery.dataTables.min.js",
+          "stylesheet": [
+            "css/jquery.dataTables.min.css",
+            "css/jquery.dataTables.extra.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": false
+        },
+        {
+          "name": "crosstalk",
+          "version": "1.1.1",
+          "src": {
+            "href": "crosstalk-1.1.1"
+          },
+          "meta": null,
+          "script": "js/crosstalk.min.js",
+          "stylesheet": "css/crosstalk.css",
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Learner_other_Learner1": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-3\">\n    <h5>Learner 1<\/h5>\n  <\/div>\n  <div class=\"col-sm-6\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label shiny-label-null\" for=\"Learner_Learner1\" id=\"Learner_Learner1-label\"><\/label>\n      <div>\n        <select id=\"Learner_Learner1\"><option value=\"classif.rpart\">decision tree<\/option>\n<option value=\"classif.ranger\">random forest<\/option>\n<option value=\"classif.svm\">support vector machine<\/option>\n<option value=\"classif.xgboost\">xgboost<\/option><\/select>\n        <script type=\"application/json\" data-for=\"Learner_Learner1\" data-nonempty=\"\">{\"plugins\":[\"selectize-plugin-a11y\"]}<\/script>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <button id=\"Learner_Create1\" type=\"button\" class=\"btn btn-default action-button\" style=\"float:right;\">\n      <i class=\"fa fa-filter\" role=\"presentation\" aria-label=\"filter icon\"><\/i>\n      Go\n    <\/button>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.12.4",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": [
+            "js/selectize.min.js",
+            "accessibility/js/selectize-plugin-a11y.min.js"
+          ],
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "font-awesome",
+          "version": "5.15.3",
+          "src": {
+            "href": "font-awesome-5.15.3"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
+    "out2755124813da8833": {
+      "x": {
+        "filter": "none",
+        "vertical": false,
+        "container": "<table class=\"display\">\n  <thead>\n    <tr>\n      <th>id<\/th>\n      <th>type<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>",
+        "options": {
+          "paging": false,
+          "searching": false,
+          "bInfo": false,
+          "ordering": false,
+          "width": "250px",
+          "order": [
+
+          ],
+          "autoWidth": false,
+          "orderClasses": false,
+          "ajax": {
+            "type": "POST",
+            "data": "function(d) {\nd.search.caseInsensitive = true;\nd.search.smart = true;\nd.escape = true;\nvar encodeAmp = function(x) { x.value = x.value.replace(/&/g, \"%26\"); }\nencodeAmp(d.search);\n$.each(d.columns, function(i, v) {encodeAmp(v.search);});\n}"
+          },
+          "serverSide": true,
+          "processing": true
+        },
+        "selection": {
+          "mode": "multiple",
+          "selected": null,
+          "target": "row",
+          "selectable": null
+        }
+      },
+      "evals": [
+        "options.ajax.data"
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+        {
+          "name": "jquery",
+          "version": "3.6.0",
+          "src": {
+            "href": "jquery-3.6.0"
+          },
+          "meta": null,
+          "script": "jquery-3.6.0.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        },
+        {
+          "name": "dt-core",
+          "version": "1.11.3",
+          "src": {
+            "href": "dt-core-1.11.3"
+          },
+          "meta": null,
+          "script": "js/jquery.dataTables.min.js",
+          "stylesheet": [
+            "css/jquery.dataTables.min.css",
+            "css/jquery.dataTables.extra.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": false
+        },
+        {
+          "name": "crosstalk",
+          "version": "1.1.1",
+          "src": {
+            "href": "crosstalk-1.1.1"
+          },
+          "meta": null,
+          "script": "js/crosstalk.min.js",
+          "stylesheet": "css/crosstalk.css",
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Task_overview": "<h5 style=\" font-weight: bold;\">Task Overview<\/h5>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Supervised Task: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>multiclass classif<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Task ID: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>iris<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Data: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>5 Variables with 150 Observations<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Target: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>Species<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Features: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>\n      <div id=\"out2755124813da8833\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n    <\/h5>\n  <\/div>\n<\/div>",
+    "Task_processing": {
+      "html": "<h5 style=\"font-weight: bold;\">Task Processing<\/h5>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Drop Features: <\/h5>\n  <\/div>\n  <div class=\"col-sm-4\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label shiny-label-null\" for=\"Task_feature\" id=\"Task_feature-label\"><\/label>\n      <div>\n        <select id=\"Task_feature\" class=\"form-control\" multiple=\"multiple\"><option value=\"Petal.Length\">Petal.Length<\/option>\n<option value=\"Petal.Width\">Petal.Width<\/option>\n<option value=\"Sepal.Length\">Sepal.Length<\/option>\n<option value=\"Sepal.Width\">Sepal.Width<\/option><\/select>\n        <script type=\"application/json\" data-for=\"Task_feature\" data-eval=\"[&quot;onInitialize&quot;]\">{\"placeholder\":\"Nothing selected\",\"onInitialize\":\"function() { this.setValue(\\\"\\\"); }\",\"plugins\":[\"selectize-plugin-a11y\"]}<\/script>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-4\">\n    <button id=\"Task_feat_deactivate\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Drop<\/button>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.12.4",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": [
+            "js/selectize.min.js",
+            "accessibility/js/selectize-plugin-a11y.min.js"
+          ],
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "TrainFit_learner_selection": {
+      "html": "<div class=\"col-sm-12\">\n  <h5>No learner has been created yet in step 3.<\/h5>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "TrainFit_overview": {
+      "html": "<h5>The basic workflow has not been started yet. Please define a learner in step 3 and select it.<\/h5>",
+      "deps": [
+
+      ]
+    },
+    "TrainFit_predict": {
+      "html": "<h5>The learner model has not been trained yet.<\/h5>",
+      "deps": [
+
+      ]
+    },
+    "TrainFit_score": {
+      "html": "<h5>A prediction has not been computed yet.<\/h5>",
+      "deps": [
+
+      ]
+    },
+    "TrainFit_train": {
+      "html": "<h5>No learner has been selected yet.<\/h5>",
+      "deps": [
+
+      ]
+    }
+  },
+  "export": {
+
+  }
+}
