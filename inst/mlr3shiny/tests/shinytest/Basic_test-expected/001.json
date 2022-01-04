@@ -8,6 +8,7 @@
     "Data_train_sheet": 1,
     "Data_train_type": "csv",
     "Data_train_xlsx": null,
+    "evaluate_start": 0,
     "Help": 0,
     "Learner_add": 0,
     "Learner_Learners_Tab": null,
@@ -50,9 +51,9 @@
         },
         {
           "name": "dt-core",
-          "version": "1.10.20",
+          "version": "1.11.3",
           "src": {
-            "href": "dt-core-1.10.20"
+            "href": "dt-core-1.11.3"
           },
           "meta": null,
           "script": "js/jquery.dataTables.min.js",

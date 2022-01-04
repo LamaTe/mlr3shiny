@@ -8,32 +8,66 @@
     "Data_train_sheet": 1,
     "Data_train_type": "csv",
     "Data_train_xlsx": null,
+    "evaluate_start": 0,
     "Help": 0,
     "Learner_add": 0,
     "Learner_Learners_Tab": null,
     "navbar": "2. Task",
-    "out17132755124813da_cell_clicked": {
+    "out2755124813da8833_cell_clicked": {
 
     },
-    "out17132755124813da_cells_selected": [
+    "out2755124813da8833_cells_selected": [
 
     ],
-    "out17132755124813da_columns_selected": null,
-    "out17132755124813da_rows_all": [
+    "out2755124813da8833_columns_selected": null,
+    "out2755124813da8833_rows_all": [
       1,
       2,
       3,
       4
     ],
-    "out17132755124813da_rows_current": [
+    "out2755124813da8833_rows_current": [
       1,
       2,
       3,
       4
     ],
-    "out17132755124813da_rows_selected": null,
-    "out17132755124813da_search": "",
-    "out17132755124813da_state": null,
+    "out2755124813da8833_rows_selected": null,
+    "out2755124813da8833_search": "",
+    "out2755124813da8833_state": {
+      "time": 1641289544436,
+      "start": 0,
+      "length": 10,
+      "order": [
+
+      ],
+      "search": {
+        "search": "",
+        "smart": true,
+        "regex": false,
+        "caseInsensitive": true
+      },
+      "columns": [
+        {
+          "visible": true,
+          "search": {
+            "search": "",
+            "smart": true,
+            "regex": false,
+            "caseInsensitive": true
+          }
+        },
+        {
+          "visible": true,
+          "search": {
+            "search": "",
+            "smart": true,
+            "regex": false,
+            "caseInsensitive": true
+          }
+        }
+      ]
+    },
     "Predict_data_csv": null,
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
@@ -74,9 +108,9 @@
         },
         {
           "name": "dt-core",
-          "version": "1.10.20",
+          "version": "1.11.3",
           "src": {
-            "href": "dt-core-1.10.20"
+            "href": "dt-core-1.11.3"
           },
           "meta": null,
           "script": "js/jquery.dataTables.min.js",
@@ -104,7 +138,7 @@
         }
       ]
     },
-    "out17132755124813da": {
+    "out2755124813da8833": {
       "x": {
         "filter": "none",
         "vertical": false,
@@ -156,9 +190,9 @@
         },
         {
           "name": "dt-core",
-          "version": "1.10.20",
+          "version": "1.11.3",
           "src": {
-            "href": "dt-core-1.10.20"
+            "href": "dt-core-1.11.3"
           },
           "meta": null,
           "script": "js/jquery.dataTables.min.js",
@@ -186,7 +220,7 @@
         }
       ]
     },
-    "Task_overview": "<h5 style=\" font-weight: bold;\">Task Overview<\/h5>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Supervised Task: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>multiclass classif<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Task ID: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>iris<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Data: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>5 Variables with 150 Observations<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Target: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>Species<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Features: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>\n      <div id=\"out17132755124813da\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n    <\/h5>\n  <\/div>\n<\/div>",
+    "Task_overview": "<h5 style=\" font-weight: bold;\">Task Overview<\/h5>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Supervised Task: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>multiclass classif<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Task ID: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>iris<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Data: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>5 Variables with 150 Observations<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Target: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>Species<\/h5>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Features: <\/h5>\n  <\/div>\n  <div class=\"col-sm-8\">\n    <h5>\n      <div id=\"out2755124813da8833\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n    <\/h5>\n  <\/div>\n<\/div>",
     "Task_processing": {
       "html": "<h5 style=\"font-weight: bold;\">Task Processing<\/h5>\n<div class=\"row\">\n  <div class=\"col-sm-4\">\n    <h5>Drop Features: <\/h5>\n  <\/div>\n  <div class=\"col-sm-4\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label shiny-label-null\" for=\"Task_feature\" id=\"Task_feature-label\"><\/label>\n      <div>\n        <select id=\"Task_feature\" class=\"form-control\" multiple=\"multiple\"><option value=\"Petal.Length\">Petal.Length<\/option>\n<option value=\"Petal.Width\">Petal.Width<\/option>\n<option value=\"Sepal.Length\">Sepal.Length<\/option>\n<option value=\"Sepal.Width\">Sepal.Width<\/option><\/select>\n        <script type=\"application/json\" data-for=\"Task_feature\" data-eval=\"[&quot;onInitialize&quot;]\">{\"placeholder\":\"Nothing selected\",\"onInitialize\":\"function() { this.setValue(\\\"\\\"); }\",\"plugins\":[\"selectize-plugin-a11y\"]}<\/script>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-4\">\n    <button id=\"Task_feat_deactivate\" type=\"button\" class=\"btn btn-default action-button\" style=\"float: right;\">Drop<\/button>\n  <\/div>\n<\/div>",
       "deps": [

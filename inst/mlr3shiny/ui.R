@@ -24,7 +24,6 @@ ui <- tagList(
     )
   ),
   useShinyjs(),
-  useShinyalert(),
   circleButton(
     inputId = "Help", icon = icon("question"),
     status = "white", size = "sm", style = "position:absolute; right:2em; top:0.35em; z-index:1001; color: #2FA4E7;"
