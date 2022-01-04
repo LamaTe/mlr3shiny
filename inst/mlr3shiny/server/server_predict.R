@@ -1,7 +1,5 @@
 # reactive values for the predict tab
 Pred <- reactiveValues(Learner = NULL, Learner_Ov = NULL, New_Data = NULL, Pred = NULL)
-# list of trained learners (will be dynamically filled in the training process)
-trained_learner_list <- reactiveValues()
 
 ## Functions
 # learner selection and overview
@@ -277,8 +275,7 @@ output$Pred_prediction_download_rds <- downloadHandler(
 resetPredLrn <- function() {
   Pred$Learner <- NULL
   Pred$Learner_Ov <- NULL
-  trained_learner_list <- NULL
-  trained_learner_list <- reactiveValues()
+  reset_trained_learner_list()
 }
 
 
@@ -422,3 +419,4 @@ get_final_training_code <- function(task, learner) {
   }
   return(final_train_code)
 }
+

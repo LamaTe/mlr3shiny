@@ -28,6 +28,10 @@ observe({
   }
 })
 
+observeEvent(currenttask$task,{
+  reset_trained_learner_list()
+})
+
 observe({
   toggle(id = "Task_target", condition = (input$Task_backend == "imported training data"))
   toggle(id = "Task_id", condition = (input$Task_backend == "imported training data"))
