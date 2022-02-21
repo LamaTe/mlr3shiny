@@ -49,6 +49,8 @@ server <- function(input, output, session) {
           HTML(userhelp[["Learner"]][4]),
           HTML("<br/>", "<br/>"),
           HTML(userhelp[["Learner"]][5]),
+          HTML("<br/>", "<br/>"),
+          HTML(userhelp[["Learner"]][6]),
           easyClose = TRUE,
           footer = div(style = "display:inline-block;width:100%;text-align: center;",
                        modalButton('OK')))
