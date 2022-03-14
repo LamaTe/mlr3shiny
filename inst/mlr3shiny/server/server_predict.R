@@ -301,7 +301,7 @@ get_task_code <- function(task) {
     task_code <- paste0(task_code, "task <- tsk(\"", task$id,"\") <br>")
   } else {
     # checking if quote is set as " or ' and choose the other one in read.csv so its either "'" or '"'
-    if (input$Data_train_sep == "'") {
+    if (input$Data_train_quote == "'") {
       quote_seperator <- '"'
     } else {
       quote_seperator <- "'"
@@ -310,7 +310,7 @@ get_task_code <- function(task) {
     # building the read.csv using the user input
     task_code <- paste0(task_code, "data <-read.csv(file = \"path_to_file\", header= ",
       input$Data_train_header, ", sep = \"", input$Data_train_sep, "\", quote =", quote_seperator,
-      input$Data_train_quote,  quote_seperator, ", header = ", input$Data_train_header, ", stringsAsFactors = TRUE) <br>")
+      input$Data_train_quote,  quote_seperator, ", stringsAsFactors = TRUE) <br>")
     if (is.numeric(currenttask$target)) {
       task_code <- paste0(task_code,
       "task <- TaskRegr$new(id = \"newData\", backend = data, target = ",
@@ -361,11 +361,11 @@ get_training_code <- function() {
   train_code <- paste0(train_code, "# creating split for test and training data <br>")
   if (!is.null(input$TrainFit_input_split)) {
     train_code <- paste0(train_code, "# using the split set by the user <br>")
-    train_code <- paste0(train_code, "train_data <- sample(task$row_ids, task$nrows*",
+    train_code <- paste0(train_code, "train_data <- sample(task$row_ids, task$nrow*",
       input$TrainFit_input_split / 100, ") <br>")
   } else {
     train_code <- paste0(train_code, "# using default 80/20 split <br>")
-    train_code <- paste0(train_code, "train_ids <- sample(task$row_ids, task$nrows*0.8) <br>")
+    train_code <- paste0(train_code, "train_ids <- sample(task$row_ids, task$nrow*0.8) <br>")
   }
   train_code <- paste0(train_code, "test_ids <- setdiff(task$row_ids, train_ids) <br>")
   train_code <- paste0(train_code, "# training the model <br>")
@@ -394,7 +394,7 @@ get_resampling_code <- function() {
   resampling_code <- paste0(resampling_code, "resampling <- rsmp(\"holdout\", ratio = 0.5) <br>")
   resampling_code <- paste0(resampling_code, "# more information regarding possible strategies <br>")
   resampling_code <- paste0(resampling_code,
-  "# and their parameters can be found here: 
+  "# and their parameters can be found here:
   <a href=\"https://mlr3book.mlr-org.com/resampling.html\">mlr3 manual</a><br>")
   resampling_code <- paste0(resampling_code, "rr <- resample(task, learner, resampling)<br>")
   resampling_code <- paste0(resampling_code,
@@ -404,6 +404,12 @@ get_resampling_code <- function() {
 }
 
 get_final_training_code <- function(task, learner) {
+  if (input$Predict_data_quote == "'") {
+    quote_seperator <- '"'
+  } else {
+    quote_seperator <- "'"
+  }
+
   final_train_code <- "# training the model on the whole dataset <br>"
   final_train_code <- paste0(final_train_code, "learner$train(task) <br>")
   if (!is.null(input$Data_train_type)) {
@@ -411,6 +417,10 @@ get_final_training_code <- function(task, learner) {
   final_train_code <- paste0(final_train_code, "new_data <-read.csv(file = \"path_to_file\", header= ",
   input$Predict_data_header, ", sep = \"", input$Predict_data_sep, "\", quote =", quote_seperator,
   input$Predict_data_quote, quote_seperator, ", stringsAsFactors = TRUE) <br>")
+  print(quote_seperator)
+  print(input$Predict_data_quote)
+  print(paste0(quote_seperator,
+               input$Predict_data_quote, quote_seperator))
   final_train_code <- paste0(final_train_code, "# predict on new data <br>")
   final_train_code <- paste0(final_train_code, "learner$predict_newdata(task, newdata = new_data)")
   } else {
