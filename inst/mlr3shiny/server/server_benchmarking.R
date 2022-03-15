@@ -55,7 +55,7 @@ getItersOv <- function() {
     return("[not available]")
   }
   else {
-    return(paste((Bench$Bench_Rslt$data$iterations()), "iterations in", nrow(Bench$Bench_Rslt$data$resamplings()),"resamplings", sep = " "))
+    return(paste(max(as.data.table(Bench$Bench_Rslt)$iteration), "iterations for", table(as.data.table(Bench$Bench_Rslt)$iteration)[1],"learners", sep = " "))
   }
 }
 
