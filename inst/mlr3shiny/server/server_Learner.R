@@ -140,7 +140,7 @@ getLearnerOverview <- function(learnerobject) {
       # do not include params as svm still remembers parameter set for radial kernel such as gamma, even though it is not
       # used in linear kernel -> confusing for user
       # "params" = getCurrentParams(learnerobject = learnerobject),
-      # using the original learner object because "predict_types" 
+      # using the original learner object because "predict_types"
       # cant be retrieved from a learner returned from as_learner()
       "predict types" = learnerobject$Learner$predict_types,
       "properties" = learnerobject$Learner$properties,
@@ -307,8 +307,8 @@ makeParamUi <- function(learnerobject, learnername) {
          addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
-      } else {     
-         parameterui <- tagList(  
+      } else {
+         parameterui <- tagList(
          #num.trees
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                        default = params[[1]]$default),
@@ -412,6 +412,27 @@ makeLearnerOvTab <- function(learnerobject) {
 
 # place overview and learner together in a tab
 makeLearnerParamTab <- function(learnerobject, learnername) {
+  # twoclass classif cannot change predict type due to pipeops
+  if (!identical(currenttask$task$properties, character(0)) && currenttask$task$properties == "twoclass") {
+    change_predict_type <- tagList()
+  }
+  else {
+    change_predict_type <- tagList(
+        hr(style = "border-color: #3e3f3a;"),
+        fluidRow(
+          column(4,
+                 h5("Change Predict Type")
+          ),
+          column(4,
+                 selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices =learnerobject$Learner$predict_types,
+                             selected = learnerobject$Learner$predict_type)
+          ),
+          column(4,
+                 actionButton(inputId = paste0(learnername, "PredictTypeChange"), label = "Change", style = "float: right;")
+          )
+        )
+      )
+  }
    learnerparams <- tagList(
                      wellPanel(
                            fluidRow(
@@ -419,21 +440,9 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
                                      h5("Learner Parameters", style = "font-weight: bold;"),
                                      makeParamUi(learnerobject = learnerobject, learnername = learnername)
                               ),
-                              
+
                            ),
-                           hr(style = "border-color: #3e3f3a;"),
-                           fluidRow(
-                              column(4,
-                                     h5("Change Predict Type")
-                              ),
-                              column(4,
-                                     selectInput(inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices =learnerobject$Learner$predict_types,
-                                                 selected = learnerobject$Learner$predict_type)
-                              ),
-                              column(4,
-                                     actionButton(inputId = paste0(learnername, "PredictTypeChange"), label = "Change", style = "float: right;")
-                              )
-                           )
+                           change_predict_type
                         )
    )
    return(learnerparams)
@@ -529,7 +538,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # a solution could be to distinguish between a display name and the internal one
       # so the ChangeParams-Routine could be used
 
-      
+
       svm_kernel <- c("radial", "polynomial", "linear")
 
       if (grepl("xgboost", learnerobject$Learner_Name)) {
