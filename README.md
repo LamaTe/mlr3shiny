@@ -13,7 +13,14 @@ Current functionalities of mlr3shiny are:
 * Prediction on new data using the trained learner
 
 ## Installation
-Install the package in R from GitHub.
+
+Install the package in R via CRAN:
+
+``` r
+install.packages(mlr3shiny)
+```
+
+Install the development version of the package in R from GitHub.
 ``` r
 remotes::install_github("https://github.com/LamaTe/mlr3shiny.git")
 ```
