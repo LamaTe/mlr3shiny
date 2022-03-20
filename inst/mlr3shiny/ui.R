@@ -29,7 +29,7 @@ ui <- tagList(
     status = "white", size = "sm", style = "position:absolute; right:2em; top:0.35em; z-index:1001; color: #2FA4E7;"
   ),
   navbarPage(
-    theme =  bs_theme(bootswatch = 'cerulean'),,
+    theme =  bs_theme(bootswatch = 'cerulean'),
     title = a("mlr3shiny", href = "https://github.com/LamaTe/mlr3shiny", target = "_blank", style = "color: white;"),
     windowTitle = "mlr3shiny",
     id = "navbar",
