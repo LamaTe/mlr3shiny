@@ -296,6 +296,10 @@ quote_seperator <- NULL
 # get code-block for task generation
 get_task_code <- function(task) {
   task_code <- NULL
+  task_code <- paste0(task_code, "# include libraries <br>")
+  task_code <- paste0(task_code, "library(mlr3) <br>")
+  task_code <- paste0(task_code, "library(mlr3learners) <br>")
+  task_code <- paste0(task_code, "library(mlr3pipelines) <br>")
   if (task$id == "iris" || task$id == "mtcars" || task$id == "german_credit") {
     task_code <- paste0(task_code, "# using pre-defined mlr3-tasks <br>")
     task_code <- paste0(task_code, "task <- tsk(\"", task$id,"\") <br>")
@@ -343,8 +347,13 @@ get_learner_code <- function(learner) {
     learner_code <- paste0(learner_code,
     "graph <- po(\"colapply\", applicator = as.integer, affect_columns = selector_type(\"ordered\")) %>>% graph <br>")
   }
+  print(currenttask$task$task_type)
+  if(currenttask$task$properties == "twoclass"){
+    learner_code <- paste0(learner_code, "# adding a threshold PipeOp for twoclass task <br>")
+    learner_code <- paste0(learner_code, "graph <- po(\"threshold\") %>>% graph <br>")
+  }
   for (parameter in names(learner$param_set$values)) {
-    learner_code <- paste0(learner_code, "learner$param_set$values$", parameter, "<- ", learner$param_set$values[parameter], "<br>")
+    learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, "<- ", learner$param_set$values[parameter], "<br>")
   }
 
   learner_code <- paste0(learner_code, "# saving the graph as a GraphLearner <br>")
