@@ -347,7 +347,6 @@ get_learner_code <- function(learner) {
     learner_code <- paste0(learner_code,
     "graph <- po(\"colapply\", applicator = as.integer, affect_columns = selector_type(\"ordered\")) %>>% graph <br>")
   }
-  print(currenttask$task$task_type)
   if(currenttask$task$properties == "twoclass"){
     learner_code <- paste0(learner_code, "# adding a threshold PipeOp for twoclass task <br>")
     learner_code <- paste0(learner_code, "graph <- po(\"threshold\") %>>% graph <br>")
