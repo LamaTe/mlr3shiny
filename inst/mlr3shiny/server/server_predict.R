@@ -347,7 +347,7 @@ get_learner_code <- function(learner) {
     learner_code <- paste0(learner_code,
     "graph <- po(\"colapply\", applicator = as.integer, affect_columns = selector_type(\"ordered\")) %>>% graph <br>")
   }
-  if(currenttask$task$properties == "twoclass"){
+  if(isTRUE(currenttask$task$properties == "twoclass")){
     learner_code <- paste0(learner_code, "# adding a threshold PipeOp for twoclass task <br>")
     learner_code <- paste0(learner_code, "graph <- po(\"threshold\") %>>% graph <br>")
   }
@@ -425,10 +425,6 @@ get_final_training_code <- function(task, learner) {
   final_train_code <- paste0(final_train_code, "new_data <-read.csv(file = \"path_to_file\", header= ",
   input$Predict_data_header, ", sep = \"", input$Predict_data_sep, "\", quote =", quote_seperator,
   input$Predict_data_quote, quote_seperator, ", stringsAsFactors = TRUE) <br>")
-  print(quote_seperator)
-  print(input$Predict_data_quote)
-  print(paste0(quote_seperator,
-               input$Predict_data_quote, quote_seperator))
   final_train_code <- paste0(final_train_code, "# predict on new data <br>")
   final_train_code <- paste0(final_train_code, "learner$predict_newdata(task, newdata = new_data)")
   } else {
