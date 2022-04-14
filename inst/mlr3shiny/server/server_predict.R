@@ -172,17 +172,17 @@ observeEvent(input$Pred_codegen, {
   showModal(
     modalDialog(
       title = h2("Code Generation", style = "text-align: center;"),
-      h4("Task Creation"),
+      h4("## Task Creation"),
       HTML(get_task_code(currenttask$task)),
-      h4("Learner Creation"),
+      h4("## Learner Creation"),
       HTML(get_learner_code(Pred$Learner)),
-      h4("Training"),
+      h4("## Training"),
       HTML(get_training_code()),
-      h4("Scoring"),
+      h4("## Scoring"),
       HTML(get_score_code(currenttask$task, Pred$Learner)),
-      h4("Resampling"),
+      h4("## Resampling"),
       HTML(get_resampling_code()),
-      h4("Final Training and Predict"),
+      h4("## Final Training and Predict"),
       HTML(get_final_training_code(currenttask$task, Pred$Learner)),
       easyClose = TRUE,
       footer = div(style = "display:inline-block;width:100%;text-align: center;",
@@ -329,13 +329,19 @@ get_task_code <- function(task) {
 }
 
 get_learner_code <- function(learner) {
+print(learner$param_set)
   # creating intial graph
   learner_code <- "# create initial graph <br>"
   learner_code <- paste0(learner_code, "graph <- Graph$new() <br>")
   # adding graph learner to graph
   learner_name <- learner$graph$ids()[grep("\\.", learner$graph$ids())]
   learner_code <- paste0(learner_code, "# adding learner PipeOp <br>")
-  learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"", learner$predict_type, "\")) <br>")
+  if(!isTRUE(currenttask$task$properties == "twoclass")){
+    learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"", learner$predict_type, "\")) <br>")
+    }
+  if(isTRUE(currenttask$task$properties == "twoclass")){
+    learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"prob\")) <br>")
+  }
   if (any(grepl("encode", learner$graph$ids()))) {
     learner_code <- paste0(learner_code,
     "# adding a PipeOp to enable the usage of factor columns for the chosen learner <br>")
@@ -349,7 +355,7 @@ get_learner_code <- function(learner) {
   }
   if(isTRUE(currenttask$task$properties == "twoclass")){
     learner_code <- paste0(learner_code, "# adding a threshold PipeOp for twoclass task <br>")
-    learner_code <- paste0(learner_code, "graph <- po(\"threshold\") %>>% graph <br>")
+    learner_code <- paste0(learner_code, "graph <- graph %>>% po(\"threshold\") <br>")
   }
   for (parameter in names(learner$param_set$values)) {
     learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, "<- ", learner$param_set$values[parameter], "<br>")

@@ -184,7 +184,7 @@ makeOverviewUi <- function(learnerobject) {
 }
 
 ## Learner params
-addNumericParam <- function(id, lower, upper, learnername, default) {
+addNumericParam <- function(id, lower, upper, learnername, default, stpsize = 1) {
    fluidRow(
       column(3,
              h5(id)
@@ -197,7 +197,7 @@ addNumericParam <- function(id, lower, upper, learnername, default) {
       ),
       column(3,
              numericInput(inputId = paste0(learnername, "Param", id), label = NULL,
-                          value = default, min = lower, max = upper)
+                          value = default, min = lower, max = upper, step = stpsize)
       )
 
    )
@@ -232,7 +232,8 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
       kernelparams <- tagList(
          addNumericParam(id = paste0(learnerobject$Learner_Name,".","gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower,
                          upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
-                         learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default),
+                         learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default,
+                         stpsize = 0.1),
          addNumericParam(id = paste0(learnerobject$Learner_Name,".","degree"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$lower,
                          upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$upper,
                          learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","degree")]]$default)
@@ -247,7 +248,8 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
    else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
       kernelparams <- tagList(
          addNumericParam(id = paste0(learnerobject$Learner_Name,".","gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$lower, upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$upper,
-                        learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default)
+                        learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","gamma")]]$default,
+                        stpsize = 0.1)
       )
       learnerobject$Params <- c(learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","kernel")]],
                                  learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name,".","cost")]],
@@ -304,7 +306,7 @@ makeParamUi <- function(learnerobject, learnername) {
          #min.node.size
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                        default = params[[3]]$default),
-         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       } else {
@@ -327,22 +329,22 @@ makeParamUi <- function(learnerobject, learnername) {
       if (grepl("threshold", learnerobject$Learner$id)) {
          parameterui <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
-                         default = params[[1]]$default),
+                         default = params[[1]]$default, stpsize = 1),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
-                         default = params[[2]]$default),
+                         default = params[[2]]$default, stpsize = 0.0025),
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
-                         default = params[[3]]$default),
-         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+                         default = params[[3]]$default, stpsize = 1),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, paramtype = params[[length(params)]]$class),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       } else {
          parameterui <- tagList(
          addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
-                         default = params[[1]]$default),
+                         default = params[[1]]$default, stpsize = 1),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
-                         default = params[[2]]$default),
+                         default = params[[2]]$default, stpsize = 0.0025),
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
-                         default = params[[3]]$default),
+                         default = params[[3]]$default, stpsize = 1),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       }
@@ -354,9 +356,9 @@ makeParamUi <- function(learnerobject, learnername) {
          # sigmoid kernel removed for explanatory reasons
          addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
          addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
-                         default = params[[2]]$default),
+                         default = params[[2]]$default, stpsize = 0.1),
          uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
-         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       } else {
@@ -364,7 +366,7 @@ makeParamUi <- function(learnerobject, learnername) {
       # sigmoid kernel removed for explanatory reasons
       addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
       addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
-                      default = params[[2]]$default),
+                      default = params[[2]]$default, stpsize = 0.1),
       uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
       actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
@@ -374,20 +376,20 @@ makeParamUi <- function(learnerobject, learnername) {
       params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
       if (grepl("threshold", learnerobject$Learner$id)) {
       parameterui <- tagList(
-         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
-         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
-         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default),
-         addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default),
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
+         addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
          addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree","dart"), learnername = learnername, default = params[[5]]$default),
-         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       } else {
       parameterui <- tagList(
-         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default),
-         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default),
-         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default),
-         addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default),
+         addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
+         addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
+         addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
+         addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
          addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree","dart"), learnername = learnername, default = params[[5]]$default),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
