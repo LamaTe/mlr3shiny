@@ -334,7 +334,7 @@ makeParamUi <- function(learnerobject, learnername) {
                          default = params[[2]]$default, stpsize = 0.0025),
          addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                          default = params[[3]]$default, stpsize = 1),
-         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, paramtype = params[[length(params)]]$class),
+         addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
          actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
       )
       } else {
