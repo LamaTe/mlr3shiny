@@ -22,7 +22,6 @@ Imports:
 	mlr3pipelines,
 	iml,
 	shiny (>= 1.6.0),
-	shinythemes,
 	shinydashboard,
 	shinyjs (>= 2.0.0),
 	shinyWidgets,
@@ -35,7 +34,8 @@ Imports:
 	purrr,
 	ranger,
 	e1071,
-	stats
+	stats,
+	bslib
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
