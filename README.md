@@ -11,6 +11,7 @@ Current functionalities of mlr3shiny are:
 * Training and evaluation of the generated models
 * Benchmarking to compare several learners on a task simultaneously
 * Prediction on new data using the trained learner
+* Explain trained learner 
 
 ## Installation
 
@@ -38,9 +39,11 @@ Start by importing a dataset. Then define a task (the problem to be solved) in t
 Resampling strategies can be applied in a sub-section of 'train & evaluate'.
 Alternatively, different learners can be compared in a benchmark.
 Use the final model to make a prediction on new data in the 'predict' tab. 
+An explanation of the final model from the predict tab can be made in the 'explain' tab. 
 
 ## References to Algorithms
 * [linear/ logistic regression](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html)
 * [decision tree](https://CRAN.R-project.org/package=rpart)
 * [random forest](https://CRAN.R-project.org/package=ranger)
 * [support vector machine](https://CRAN.R-project.org/package=e1071)
+* [xgboost](https://CRAN.R-project.org/package=xgboost)
