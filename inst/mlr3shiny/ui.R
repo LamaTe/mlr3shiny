@@ -1,4 +1,4 @@
-ui_files <- list.files(path = "./ui", pattern = "*.R")
+ui_files <- list.files(path = "./ui")
 ui_files <- paste0("ui/", ui_files)
 
 for (i in seq_along(ui_files)) {

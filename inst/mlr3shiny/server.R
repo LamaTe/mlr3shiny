@@ -1,5 +1,5 @@
 server <- function(input, output, session) {
-  server_files = list.files(path = "./server", pattern = "*.R")
+  server_files = list.files(path = "./server")
   server_files = paste0("server/", server_files)
   for (i in seq_along(server_files)) {
     source(server_files[i], local = TRUE)
