@@ -32,18 +32,24 @@ output$eval_learner_plot_tabs <- renderUI({
 
 # observe "start evaluation" button and start iml workflow
 observeEvent(input$evaluate_start, {
-  withCallingHandlers(
-    tryCatch({
+  withProgress(message = "Computing benchmark", style = "notification",
+      withCallingHandlers(
+      tryCatch({
         model <- Predictor$new(eval_meta$current_learner, data = currenttask$task$data(), y = currenttask$task$target_names)
+        incProgress(0.2)
         # saving iml calculations in meta object
         eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker, compare = input$compare_picker)
+        incProgress(0.4)
         eval_meta$feature_effect <- FeatureEffects$new(model, method = "pdp")
+        incProgress(0.6)
         calculate_plots()
       },
       error = errorAlertTrain
+      )
     )
   )
 })
+
 
 # observe choosen learner in ui and change meta object
 observeEvent(input$selected_learner, {
