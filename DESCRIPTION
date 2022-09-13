@@ -35,6 +35,7 @@ Imports:
 	ranger,
 	e1071,
 	stats,
+	patchwork,
 	bslib
 LazyData: true
 RoxygenNote: 7.1.1
