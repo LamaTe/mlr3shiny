@@ -1,4 +1,4 @@
-# reactive values for benchmarking'
+# reactive values for benchmarking
 Bench <- reactiveValues(Bench_Rslt = NULL, Res_Strat = NULL, Current_Learners = NULL, Current_Design = NULL, Best = NULL,
                         Overview = NULL)
 
