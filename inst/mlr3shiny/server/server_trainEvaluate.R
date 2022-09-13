@@ -219,10 +219,11 @@ getScoreUi <- function(Wfstate){
         column(6,
                selectizeInput(inputId = "TrainFit_select_measure", label = NULL,
                               choices = get_msrs(currenttask$task, Wf$Current_Learner, avail_msrs, msr_translations),
-                              options = list(
-                                placeholder = 'Nothing selected',
-                                onInitialize = I('function() { this.setValue(""); }')
-                              ),
+                              # options = list(
+                              #   placeholder = 'Nothing selected',
+                              #   onInitialize = I('function() { this.setValue(""); }')
+                              # ),
+                              selected = get_msrs(currenttask$task, Wf$Current_Learner, avail_msrs, msr_translations)[1],
                               multiple = TRUE)
         ),
         column(6,
@@ -237,7 +238,7 @@ getScoreUi <- function(Wfstate){
 getPredTable <- function(currentpred) {
   if (!is.null(currentpred)) {
     tabl <- DT::datatable(as.data.table(currentpred),
-                          options = list(scrollX = TRUE,searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
+                          options = list(scrollX = TRUE, searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
     return(tabl)
   }
 }
