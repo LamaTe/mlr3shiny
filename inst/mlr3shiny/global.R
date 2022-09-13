@@ -198,9 +198,10 @@ get_msrs <- function(current_task, current_learner, available_measures, measure_
   }
   # check for classif as regression has no subtypes (properties)
   else if (current_task$task_type == 'classif' & current_task$properties == 'twoclass') {
-    keys <- available_measures[which(available_measures$task_type == current_task$task_type &
-                                       available_measures$predict_type == current_learner$predict_type)][['key']]
-  }
+    keys <- available_measures[which(available_measures$task_type == 'classif' &
+                                       available_measures$predict_type == 'response' |
+                                       available_measures$predict_type == 'prob')][['key']]
+      }
   else  {
     keys <- intersect(available_measures[which(available_measures$task_type == current_task$task_type &
                                                  available_measures$predict_type == current_learner$predict_type)][['key']],
