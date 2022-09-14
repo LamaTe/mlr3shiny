@@ -329,7 +329,6 @@ get_task_code <- function(task) {
 }
 
 get_learner_code <- function(learner) {
-print(learner$param_set)
   # creating intial graph
   learner_code <- "# create initial graph <br>"
   learner_code <- paste0(learner_code, "graph <- Graph$new() <br>")

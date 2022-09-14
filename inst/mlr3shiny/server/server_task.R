@@ -136,9 +136,10 @@ output$Task_overview <- renderPrint({
 # Task processing
 
 observeEvent(input$Task_feat_deactivate, {
-    updatedfeat <- setdiff(currenttask$task$feature_names, input$Task_feature)
-    currenttask$task$select(cols = updatedfeat)
-
+    #updatedfeat <- setdiff(currenttask$task$feature_names, input$Task_feature)
+    #currenttask$task$select(cols = updatedfeat)
+    currenttask$task$select(cols = input$Task_feature)
+  
     ## here we need to update currenttask$features, so that Shiny recognizes that the R6- task - object has changed
     currenttask$featTypes <- currenttask$task$feature_types
     currenttask$featNames <- currenttask$task$feature_names
@@ -166,16 +167,22 @@ printTaskProcessingUI <- function(){
                column(4, actionButton(inputId = "Task_change_pos_class", label = "Change", style = "float: right;")))
     },
     fluidRow(
-      column(4, h5("Drop Features: ")),
-      column(4, selectizeInput(inputId = "Task_feature", label = NULL,
-                            choices = c(currenttask$featNames),
-                            options = list(
-                              placeholder = 'Nothing selected',
-                              onInitialize = I('function() { this.setValue(""); }')
-                            ),
-                            multiple = TRUE)
+      column(4, h5("Select Features: ")),
+      column(4,  pickerInput("Task_feature",
+                             choices = c(currenttask$featNames),
+                             multiple = TRUE,
+                             selected = c(currenttask$featNames),
+                             options = pickerOptions(
+                               #  list(
+                               #   placeholder = 'Nothing selected',
+                               #   onInitialize = I('function() { this.setValue(""); }')
+                               # )
+                               list(`actions-box` = TRUE)
+                               )
+                             )
              ),
-      column(4, actionButton(inputId = "Task_feat_deactivate", label = "Drop", style = "float: right;"))
+      #now select instead of dtop / deactivate
+      column(4, actionButton(inputId = "Task_feat_deactivate", label = "Select", style = "float: right;"))
     )
   )
 }
