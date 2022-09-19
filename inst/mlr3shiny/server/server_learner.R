@@ -518,24 +518,39 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    # # To-Do: get a prettier solution
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
+      invalidparams <- NULL
       for (i in learnerobject$Params) {
          currentinput <- input[[paste0(learnername, "Param", i$id)]]
-         # validate input value
-         if (!is.na(currentinput) && !is.null(currentinput)) {
+         # validate input value with 2 overall if statements 
+         # on Windows and Linux Shiny sends NA (empty) inputs differently
+         # Windows translates to 0 whereas Linux keeps as NA
+         # hence we check if the input is NA separately
+         if (is.null(currentinput) || is.na(currentinput)) {
+           invalidparams <- c(invalidparams, paste0(learnername, "Param", i$id))
+         }
+         
+         if (is.integer(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
                  currentinput > learnerobject$Learner$param_set$params[[i$id]]$upper) ||
                 (!is.na(learnerobject$Learner$param_set$params[[i$id]]$lower) &&
                 currentinput < learnerobject$Learner$param_set$params[[i$id]]$lower) ||
                 (i$id == "mtry" && currentinput > length(currenttask$task$feature_names))) {
-                  shinyalert(title = "Invalid Parameter Input",
-                             text = "It seems that you tried to set a parameter that is not within its parameter range. Please set a valid value.",
-                             animation = FALSE, closeOnClickOutside = TRUE)
+                  invalidparams <- c(invalidparams, paste0(learnername, "Param", i$id))
             }
             else {
                paramlist[[i$id]] <- currentinput
-               }
+            }
          }
       }
+   
+      if(!is.null(invalidparams)){
+        shinyalert(title = "Empty or Invalid Parameter Input",
+                text = paste("It seems that you tried to set parameter(s)",
+                             invalidparams,
+                             "that are left empty or not within their parameter range. The default value for the parameter(s) is used instead."),
+                animation = FALSE, closeOnClickOutside = TRUE)
+      }
+        
       #TODO: need to find better solution to add factor params to paramlist
       # a solution could be to distinguish between a display name and the internal one
       # so the ChangeParams-Routine could be used
