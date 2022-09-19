@@ -15,6 +15,7 @@ library(purrr)
 library(iml)
 library(stringr)
 library(bslib)
+library(mlr3tuningspaces)
 
 requireNamespace("mlr3measures")
 
