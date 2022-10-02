@@ -36,7 +36,8 @@ Imports:
 	e1071,
 	stats,
 	patchwork,
-	bslib
+	bslib,
+	haven
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
