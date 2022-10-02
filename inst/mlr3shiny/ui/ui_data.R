@@ -13,7 +13,7 @@ tabpanel_Data <- fluidPage(
       hr(style = "border-color: #3e3f3a;"),
       h5("Import training data", style = "font-weight: bold;"),
       selectInput(
-        inputId = "Data_train_type", label = h5("Type"), choices = c("csv", "txt", "xlsx"),
+        inputId = "Data_train_type", label = h5("Type"), choices = c("csv", "txt", "xlsx","spss","sas","stata"),
         selected = "csv"
       ),
       # To be expanded, if more file formats are accepted
@@ -42,6 +42,27 @@ tabpanel_Data <- fluidPage(
         ),
         checkboxInput("Data_train_header_xlsx", "Header", TRUE),
         numericInput(inputId = "Data_train_sheet", label = h5("Sheet"), value = 1)
+      ),
+      conditionalPanel(
+        condition = "input.Data_train_type == 'spss'",
+        fileInput(
+          inputId = "Data_train_spss", label = h5("Select a File"),
+          accept = c(".sav", ".por")
+        )
+      ),
+      conditionalPanel(
+        condition = "input.Data_train_type == 'sas'",
+        fileInput(
+          inputId = "Data_train_sas", label = h5("Select a File"),
+          accept = c(".sas7bdat")
+        )
+      ),
+      conditionalPanel(
+        condition = "input.Data_train_type == 'stata'",
+        fileInput(
+          inputId = "Data_train_stata", label = h5("Select a File"),
+          accept = c(".dta")
+        )
       )
     ),
     mainPanel(
