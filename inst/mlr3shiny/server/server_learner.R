@@ -321,72 +321,23 @@ getAvailableParams <- function(algorithm, learnerobject) {
    # Implicitly assigns available hyperparameter to learner$Params for later reference when setting hyperparams
    # Output: list of parameters with id, lower and upper levels, defaults
    params <- list()
-   for (i in 1:length(learnerparams[[algorithm]])) {
-      # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
-      # this is required because the graph learner stores all parameters in this format
-      # example: "classif.rpart.maxdepth"
-      params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]]
+   if (grepl("log_reg", learnerobject$Learner$id)) {
+     params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
    }
-   if (grepl("threshold", learnerobject$Learner$id)) {
-      params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
+   else{
+     for (i in 1:length(learnerparams[[algorithm]])) {
+        # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
+        # this is required because the graph learner stores all parameters in this format
+        # example: "classif.rpart.maxdepth"
+        params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]]
+     }
+     if (grepl("threshold", learnerobject$Learner$id)) {
+        params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
+     }
    }
    learnerobject$Params <- params
    return(params)
 }
-
-# defining the parameter setting UI with dynamic usage of the mlr3tuningspaces package
-makeNewParamUI <- function(learnerobject, learnername) {
-   paramList <- lts(paste0(getLrnModel(learnerobject$Learner$id), ".default"))
-
-   # iterating over possible learner
-   parameterui <- tagList(
-      for (name in names(paramList$values)) {
-         print(name)
-         if (class(paramList$values[[name]])[1] == "RangeTuneToken") {
-            print("numerisch")
-            # addNumericParam(
-            #    id = name,
-            #    lower = paramList$values[[name]]$content$lower,
-            #    upper = paramList$values[[name]]$content$upper,
-            #    learnername = learnername
-            # )
-            fluidRow(
-               column(
-                  3,
-                  h5(id)
-               ),
-               column(
-                  3,
-                  h5(paste("Lower:", paramList$values[[name]]$content$lower, sep = " "))
-               ),
-               column(
-                  3,
-                  h5(paste("Upper:", paramList$values[[name]]$content$upper, sep = " "))
-               ),
-               column(
-                  3,
-                  numericInput(
-                     inputId = paste0(learnername, "Param", name), label = NULL,
-                     value = 0, min = paramList$values[[name]]$content$lower, max = paramList$values[[name]]$content$upper, step = 1
-                  )
-               )
-            )
-            # print(paramList$values[[name]]$content$lower)
-            # print(paramList$values[[name]]$content$upper)
-            # print(paramList$values[[name]]$content$logscale)
-         } else if (class(paramList$values[[name]])[1] == "ObjectTuneToken") {
-            addFactorParam(
-               id = name,
-               levels = paramList$values[[name]]$content$param$levels,
-               learnername = learnername
-            )
-            # print(paramList$values[[name]]$content$param$levels)
-         }
-      }
-   )
-   return(parameterui)
-}
-
 
 # define the parameter settings UI for each learner depending on the selected algorithm
 makeParamUi <- function(learnerobject, learnername) {
@@ -525,6 +476,15 @@ makeParamUi <- function(learnerobject, learnername) {
          )
       }
    }
+     else if (grepl("log_reg", learnerobject$Learner$id, fixed = TRUE)) {
+        params <- getAvailableParams(algorithm = "log_reg", learnerobject = learnerobject)
+        if (grepl("threshold", learnerobject$Learner$id)) {
+          parameterui <- tagList(
+            addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
+            actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
+          )
+        }
+   }
    return(parameterui)
 }
 
@@ -576,9 +536,8 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
             column(
                12,
                h5("Learner Parameters", style = "font-weight: bold;"),
-               # makeParamUi(learnerobject = learnerobject, learnername = learnername),
-               makeNewParamUI(learnerobject = learnerobject, learnername = learnername)
-            ),
+               makeParamUi(learnerobject = learnerobject, learnername = learnername),
+               ),
          ),
          change_predict_type
       )
@@ -668,7 +627,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
            invalidparams <- c(invalidparams, i$id)
          }
          
-         if (is.integer(currentinput)) {
+         if (!is.null(currentinput) & !is.na(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
                  currentinput > learnerobject$Learner$param_set$params[[i$id]]$upper) ||
                 (!is.na(learnerobject$Learner$param_set$params[[i$id]]$lower) &&
