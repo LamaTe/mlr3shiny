@@ -526,15 +526,18 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
          # Windows translates to 0 whereas Linux keeps as NA
          # hence we check if the input is NA separately
          if (is.null(currentinput) || is.na(currentinput)) {
-           invalidparams <- c(invalidparams, paste0(learnername, "Param", i$id))
+           invalidparams <- c(invalidparams, i$id)
          }
          
          if (is.integer(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
                  currentinput > learnerobject$Learner$param_set$params[[i$id]]$upper) ||
                 (!is.na(learnerobject$Learner$param_set$params[[i$id]]$lower) &&
-                currentinput < learnerobject$Learner$param_set$params[[i$id]]$lower) ||
-                (i$id == "mtry" && currentinput > length(currenttask$task$feature_names))) {
+                 currentinput < learnerobject$Learner$param_set$params[[i$id]]$lower) ||
+                (i$id == "classif.ranger.mtry" && currentinput > length(currenttask$task$feature_names)) ||
+                (i$id == "threshold.thresholds" && currentinput > 1) ||
+                (i$id == "threshold.thresholds" && currentinput < 0) 
+            ) {
                   invalidparams <- c(invalidparams, paste0(learnername, "Param", i$id))
             }
             else {
@@ -542,12 +545,11 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
             }
          }
       }
-   
       if(!is.null(invalidparams)){
         shinyalert(title = "Empty or Invalid Parameter Input",
-                text = paste("It seems that you tried to set parameter(s)",
-                             invalidparams,
-                             "that are left empty or not within their parameter range. The default value for the parameter(s) is used instead."),
+                text = paste("It seems that you tried to set parameter(s): ",
+                             paste(unlist(invalidparams), collapse = ', '),
+                             " that are left empty or not within their parameter range. The default value for the parameter(s) is used instead."),
                 animation = FALSE, closeOnClickOutside = TRUE)
       }
         
