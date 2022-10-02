@@ -21,6 +21,34 @@ observe({
                                      which(as.character(sapply(traindf, class)) == "character"),
                                      as.factor)
         }
+  } else if (input$Data_train_type == "spss") {
+    filepath <-  input$Data_train_spss$datapath
+    if (!is.null(filepath) && (str_sub(filepath, -4, -1) == ".sav" | str_sub(filepath, -4, -1) == ".por") ) {
+      traintibble <- read_spss(file = filepath)
+      traindf <- as.data.frame(traintibble)
+      traindf <- as_factor(traindf)
+      data$traindata <- modify_at(traindf,
+                                  which(as.character(sapply(traindf, class)) == "character"),
+                                  as.factor)
+    }
+  } else if (input$Data_train_type == "sas") {
+    filepath <-  input$Data_train_sas$datapath
+    if (!is.null(filepath) && (str_sub(filepath, -9, -1) == ".sas7bdat") ) {
+      traintibble <- read_sas(data_file = filepath)
+      traindf <- as.data.frame(traintibble)
+      data$traindata <- modify_at(traindf,
+                                  which(as.character(sapply(traindf, class)) == "character"),
+                                  as.factor)
+    }
+  } else if (input$Data_train_type == "stata") {
+    filepath <-  input$Data_train_stata$datapath
+    if (!is.null(filepath) && (str_sub(filepath, -4, -1) == ".dta") ) {
+      traintibble <- read_stata(file = filepath)
+      traindf <- as.data.frame(traintibble)
+      data$traindata <- modify_at(traindf,
+                                  which(as.character(sapply(traindf, class)) == "character"),
+                                  as.factor)
+    }
   }
 })
 
