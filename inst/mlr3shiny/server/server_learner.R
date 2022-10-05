@@ -546,28 +546,45 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 }
 
 
-# create GraphLearner object
-# for twoclass the threshold-po is added
-# if xgboost is selected the factor variables will be converted into numerals
-# furthermore ordered variables will also be converted to integers
+# # create GraphLearner object
+# # for twoclass the threshold-po is added
+# # if xgboost is selected the factor variables will be converted into numerals
+# # furthermore ordered variables will also be converted to integers
+# createGraphLearner_old_alex <- function(selectedlearner) {
+#    graph <- Graph$new()
+#    if (!isTRUE(currenttask$task$properties == "twoclass")) {
+#       learner <- po("learner", lrn(input[[selectedlearner]]))
+#       graph$add_pipeop(learner)
+#    } else {
+#       learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob"))
+#       graph$add_pipeop(learner)
+#       graph <- graph %>>% po("threshold")
+#    }
+#    if (any(grepl("factor", unique(currenttask$task$feature_types$type))) && !any(grepl("factor", lrn(input[[selectedlearner]])$feature_types))) {
+#       graph <- po("encode", method = "treatment", affect_columns = selector_type("factor")) %>>% graph
+#    }
+#    if (any(grepl("ordered", unique(currenttask$task$feature_types$type))) && !any(grepl("ordered", lrn(input[[selectedlearner]])$feature_types))) {
+#       graph <- po("colapply", applicator = as.integer, affect_columns = selector_type("ordered")) %>>% graph
+#    }
+#    return(as_learner(graph))
+# }
+
+
 createGraphLearner <- function(selectedlearner) {
-   graph <- Graph$new()
-   if (!isTRUE(currenttask$task$properties == "twoclass")) {
-      learner <- po("learner", lrn(input[[selectedlearner]]))
-      graph$add_pipeop(learner)
-   } else {
-      learner <- po("learner", lrn(input[[selectedlearner]], predict_type = "prob"))
-      graph$add_pipeop(learner)
-      graph <- graph %>>% po("threshold")
-   }
-   if (any(grepl("factor", unique(currenttask$task$feature_types$type))) && !any(grepl("factor", lrn(input[[selectedlearner]])$feature_types))) {
-      graph <- po("encode", method = "treatment", affect_columns = selector_type("factor")) %>>% graph
-   }
-   if (any(grepl("ordered", unique(currenttask$task$feature_types$type))) && !any(grepl("ordered", lrn(input[[selectedlearner]])$feature_types))) {
-      graph <- po("colapply", applicator = as.integer, affect_columns = selector_type("ordered")) %>>% graph
-   }
-   return(as_learner(graph))
+  if (!isTRUE(currenttask$task$properties == "twoclass")) {
+    learner <- lrn(input[[selectedlearner]])
+  } else { # ...otherwise predict_type = "prob" is set and a threshold po added below
+    learner <- lrn(input[[selectedlearner]], predict_type = "prob")
+  }
+  if(input[["Task_robustify"]]){
+    graph <- pipeline_robustify(currenttask$task, learner) %>>% learner
+  } else graph <- as_graph(po("learner", learner))
+  plot(graph)  
+  if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")
+  
+  return(as_learner(graph))
 }
+
 
 # add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
