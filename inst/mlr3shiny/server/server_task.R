@@ -151,6 +151,19 @@ observeEvent(input$Task_change_pos_class, {
   currenttask$positive <- currenttask$task$positive
 })
 
+observeEvent(input$Task_robustify, {
+  if(!input[["Task_robustify"]]){
+    shinyalert(title = "Robustify data preprocessing disabled",
+               text = "Note that this might lead to an error 
+                       when training a learner if the chosen
+                       learner can not deal with all variable types 
+                       in the original data.",
+               animation = FALSE, closeOnClickOutside = TRUE)
+  }
+})
+
+
+
 printTaskProcessingUI <- function(){
   tagList(
     h5("Task Processing", style = "font-weight: bold;"),
@@ -183,8 +196,14 @@ printTaskProcessingUI <- function(){
              ),
       #now select instead of dtop / deactivate
       column(4, actionButton(inputId = "Task_feat_deactivate", label = "Select", style = "float: right;"))
+    ),
+    fluidRow(
+      column(4, h5("Robustify: ")),
+      column(8, checkboxInput(inputId = "Task_robustify", label = "apply mlr3 robustify preprocessing to data", value = TRUE))
     )
+    
   )
+
 }
 
 
