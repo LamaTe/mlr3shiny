@@ -1,5 +1,9 @@
 # reactive values for the chosen learner, the features selected and the iml objects used for explaining the model
-eval_meta <- reactiveValues(current_learner = NULL, selected_features = NULL, feature_effect = NULL, feature_importance = NULL, feature_importance_compare = NULL)
+eval_meta <- reactiveValues(current_learner = NULL, 
+                            selected_features = NULL, 
+                            feature_effect = NULL, 
+                            feature_importance = NULL, 
+                            feature_importance_compare = NULL)
 
 # available losses for multiclass/twoclass classification and regression tasks
 classif_losses <- c("ce", "f1")
@@ -31,16 +35,28 @@ output$eval_learner_plot_tabs <- renderUI({
 })
 
 # observe "start evaluation" button and start iml workflow
+
+#NEEDS TO BE REPLACED WITH DALEX EXPLAINER
 observeEvent(input$evaluate_start, {
   withProgress(message = "Computing benchmark", style = "notification",
       withCallingHandlers(
       tryCatch({
-        model <- Predictor$new(eval_meta$current_learner, data = currenttask$task$data(), y = currenttask$task$target_names)
+        model <- explain(eval_meta$current_learner, 
+                               data = currenttask$task$data(), 
+                               y = currenttask$task$target_names)
         incProgress(0.2)
+        
+        
         # saving iml calculations in meta object
-        eval_meta$feature_importance <- FeatureImp$new(model, loss = input$loss_picker, compare = input$compare_picker)
+        #NEEDS TO BE REPLACED BY DALEX MODEL_PARTS
+        eval_meta$feature_importance <- FeatureImp$new(model, 
+                                                       loss = input$loss_picker, 
+                                                       compare = input$compare_picker)
+        
         incProgress(0.4)
-        eval_meta$feature_effect <- FeatureEffects$new(model, method = "pdp")
+        #NEEDS TO BE REPLACED BY MODEL_PROFILE
+        eval_meta$feature_effect <- FeatureEffects$new(model, 
+                                                       method = "pdp")
         incProgress(0.6)
         calculate_plots()
       },
@@ -49,7 +65,6 @@ observeEvent(input$evaluate_start, {
     )
   )
 })
-
 
 # observe choosen learner in ui and change meta object
 observeEvent(input$selected_learner, {
@@ -190,6 +205,7 @@ get_learner_selection <- function(list_of_learners) {
 }
 
 # printing the pdp and vi plot to output
+#NEEDS TO BE RENAMED
 calculate_plots <- function() {
   output$pdp_plot <- renderPlot({
     plot(eval_meta$feature_effect, features = eval_meta$selected_features)
