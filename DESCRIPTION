@@ -37,7 +37,9 @@ Imports:
 	stats,
 	patchwork,
 	bslib,
-	haven
+	haven,
+	xgboost,
+	igraph
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
