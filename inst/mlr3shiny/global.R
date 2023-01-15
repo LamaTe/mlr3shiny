@@ -16,6 +16,8 @@ library(iml)
 library(stringr)
 library(bslib)
 library(haven)
+library(igraph)
+library(xgboost)
 
 requireNamespace("mlr3measures")
 
