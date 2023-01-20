@@ -21,3 +21,6 @@ Nice-to-haves:
 -accessability update/user-centric-design
 
 
+Anscheinend fehlerhaft:
+#library(shiny)
+#shinyAppDir("C:/Users/henni/OneDrive/Dokumente/mlr3shiny")
