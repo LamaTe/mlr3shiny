@@ -25,4 +25,3 @@ launchMlr3Shiny <- function(test = FALSE) {
   }
 }
 
-shinyAppDir("C:/Users/henni/OneDrive/Dokumente/mlr3shiny/inst/mlr3shiny")

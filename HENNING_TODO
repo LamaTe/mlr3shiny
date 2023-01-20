@@ -9,5 +9,15 @@ TODO:
   Testing
   Updating Documentation/Help Section (Global.R)
   
-2.
+2. 
   
+
+Befunde:
+
+IML "Predictor" == DALEX "Explainer"
+
+Nice-to-haves:
+-Better documentation
+-accessability update/user-centric-design
+
+

@@ -49,14 +49,14 @@ observeEvent(input$evaluate_start, {
         
         # saving iml calculations in meta object
         #NEEDS TO BE REPLACED BY DALEX MODEL_PARTS
-        eval_meta$feature_importance <- FeatureImp$new(model, 
+        eval_meta$feature_importance <- model_parts(model, 
                                                        loss = input$loss_picker, 
                                                        compare = input$compare_picker)
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
-        eval_meta$feature_effect <- FeatureEffects$new(model, 
-                                                       method = "pdp")
+        eval_meta$feature_effect <- model_profile(model, 
+                                                       method = input$method_picker)
         incProgress(0.6)
         calculate_plots()
       },
@@ -91,7 +91,7 @@ get_compare_method_list <- function() {
         column(
           12,
           pickerInput("compare_picker",
-            choices = c("ratio", "difference")
+            choices = c("ratio", "raw")
           )
         )
       )
@@ -155,6 +155,15 @@ get_feature_selection <- function() {
           options = pickerOptions(
             maxOptions = 6
           )
+        )
+      )
+    ),
+    fluidRow(
+      column(
+        12,
+        pickerInput("method_picker",
+                    choices = c("partial", "conditional", "accumulated"),
+                   
         )
       )
     ),
@@ -266,3 +275,4 @@ observe({
     enable("evaluate_start")
   }
 })
+
