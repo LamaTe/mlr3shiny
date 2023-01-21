@@ -24,3 +24,29 @@ Nice-to-haves:
 Anscheinend fehlerhaft:
 #library(shiny)
 #shinyAppDir("C:/Users/henni/OneDrive/Dokumente/mlr3shiny")
+
+Protokoll 21.01.2023:
+Problemdiagnose: DALEX kennt die Loss-Functions des IML Paketes nicht
+IML: Nutzt die implementierten Loss-Functions des METRICS Paket,
+DALEX hat einen Standardwert und akzeptiert Custom Functions im Schema
+(observed, predicted)
+
+
+classification:
+ce                      Classification Error
+f1                      F1 Score
+
+  logLoss                 Mean Log Loss
+  mae                     Mean Absolute Error
+  mape                    Mean Absolute Percent Error
+  mapk                    Mean Average Precision at k
+  mse                     Mean Squared Error
+  msle                    Mean Squared Log Error
+  percent_bias            Percent Bias
+  rae                     Relative Absolute Error
+  rmse                    Root Mean Squared Error
+  rmsle                   Root Mean Squared Log Error
+  rrse                    Root Relative Squared Error
+  rse                     Relative Squared Error
+  smape                   Symmetric Mean Absolute Percentage Error
+
