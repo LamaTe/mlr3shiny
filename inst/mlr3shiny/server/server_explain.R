@@ -51,7 +51,7 @@ observeEvent(input$evaluate_start, {
         #NEEDS TO BE REPLACED BY DALEX MODEL_PARTS
         #TEMPORARY REPLACE input$loss_picker with ce
         #ToDO: Implement working selector mechanism
-        eval_meta$feature_importance <- model_parts(model, loss_function = ce, type = input$compare_picker)
+        eval_meta$feature_importance <- model_parts(model, loss_function = match.fun(input$loss_picker), type = input$compare_picker)
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
