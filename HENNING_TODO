@@ -31,7 +31,6 @@ IML: Nutzt die implementierten Loss-Functions des METRICS Paket,
 DALEX hat einen Standardwert und akzeptiert Custom Functions im Schema
 (observed, predicted)
 
-
 classification:
 ce                      Classification Error
 f1                      F1 Score
@@ -50,3 +49,6 @@ f1                      F1 Score
   rse                     Relative Squared Error
   smape                   Symmetric Mean Absolute Percentage Error
 
+Protokoll 22.01.2023
+mlr3shiny kommt nicht mit dem Paket klar, da der Loss§Input den Input mit
+Anführungszeichen übergibt (zB "ce" statt ce). Dadurch kommt ein Error
