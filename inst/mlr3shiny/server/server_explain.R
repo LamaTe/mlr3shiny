@@ -55,7 +55,7 @@ observeEvent(input$evaluate_start, {
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
-        eval_meta$feature_effect <- model_profile(model, 
+        eval_meta$feature_effect <- model_profile(model, variables = eval_meta$selected_features,
                                                        type = input$method_picker)
         incProgress(0.6)
         calculate_plots()
@@ -217,7 +217,7 @@ get_learner_selection <- function(list_of_learners) {
 #NEEDS TO BE RENAMED
 calculate_plots <- function() {
   output$pdp_plot <- renderPlot({
-    plot(eval_meta$feature_effect, features = eval_meta$selected_features)
+    plot(eval_meta$feature_effect, features = eval_meta$selected_features, geom = "aggregates")
   })
   output$vi_plot <- renderPlot({
     plot(eval_meta$feature_importance)
