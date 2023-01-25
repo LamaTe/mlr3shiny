@@ -49,16 +49,16 @@ observeEvent(input$evaluate_start, {
         
         # saving iml calculations in meta object
         #NEEDS TO BE REPLACED BY DALEX MODEL_PARTS
-        #TEMPORARY REPLACE input$loss_picker with ce    match.fun(input$loss_picker) input$compare_picker
+        #TEMPORARY REPLACE input$loss_picker with ce     
         #ToDO: Implement working selector mechanism
-        eval_meta$feature_importance <- model_parts(model, loss_function = ce, N = NULL, type = "variable_importance")
+        eval_meta$feature_importance <- model_parts(model, loss_function = match.fun(input$loss_picker), type = input$compare_picker)
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
         eval_meta$feature_effect <- model_profile(model, variables = eval_meta$selected_features,
                                                        type = input$method_picker)
         incProgress(0.6)
-        calculate_plots(feature_effect, feature_importance)
+        calculate_plots(eval_meta$feature_effect)
       },
       error = errorAlertTrain
       )
@@ -215,12 +215,12 @@ get_learner_selection <- function(list_of_learners) {
 
 # printing the pdp and vi plot to output
 #NEEDS TO BE RENAMED
-calculate_plots <- function(x, y) {
+calculate_plots <- function(x) {
   output$pdp_plot <- renderPlot({
     plot(x, geom = "aggregates")
   })
   output$vi_plot <- renderPlot({
-    plot(y)
+    plot(eval_meta$feature_importance)
   })
 }
 
