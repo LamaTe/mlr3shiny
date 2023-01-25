@@ -217,7 +217,7 @@ get_learner_selection <- function(list_of_learners) {
 #NEEDS TO BE RENAMED
 calculate_plots <- function() {
   output$pdp_plot <- renderPlot({
-    plot(eval_meta$feature_effect, features = eval_meta$selected_features, geom = "aggregates")
+    plot(eval_meta$feature_effect, geom = "aggregates")
   })
   output$vi_plot <- renderPlot({
     plot(eval_meta$feature_importance)
