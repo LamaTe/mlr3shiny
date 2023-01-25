@@ -49,9 +49,9 @@ observeEvent(input$evaluate_start, {
         
         # saving iml calculations in meta object
         #NEEDS TO BE REPLACED BY DALEX MODEL_PARTS
-        #TEMPORARY REPLACE input$loss_picker with ce
+        #TEMPORARY REPLACE input$loss_picker with ce    match.fun(input$loss_picker) input$compare_picker
         #ToDO: Implement working selector mechanism
-        eval_meta$feature_importance <- model_parts(model, loss_function = match.fun(input$loss_picker), type = input$compare_picker)
+        eval_meta$feature_importance <- model_parts(model, loss_function = ce, N = NULL, type = "variable_importance")
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
