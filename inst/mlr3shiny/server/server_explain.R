@@ -49,8 +49,8 @@ observeEvent(input$evaluate_start, {
         
         # saving iml calculations in meta object
 #Test 26.1: using functions -- loss_function = match.fun(input$loss_picker)
-        loss_func <- ce()
-        eval_meta$feature_importance <- model_parts(model, loss_function = loss_func , type = input$compare_picker)
+       
+        eval_meta$feature_importance <- model_parts(model, type = input$compare_picker)
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
