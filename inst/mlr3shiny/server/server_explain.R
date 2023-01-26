@@ -51,7 +51,7 @@ observeEvent(input$evaluate_start, {
         #Test 26.1: using functions -- loss_function = match.fun(input$loss_picker)
         
        #trying to create a custom loss function
-        predictions <- eval_meta$current_learner$predict()
+        predictions <- eval_meta$current_learner$predict(currenttask$task$data())
         # access the observed values
         observed <- currenttask$task$target_names
         
