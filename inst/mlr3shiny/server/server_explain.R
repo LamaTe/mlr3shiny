@@ -36,14 +36,22 @@ output$eval_learner_plot_tabs <- renderUI({
 
 # observe "start evaluation" button and start iml workflow
 
+
 #NEEDS TO BE REPLACED WITH DALEX EXPLAINER
 observeEvent(input$evaluate_start, {
   withProgress(message = "Computing benchmark", style = "notification",
       withCallingHandlers(
       tryCatch({
+        dalex_target <- currenttask$task$data %>% select(target_names)
+        dalex_predictors <- currenttask$task$data %>% select(-target_names)
+        
+        #model <- explain(eval_meta$current_learner, 
+         #                data = currenttask$task$data(), 
+          #               y = currenttask$task$target_names)
+        
         model <- explain(eval_meta$current_learner, 
-                              # data = currenttask$task$data(), 
-                               y = currenttask$task$target_names)
+                               data = dalex_predictors, 
+                               y = dalex_target)
         incProgress(0.2)
         
         
