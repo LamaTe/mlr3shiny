@@ -42,16 +42,16 @@ observeEvent(input$evaluate_start, {
   withProgress(message = "Computing benchmark", style = "notification",
       withCallingHandlers(
       tryCatch({
-        dalex_temp <- currenttask$task$data()
-        dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
-        
-        #model <- explain_mlr3(eval_meta$current_learner, 
-         #                data = currenttask$task$data(), 
-          #               y = currenttask$task$target_names)
+       # dalex_temp <- currenttask$task$data()
+        #dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
         
         model <- explain_mlr3(eval_meta$current_learner, 
-                              data = dalex_predictors, 
-                             y = currenttask$task$target_names)
+                         data = currenttask$task$data(), 
+                         y = currenttask$task$target_names)
+        
+        #model <- explain_mlr3(eval_meta$current_learner, 
+         #                     data = dalex_predictors, 
+          #                   y = currenttask$task$target_names)
         incProgress(0.2)
         
         
