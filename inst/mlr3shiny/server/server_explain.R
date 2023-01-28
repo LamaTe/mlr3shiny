@@ -42,24 +42,24 @@ observeEvent(input$evaluate_start, {
   withProgress(message = "Computing benchmark", style = "notification",
       withCallingHandlers(
       tryCatch({
-        dalex_temp <- currenttask$task$data()
-        dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
-        
-        #model <- explain(eval_meta$current_learner, 
-         #                data = currenttask$task$data(), 
-          #               y = currenttask$task$target_names)
+        #dalex_temp <- currenttask$task$data()
+        #dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
         
         model <- explain(eval_meta$current_learner, 
-                               data = dalex_predictors, 
-                               y = currenttask$task$target_names)
+                         data = currenttask$task$data(), 
+                         y = currenttask$task$target_names)
+        
+        #model <- explain(eval_meta$current_learner, 
+         #                      data = dalex_predictors, 
+          #                     y = currenttask$task$target_names)
         incProgress(0.2)
         
         
-        # saving iml calculations in meta object
+        # saving iml calculations in meta object loss_function = DALEX::loss_default(model)
         #Test 26.1: using functions -- loss_function = match.fun(input$loss_picker)
         
         #################################
-        eval_meta$feature_importance <- model_parts(model, loss_function = DALEX::loss_default(model), type = input$compare_picker)
+        eval_meta$feature_importance <- model_parts(model, loss_function = match.fun(input$loss_picker), type = input$compare_picker)
       
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
