@@ -50,22 +50,8 @@ observeEvent(input$evaluate_start, {
         # saving iml calculations in meta object
         #Test 26.1: using functions -- loss_function = match.fun(input$loss_picker)
         
-       #trying to create a custom loss function
-        predictions <- eval_meta$current_learner$predict_newdata(currenttask$task$data())
-        # access the observed values
-        observed <- currenttask$task$target_names
-        
-        # access the predicted values
-        predicted <- predictions$data$response
-        
-        custom_loss_function <- function(observed, predicted) {
-          # calculate the number of misclassified observations
-          misclassifications <- sum(observed != predicted)
-          # divide by the total number of observations and return
-          misclassifications / length(observed)
-        }
         #################################
-        eval_meta$feature_importance <- model_parts(model, loss_function = custom_loss_function(observed = observed, predicted = predicted), type = input$compare_picker)
+        eval_meta$feature_importance <- model_parts(model, loss_function = DALEX::loss_default(model), type = input$compare_picker)
         
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
