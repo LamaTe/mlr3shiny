@@ -45,9 +45,11 @@ observeEvent(input$evaluate_start, {
        # dalex_temp <- currenttask$task$data()
         #dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
         
-        model <- explain_mlr3(eval_meta$current_learner, 
-                         data = currenttask$task$data(), 
-                         y = currenttask$task$target_names)
+        model <- explain_mlr3(eval_meta$current_learner
+                              #, 
+                         #data = currenttask$task$data(), 
+                         #y = currenttask$task$target_names
+                         )
         
         #model <- explain_mlr3(eval_meta$current_learner, 
          #                     data = dalex_predictors, 
@@ -59,7 +61,7 @@ observeEvent(input$evaluate_start, {
         #Test 26.1: using functions -- loss_function = match.fun(input$loss_picker)
         
         #################################
-        eval_meta$feature_importance <- model_parts(model, loss_function = match.fun(input$loss_picker), type = input$compare_picker)
+        eval_meta$feature_importance <- model_parts(model, loss_function = DALEX::loss_default(model), type = input$compare_picker)
       
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
