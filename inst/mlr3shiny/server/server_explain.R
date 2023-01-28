@@ -42,7 +42,7 @@ observeEvent(input$evaluate_start, {
       withCallingHandlers(
       tryCatch({
         model <- explain(eval_meta$current_learner, 
-                               data = currenttask$task$data(), 
+                              # data = currenttask$task$data(), 
                                y = currenttask$task$target_names)
         incProgress(0.2)
         
@@ -52,7 +52,7 @@ observeEvent(input$evaluate_start, {
         
         #################################
         eval_meta$feature_importance <- model_parts(model, loss_function = DALEX::loss_default(model), type = input$compare_picker)
-        
+      
         incProgress(0.4)
         #NEEDS TO BE REPLACED BY MODEL_PROFILE
         eval_meta$feature_effect <- model_profile(model, variables = eval_meta$selected_features,
