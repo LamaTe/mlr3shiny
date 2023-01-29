@@ -46,9 +46,9 @@ observeEvent(input$evaluate_start, {
         #dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
         
         model <- explain_mlr3(eval_meta$current_learner
-                              #, 
-                         #data = currenttask$task$data(), 
-                         #y = currenttask$task$target_names
+                              , 
+                         data = currenttask$task$data(), 
+                         y = currenttask$task$target_names
                          )
         
         #model <- explain_mlr3(eval_meta$current_learner, 
