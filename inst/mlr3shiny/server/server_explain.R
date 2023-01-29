@@ -44,11 +44,12 @@ observeEvent(input$evaluate_start, {
       tryCatch({
        # dalex_temp <- currenttask$task$data()
         #dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
+        #29.01 currenttask$task$target_names
         
         model <- explain_mlr3(eval_meta$current_learner
                               , 
                          data = currenttask$task$data(), 
-                         y = currenttask$task$target_names
+                         y = iris$Species
                          )
         
         #model <- explain_mlr3(eval_meta$current_learner, 
