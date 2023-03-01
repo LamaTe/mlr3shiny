@@ -10,7 +10,8 @@ TODO:
   Updating Documentation/Help Section (Global.R)
   
 2. 
-  
+  miller 1956, magical number 7
+  brady störmer alvarez working memory active storage capacity
 
 Befunde:
 
@@ -49,6 +50,228 @@ f1                      F1 Score
   rse                     Relative Squared Error
   smape                   Symmetric Mean Absolute Percentage Error
 
+DALEX:
+loss_cross_entropy
+loss_sum_of_squares
+loss_root_mean_square
+loss_accuracy
+loss_one_minus_auc
+
+
 Protokoll 22.01.2023
 mlr3shiny kommt nicht mit dem Paket klar, da der Loss§Input den Input mit
-Anführungszeichen übergibt (zB "ce" statt ce). Dadurch kommt ein Error
+Anführungszeichen übergibt (zB "ce" statt ce). Dadurch kommt ein Error.
+
+Mit Standarswert kommt man an das Erstellen eines Plots. In einem der Functionen fehlen jedoch Werte
+
+Protokoll 24.01.23
+Das Kalkulieren der Plots funktioniert nun Errorfrei beim IRIS Set. 
+Die Plots sind allerdings leer, Vermutung:
+DALEX  model_profile wird aufgerufen, braucht aber vermutlich die Variablennamen,
+für die er den pdp Plot erstellen soll.
+
+
+Protokoll 25.01.2023
+Heute wurde wieder mit der calculate_plots funktion herumexperimentiert,
+sowie mit der Implementierung von model_parts und model_profile.
+Model_Profile, die Funktion zur Erstellung der pdp/Ale-Plots hat einen
+error gegeben, da er keine atomischen Vektorenakzeptierte. Das umlagern
+von Model_Profile in einen Parameter der calculate_plots Funktion löste
+das Problem.
+Model_Parts Plot wird erstellt, er ist aber leer. Hauptverdächtiger ist die
+Loss-Funktion, welche wahrscheinlich ohne observed/predicted Werte keine richtigen Berechnungen vornehmen kann.
+--> Tiefe Analyse der Loss-Function nötig!!
+
+
+Protokoll 26.01.2023:
+Einfügen der Loss-Funktion bisher nicht erfolgreich. 
+Ich muss schauen, ob die Route custom function schaffbarer ist oder die
+Alternative
+
+Protokoll 28.01.2023:
+Das Problem scheint in der Explain-funkion zu liegen. Es möchte die Daten ohne
+Zielvariable haben und in y die Zielvariable. Nun ist es dazu gekommen, dass
+DALEX die Modell-Objekte gar nicht mehr annimmt mit dem Fehler
+
+Error in UseMethod("explain") : 
+  no applicable method for 'explain' applied to an object of class "c('LearnerClassifRanger', 'LearnerClassif', 'Learner', 'R6')"
+  
+  Dokumentation von Dalex lässt befürchten, dass mlr oder caret implementiert sind,
+  mlr3 jedoch nicht
+Addendum 20:28 https://mlr3book.mlr-org.com/interpretation.html ist vielleicht meine Rettung
+explain_mlr3 funktioniert, nun muss ich mich mit dem Error in model_parts beschäftigen.
+Idee: Model_parts auskommentieren und schauen, wie das Programm mit model_profile interagiert
+
+Protokoll 29.01.2023:
+Problem ist der Learner/ die explain_mlr3 Function:
+1. Als Target Variable nimmt der den String der Überschrift ("Species"), nicht die Spalte
+2. Der Learner ist ein einfacher Classification-Learner, kein Multiclass
+
+Diese Probleme müssen behoben werden, damit DALEX arbeiten kann
+
+Test1: manuelles Setzen der Target Variable und das Ändern auf prob-trainer
+hat das Programm erkennen lassen, dass es ein multiclass-Problem ist
+--> Programm funktioniert einwandfrei damit
+
+Protokoll 31.01.2023:
+Mit dem dplyr paket nehme ich jetzt den Datensatz auseinander und damit kann ich den
+Explainer problemlos mit verschiedenen Datensätzen erstellen. 
+Aktuelle Herausforderung: Die Lossfunktion soll einstellbar sein. die UI wird durch
+get_lossfunction_list() aufgerufen und durch den loss_ui_builder aufgebaut. Hier 
+wird je nach Task die Auswahl definiert. 
+
+DALEX: Die LISTE macht doch Sinn. Input bei Loss_function= muss die DALEX function ohne
+"" oder () sein
+
+Protokoll 1.02.2023:
+
+Server_explain wurde aufgeräumt und ein Design für die finale Predict Seite entworfen.
+Dies beinhaltet eine Umgestaltung der vorhandenen ui-builder funktionen und die Programmierung neuer. Nächstes ToDo: Die weitere Umsetzung des Designs 
+Weitere ToDos:
+Backend Logik für die auto_feat_analysis entwerfen
+Bugfixing für andere Datasets
+
+2.2.: 
+Das Design wurde an die anderen Tabs angepasst. Nun kann ein Learner ausgewählt werden
+und entschieden werden, ob nur die feature analysis, ein pdp/ale/ice plot berechnet werden soll, oder 
+beides.
+Nächste Aufgaben:
+-Einbau der manual/automatic Option bei SFA
+-Backendlogik bei automatic testen -> Auf was für Inputs könnte der Algorithmus basieren?
+-Loading Balken erneuern
+-Bugfixing
+
+5.2
+
+UI Design finalisiert. Einfach Backendlogik für automatic: Die relevantesten 4 Features werden ausgewählt und geplottet. Basis dafür ist eine Analyse der model_parts function. Problem: Wenn es weniger als 4 gibt, wird ein Error kommen, 
+bei 4 features wird das Modell auch "unwichtige" anzeigen.
+
+Weitere Ideen: Features anhand einer Formel ausrechnen (zB. mean loss < 0.4 * baseline)
+
+Weitere Idee: Ein Text soll ausgegeben werden: following Features were choosen...
+oder so Ähnlich
+
+
+
+%OFFENE PUNKTE:
+
+-Paste bei automatic, warum features ausgewählt wurden
+
+OFFENE Bugs/Punkte:
+Endlosschleife oder Error, wenn falsche Loss-Function ausgewählt wurde
+Explainer erkennt Multi-Classification-Task nicht richtig --> IRIS
+Parameter werden zurückgesetzt, wenn zusätzliche Methode ausgewählt wird
+Anpassung der Progress-Bar
+
+
+Not in-scope:
+Implementierung weiterer DALEX-Funktionen, wie Performance oder Diagnostic
+Implementierung des yardstick Pakets für weitere Loss-Functions
+(Als Ersatz der metrics loss-functions)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CODE-GRAVEYARD:
+#Produces an error, because the output of currenttask$task$target_names
+        #is not the target column, but the string of the name of the target column, i.e. "Species"
+        
+        #model <- explain_mlr3(eval_meta$current_learner, 
+         #                     data = dalex_predictors, 
+          #                   y = currenttask$task$target_names)
+
+
+# get relevant loss functions for current task
+get_loss_function_list <- function(task, learner) {
+  if (!is.null(learner)) {
+    if (task$task_type == "classif") {
+      if (task$properties == "twoclass") {
+        ui <- loss_ui_builder(c(twoclass_losses, classif_losses))
+      } else {
+        ui <- loss_ui_builder(classif_losses)
+      }
+    } else if (task$task_type == "regr") {
+      ui <- loss_ui_builder(regr_losses)
+    }
+    return(ui)
+  }
+}
+
+# builder for loss function selection
+loss_ui_builder <- function(choices) {
+  tagList(
+    fluidRow(
+      column(
+        12,
+        h5("Select loss function for Feature Importance: "),
+      )
+    ),
+    fluidRow(
+      column(
+        12,
+        pickerInput("loss_picker",
+          choices = c("loss_cross_entropy" = "loss_cross_entropy",
+                      "loss_sum_of_squares" = "loss_sum_of_squares",
+                      "loss_root_mean_square" = "loss_root_mean_square",
+                      "loss_accuracy" = "loss_accuracy",
+                      "loss_one_minus_auc" = "loss_one_minus_auc")
+        )
+      )
+    )
+  )
+}
+
+# NEW LOSS_FUNCTIONS
+
+loss_result <- reactive({
+  formula <- input$loss_picker
+  
+  if (formula == "loss_cross_entropy") {
+    return(noquote("loss_cross_entropy"))
+  } else if (formula == "loss_sum_of_squares") {
+    return(DALEX::loss_sum_of_squares)
+  } else if (formula == "loss_accuracy") {
+    return(DALEX::loss_accuracy)
+  } else if (formula == "loss_one_minus_auc") {
+    return(DALEX::loss_one_minus_auc)
+  }
+  
+})
+
+
+# available losses for multiclass/twoclass classification and regression tasks
+classif_losses <- c("ce", "f1")
+regr_losses <- c(
+  "mae", "mse", "rmse", "mape",
+  "mdae", "msle", "percent_bias", "rae", "rmsle", "rse", "rrse", "smape"
+)
+twoclass_losses <- c("logLoss")
+
+
+# get relevant loss functions for current task
+get_loss_function_list_new <- function(task, learner) {
+  
+  
+  if (!is.null(learner)) {
+    if (task$task_type == "classif") {
+      if (task$properties == "twoclass") {
+        ui <- loss_ui_builder_new()
+      } else {
+        ui <- loss_ui_builder_new()
+      }
+    } else if (task$task_type == "regr") {
+      ui <- loss_ui_builder_new()
+    }
+    return(ui)
+  }
+}
