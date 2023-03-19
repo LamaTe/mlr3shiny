@@ -22,7 +22,7 @@ library(haven)
 
 requireNamespace("mlr3measures")
 
-userhelp <- list(Data = c(paste("Hallo, 21.01.2023! This app let's you conduct the basic steps of a machine learning workflow using your own data.",
+userhelp <- list(Data = c(paste("This app let's you conduct the basic steps of a machine learning workflow using your own data.",
                                 "You can navigate over the different sections by clicking on each tab. They are chronologically ordered.",
                                 "To get more information on the functionalities and purpose of each section, click on the questionmark in the rop-right corner.",
                                 "Start by importing a dataset.",
@@ -151,11 +151,33 @@ userhelp <- list(Data = c(paste("Hallo, 21.01.2023! This app let's you conduct t
                                    "A new dataset can be imported with the same procedure as before.",
                                    "Afterwards, the trained model can be used to make a prediction which is displayed on the left-hand side.",
                                    "The prediction can be downloaded either as a csv-file or as a rds-file if it is to be included directly in another R session.")),
-                 Explain = c(paste("For further use in different domains, it can be of considerable advantage to understand the internal \"ways of thinking\" of the algorithms used, which lead to the eventual calculation of the results. Following the Explainable AI approach, model agnostic methods are used here via the <a href='https://github.com/christophM/iml'>iml</a> framework to graphically represent the Feature Importance and Partial Dependence (PD)-Plots.
-As a result, even more complex models can be made relatively easy to understand, which can be particularly useful in arguing for the use of machine learning in newer application areas. <p> More information regarding PD-Plots and Variable Importance can be found in <a href=\"https://christophm.github.io/interpretable-ml-book/index.html\">Interpretable Machine Learning</a> which is in close relation to iml itself.</p>",
-                                   sep = " "),
-                             paste("After selecting a learner that has been trained on all data in advance, the loss function can be selected that is to be used in the calculation of the feature importance. Additionally, the compare method can be used to select whether the importance should be displayed as a difference (error.permutation-error.original) or as a ratio (error.permutation/error.original). Finally, the features to be displayed in the PD plot can also be selected.
-                             <p>Further information on the used loss functions can be found in the <a href=\"https://github.com/mfrasco/Metrics\">Metrics Github-Repository</a></p>")
+                 
+                 Explain = c(paste("For further use in different domains, it can be of considerable advantage to understand the internal 
+                 \"ways of thinking\" of the algorithms used, which lead to the eventual calculation of the results. 
+                 Following the Explainable AI approach, model agnostic methods are used here via the 
+                 <a href='https://github.com/ModelOriented/DALEX'>DALEX</a> framework to graphically analyse your model.
+                 Implemented are feature importance, as well as methods for specific feature analysis with PD-Plots and ALE-Plots.
+                 As a result, even more complex models can be made relatively easy to understand, 
+                 which can be particularly useful in arguing for the use of machine learning in newer 
+                 application areas. 
+                 <p> More information regarding responsible machine learning can be found on the
+                 <a href=\"https://dalex.drwhy.ai\">DALEX</a> website, 
+                 which is in close relation to the package itself.</p>",
+                 sep = " "),
+                 paste("After selecting a learner that has been trained on all data in advance, 
+                 the applied methods can be selected via the checkboxes.
+                 <h4>Feature Importance </h4>
+                 For the feature importance, you can select the applied loss-function as well as the compare method.
+                 The compare method can be used to select whether the importance should be displayed as a difference 
+                 or as a ratio. 
+                 After the computation, you will see a plot of the different features and bars indicating their loss.
+                 The higher the loss is, the more influence the feature has on the target variable.
+                 <h4> Specific feature analysis </h4> 
+                  For the feature analysis, you can pick between PD-Plots, ALE-Plots and ICE-Plots. 
+                  You can pick features manually with the manual select option or choose a number of
+                  features to be picked automaticially, if you choose the automatic option.
+                  (Currently, it is only able to display one type of feature (numeric, ordered etc.) at a time).
+                  The displayed plots visualize how the values of selected features influence the final prediction.")
 
                  )
 )

@@ -15,7 +15,6 @@ output$eval_explanation_selection <- renderUI({
 })
 
 output$eval_loss_function_selection <- renderUI({
-  #To-Do: Renaming the function
   loss_ui_builder_new(currenttask$task, input$selected_learner)
 })
 
@@ -43,55 +42,94 @@ output$eval_learner_plot_tabs <- renderUI({
   display_plot_tabs()
 })
 
+##display warning message if model interpretation may fail and how the user can avoid this
+observeEvent(input$explanation_selection, {
+  if(isTRUE(currenttask$task$properties == "multiclass" && eval_meta$current_learner$predict_type == "response")){
+     showNotification("This learner may not work due to the predict_type being set 
+                      to response. Consider changing it to 'prob' in the learner-tab", duration = 15, type = "warning")
+    }
+  
+})
+
 
 # observe "start evaluation" button and start DALEX Workflow
 observeEvent(input$evaluate_start, {
   withProgress(message = "Initialising evaluation", style = "notification",
       withCallingHandlers(
       tryCatch({
-        
-        if (isTRUE(currenttask$task$properties == "twoclass")){
-          #Preparation Learner
-          twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.ranger$learner_model
-          twoclass_learner$train(currenttask$task)
           
+        # this condition starts a seperate preparatory workflow for twoclass modells
+        # this is due to an mlr3 pipeOps syntax restriction
+        if (isTRUE(currenttask$task$properties == "twoclass") ){
+          #Preparation Learner
+          if(grepl("classif.ranger", eval_meta$current_learner$id , fixed = TRUE)){
+            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.ranger$learner_model
+          }
+          else if(grepl("classif.rpart", eval_meta$current_learner$id , fixed = TRUE) ){
+            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.rpart$learner_model
+          }
+          #Error: <TaskClassif:german_credit> has the following unsupported feature types: factor, ordered
+          # SVM and xgboost get their feature types changed to compatible ones --> This does not happen here yet
+          else if(grepl("classif.svm", eval_meta$current_learner$id , fixed = TRUE) ){
+            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.svm$learner_model
+            twoclass_learner = po("encode") %>>% twoclass_learner
+            }
+          #Error: <TaskClassif:german_credit> has the following unsupported feature types: factor, ordered
+          else if(grepl("classif.xgboost", eval_meta$current_learner$id , fixed = TRUE) ){
+            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.xgboost$learner_model
+          }
+          else if(grepl("classif.log_reg", eval_meta$current_learner$id , fixed = TRUE) ){
+            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.log_reg$learner_model
+          }
+         
+          #train the extracted learner again
+          twoclass_learner$train(currenttask$task)
+     
           #Preparation for Explainer | TASK
           dalex_temp <- currenttask$task$data(data_format = "data.table")
-          #print(dalex_temp)
+         
           dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
           dalex_target <- dalex_temp %>% select(currenttask$task$target_names)
-          names(dalex_target)[names(dalex_target) == currenttask$target_names] <- "target"
+          colnames(dalex_target) <- "target"
+        
+          dalex_target$target <- as.character(dalex_target$target)
+          dalex_target$target[dalex_target$target == currenttask$task$positive] <- "1"
+          dalex_target$target[dalex_target$target != "1"] <- "0"
           
-          print(dalex_target)
           incProgress(0.1, paste("Initialising Workflow"))
           
           #creating the DALEX(tra) Explainer object for further computations
           
           model <- explain_mlr3(twoclass_learner, 
                                 data = dalex_predictors, 
-                                y = as.numeric(dalex_target$credit_risk))
+                                y = as.numeric(dalex_target$target),
+                                predict_function_target_column = currenttask$positive,
+                                verbose = FALSE) 
           
           
           incProgress(0.2, paste("Creating Explainer"))
+         
         }
-        #splitting dataset into subsets in preparation for the explain_mlr3 function
-        #This splits the predictor columns and the target column
-        
-        #currenttask is a meta object containing the mlr3-task-object
-        #currentlearner is the learner object with prediction type set to "response"
+      
+        #starting the other workflow for multiclass/ regression models
         else{
         dalex_temp <- currenttask$task$data(data_format = "data.table")
         dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
         dalex_target <- dalex_temp %>% select(currenttask$task$target_names)
          
+        #This does not work unfortunately
+        #if(isTRUE(currenttask$task$properties == "multiclass" && eval_meta$current_learner$predict_type == "response")){
+         # eval_meta$current_learner$predict_type <- "prob"
+        #}
+        
         incProgress(0.1, paste("Initialising Workflow"))
         
-        eval_meta$current_learner$predict_type = "prob"
         #creating the DALEX(tra) Explainer object for further computations
         
         model <- explain_mlr3(eval_meta$current_learner, 
                          data = dalex_predictors, 
-                         y = dalex_target)
+                         y = dalex_target,
+                         verbose = FALSE)
                          
         
         incProgress(0.2, paste("Creating Explainer"))
@@ -129,7 +167,7 @@ observeEvent(input$evaluate_start, {
           #plot_feature_analysis(eval_meta$feature_effect)
           
           
-          #1. Compute VI
+          #1. Compute VI in a time efficient manner
           temp_var_imp <- model %>% model_parts(B=1)
           #2. Get Vector of most important columns from worst to best
           temp_var_imp_vector <- temp_var_imp$variable
@@ -138,8 +176,8 @@ observeEvent(input$evaluate_start, {
           #4. Remove Base_line and __full_model__
           len <- length(temp_var_imp_vector)
           temp_var_imp_vector <- head(tail(temp_var_imp_vector,len-1), len-2)
-          print(temp_var_imp_vector)
           
+          #compute Feature Effect
           eval_meta$feature_effect <- model_profile(
             model, 
             variables <- tail(temp_var_imp_vector, as.numeric(input$automation_slider)),
@@ -245,8 +283,7 @@ loss_ui_builder_new <- function(task, learner) {
         column(
         12,
         pickerInput("loss_picker",
-                   choices = c("Accuracy Loss" = "loss_accuracy",
-                              "One-Minus-AUC" = "loss_one_minus_auc")
+                   choices = c("One-Minus-AUC" = "loss_one_minus_auc")
           )
          )
         )
@@ -281,21 +318,21 @@ loss_ui_builder_new <- function(task, learner) {
     }
   )
   return(ui)
-}}}
+    }
+  }
+  }
 
 #compute slider values
 compute_slider_values <- function(){
   if (!is.null(input$selected_learner)) {
     if("Specific feature analysis" %in% input$explanation_selection){
       if("automatic" %in% input$automation_flag){
-        col_names_vector <- currenttask$task$backend$colnames
-        #removing target variable
-        col_names_vector <- col_names_vector[ !col_names_vector == currenttask$task$target_names]
+        
+        #This function used to be longer... found a better solution
+        #This function is now pretty much redundant
+        col_names_vector <- features_to_use$features
         len <- length(col_names_vector)
-        #removing rowid
-        col_names_vector <- head(col_names_vector, len-1)
-        len <- length(col_names_vector)
-      
+        
         ui <- automation_slider_builder(len)  
   
       }}}
@@ -309,7 +346,11 @@ automation_slider_builder <- function(vector_length){
         fluidRow(
           column(
             12,
-            h5("Choose how many features you want to display:")
+            h5("Choose how many features you want to display:"),
+          ),
+          column(
+            12,
+            h5("The actual amount of features displayed may vary."),
           ),
           column(
             12,
@@ -431,7 +472,6 @@ get_learner_selection <- function(list_of_learners) {
 }
 
 # printing the pdp and vi plot to output
-#NEEDS TO BE RENAMED
 calculate_plots <- function(x) {
   output$pdp_plot <- renderPlot({
     plot(x, geom = "aggregates")
@@ -454,6 +494,7 @@ plot_feature_analysis <- function(x){
   output$feature_analysis_plot <- renderPlot({
     plot(x, geom = "aggregates")
   })
+  #Optional future feature: Explanation for Automatic display
   #if("Specific feature analysis" %in% input$explanation_selection && input$automation_flag == "automatic"){
   #output$auto_response <- renderText({
    # paste("The following features were selected for display: ")
@@ -509,9 +550,9 @@ display_plot_tabs <- function() {
         "Feature-Analysis-Plot",
         wellPanel(
           plotOutput(outputId = "feature_analysis_plot")
-        ),
-        textOutput(outputId = "auto_response"),
-        textOutput(outputId = "auto_response2")
+        )
+        #textOutput(outputId = "auto_response"),
+       # textOutput(outputId = "auto_response2")
         )
     )
     return(ui)
@@ -530,8 +571,8 @@ display_plot_tabs <- function() {
         "Feature-Analysis-Plot",
         wellPanel(
           plotOutput(outputId = "feature_analysis_plot")
-        ),
-        textOutput(outputId = "auto_response")
+        )#,
+       # textOutput(outputId = "auto_response")
       )
     )
     return(ui)
