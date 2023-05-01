@@ -57,37 +57,11 @@ observeEvent(input$evaluate_start, {
   withProgress(message = "Initialising evaluation", style = "notification",
       withCallingHandlers(
       tryCatch({
-          
-        # this condition starts a seperate preparatory workflow for twoclass modells
-        # this is due to an mlr3 pipeOps syntax restriction
+        
         if (isTRUE(currenttask$task$properties == "twoclass") ){
-          #Preparation Learner
-          if(grepl("classif.ranger", eval_meta$current_learner$id , fixed = TRUE)){
-            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.ranger$learner_model
-          }
-          else if(grepl("classif.rpart", eval_meta$current_learner$id , fixed = TRUE) ){
-            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.rpart$learner_model
-          }
-          #Error: <TaskClassif:german_credit> has the following unsupported feature types: factor, ordered
-          # SVM and xgboost get their feature types changed to compatible ones --> This does not happen here yet
-          else if(grepl("classif.svm", eval_meta$current_learner$id , fixed = TRUE) ){
-            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.svm$learner_model
-            twoclass_learner = po("encode") %>>% twoclass_learner
-            }
-          #Error: <TaskClassif:german_credit> has the following unsupported feature types: factor, ordered
-          else if(grepl("classif.xgboost", eval_meta$current_learner$id , fixed = TRUE) ){
-            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.xgboost$learner_model
-          }
-          else if(grepl("classif.log_reg", eval_meta$current_learner$id , fixed = TRUE) ){
-            twoclass_learner <- eval_meta$current_learner$graph_model$pipeops$classif.log_reg$learner_model
-          }
-         
-          #train the extracted learner again
-          twoclass_learner$train(currenttask$task)
-     
+          
           #Preparation for Explainer | TASK
           dalex_temp <- currenttask$task$data(data_format = "data.table")
-         
           dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
           dalex_target <- dalex_temp %>% select(currenttask$task$target_names)
           colnames(dalex_target) <- "target"
@@ -100,11 +74,11 @@ observeEvent(input$evaluate_start, {
           
           #creating the DALEX(tra) Explainer object for further computations
           
-          model <- explain_mlr3(twoclass_learner, 
+          model <- explain_mlr3(eval_meta$current_learner,
                                 data = dalex_predictors, 
                                 y = as.numeric(dalex_target$target),
                                 predict_function_target_column = currenttask$positive,
-                                verbose = FALSE) 
+                                verbose = TRUE) 
           
           
           incProgress(0.2, paste("Creating Explainer"))
