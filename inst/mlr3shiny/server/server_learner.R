@@ -577,7 +577,21 @@ createGraphLearner <- function(selectedlearner) {
     learner <- lrn(input[[selectedlearner]], predict_type = "prob")
   }
   if(input[["Task_robustify"]]){
-    graph <- pipeline_robustify(currenttask$task, learner) %>>% learner
+    impm <- NULL 
+    if(input[["impute_missings"]] == "TRUE") {impm <- TRUE}
+    if(input[["impute_missings"]] == "FALSE") {impm <- FALSE}
+    
+    ftn <- NULL 
+    if(input[["factors_to_numeric"]] == "TRUE") {ftn <- TRUE}
+    if(input[["factors_to_numeric"]] == "FALSE") {ftn <- FALSE}
+     
+     graph <- pipeline_robustify(currenttask$task, learner,
+                                 impute_missings    = impm,
+                                 factors_to_numeric = ftn,
+                                 max_cardinality    = input[["max_cardinality"]],
+                                 ordered_action     = input[["ordered_action"]],
+                                 character_action   = input[["character_action"]],
+                                 POSIXct_action     = input[["POSIXct_action"]]) %>>% learner
   } else graph <- as_graph(po("learner", learner))
   plot(graph)  
   if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")

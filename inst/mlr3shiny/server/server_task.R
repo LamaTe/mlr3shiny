@@ -199,7 +199,27 @@ printTaskProcessingUI <- function(){
     ),
     fluidRow(
       column(4, h5("Robustify: ")),
-      column(8, checkboxInput(inputId = "Task_robustify", label = "apply mlr3 robustify preprocessing to data", value = TRUE))
+      column(8, checkboxInput(inputId = "Task_robustify", label = "apply mlr3 robustify preprocessing to data", value = TRUE),
+                conditionalPanel(condition = "input[[\"Task_robustify\"]] == true",
+                                 selectInput("impute_missings", "impute_missings", list("NULL" = "NULL", "TRUE" = "TRUE", "FALSE" = "FALSE"), selected = "NULL")),
+                conditionalPanel(condition = "input[[\"Task_robustify\"]] == true",
+                                 selectInput("factors_to_numeric", "factors_to_numeric", list("NULL" = "NULL", "TRUE" = "TRUE", "FALSE" = "FALSE"), selected = "NULL")),
+                conditionalPanel(condition = "input[[\"Task_robustify\"]] == true",
+                                 numericInput("max_cardinality", label = "max_cardinality", value = 1000, min = 2)),
+                conditionalPanel(condition = "input[[\"Task_robustify\"]] == true",
+                                 selectInput("ordered_action", "ordered_action", 
+                                             list("factor" = "factor", "factor!" = "factor!", "matrix" = "matrix", "matrix!" = "matrix!",
+                                                  "ignore" = "ignore", "ignore!" = "ignore!"), selected = "factor")),
+                conditionalPanel(condition = "input[[\"Task_robustify\"]] == true",
+                                 selectInput("character_action", "character_action", 
+                                             list("factor" = "factor", "factor!" = "factor!", "matrix" = "matrix", "matrix!" = "matrix!",
+                                                  "ignore" = "ignore", "ignore!" = "ignore!"), selected = "factor")),
+                conditionalPanel(condition = "input[[\"Task_robustify\"]] == true",
+                                 selectInput("POSIXct_action", "POSIXct_action", 
+                                             list("numeric" = "numeric", "numeric!" = "numeric!", "datefeatures" = "datefeatures", "datefeatures!" = "datefeatures!",
+                                                  "ignore" = "ignore", "ignore!" = "ignore!"), selected = "factor"))
+             
+             )
     )
     
   )
