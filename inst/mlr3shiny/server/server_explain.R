@@ -298,45 +298,29 @@ loss_ui_builder_new <- function(task, learner) {
 
 #compute slider values
 compute_slider_values <- function(){
-  if (!is.null(input$selected_learner)) {
-    if("Specific feature analysis" %in% input$explanation_selection){
       if("automatic" %in% input$automation_flag){
         
-        #This function used to be longer... found a better solution
-        #This function is now pretty much redundant
-        col_names_vector <- features_to_use$features
-        len <- length(col_names_vector)
-        
-        ui <- automation_slider_builder(len)  
-  
-      }}}
-
+        ui <- tagList( 
+          fluidRow(
+            column(
+              12,
+              h5("Choose how many features you want to display:"),
+            ),
+            column(
+              12,
+              h5("The actual amount of features displayed may vary."),
+            ),
+            column(
+              12,
+              sliderInput("automation_slider",label = "", step = 1, min = 1, 
+                          max = length(features_to_use$features), value = 1)
+              
+            )
+          )
+        )
+      }
 }
 
-#build the slider for automatic model_profile
-automation_slider_builder <- function(vector_length){
-  
-      ui <- tagList( 
-        fluidRow(
-          column(
-            12,
-            h5("Choose how many features you want to display:"),
-          ),
-          column(
-            12,
-            h5("The actual amount of features displayed may vary."),
-          ),
-          column(
-            12,
-            sliderInput("automation_slider",label = "", step = 1, min = 1, 
-                        max = vector_length, value = 1)
-          
-        )
-       )
-      )
-    
-
-  }
 
 #get the plot information
 get_analysis_plot <- function(){
