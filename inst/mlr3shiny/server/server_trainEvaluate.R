@@ -2,7 +2,8 @@
 Help <- reactiveValues(Tracker = 1)
 Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
-
+## Functions
+#get Learner choices
 getLearnChoicesUI <- function() {
   if (is.null(LearnerMeta$Learner_Avail)) {
     ui <- tagList(
