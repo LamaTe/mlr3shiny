@@ -24,4 +24,3 @@ launchMlr3Shiny <- function(test = FALSE) {
     return(shiny::shinyAppDir(appDir))
   }
 }
-
