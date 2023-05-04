@@ -218,6 +218,34 @@ observe({
                                         which(as.character(sapply(predictdf, class)) == "character"),
                                         as.factor)
     }
+  } else if (input$Predict_data_type == "spss") {
+    filepath <-  input$Predict_data_spss$datapath
+    if (!is.null(filepath) && (str_sub(filepath, -4, -1) == ".sav" | str_sub(filepath, -4, -1) == ".por") ) {
+      predicttibble <- read_spss(file = filepath)
+      predictdf <- as.data.frame(predicttibble)
+      predictdf <- as_factor(predictdf)
+      Pred$New_Data <- modify_at(predictdf,
+                                  which(as.character(sapply(predictdf, class)) == "character"),
+                                  as.factor)
+    }
+  } else if (input$Predict_data_type == "sas") {
+    filepath <-  input$Predict_data_sas$datapath
+    if (!is.null(filepath) && (str_sub(filepath, -9, -1) == ".sas7bdat") ) {
+      predicttibble <- read_sas(data_file = filepath)
+      predictdf <- as.data.frame(predicttibble)
+      Pred$New_Data <- modify_at(predictdf,
+                                  which(as.character(sapply(predictdf, class)) == "character"),
+                                  as.factor)
+    }
+  } else if (input$Predict_data_type == "stata") {
+    filepath <-  input$Predict_data_stata$datapath
+    if (!is.null(filepath) && (str_sub(filepath, -4, -1) == ".dta") ) {
+      predicttibble <- read_stata(file = filepath)
+      predictdf <- as.data.frame(predicttibble)
+      Pred$New_Data <- modify_at(predictdf,
+                                  which(as.character(sapply(predictdf, class)) == "character"),
+                                  as.factor)
+    }
   }
 })
 
