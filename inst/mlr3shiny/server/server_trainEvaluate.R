@@ -2,11 +2,7 @@
 Help <- reactiveValues(Tracker = 1)
 Wf <- reactiveValues(Current_Learner = NULL, Overview = NULL, State = NULL, TrainIds = NULL, TestIds = NULL,
                      Pred_Test = NULL, Pred_Train = NULL, Perf_Test = NULL, Perf_Train = NULL)
-#24.02
-#explain_helper <- reactiveValues(Pred_Vector = NULL)
 
-## Functions
-# get Learner choices
 getLearnChoicesUI <- function() {
   if (is.null(LearnerMeta$Learner_Avail)) {
     ui <- tagList(
@@ -294,12 +290,6 @@ observeEvent(input$TrainFit_predict_data, {
     tryCatch({
       Wf$Pred_Train <- Wf$Current_Learner$predict(task = currenttask$task, row_ids = Wf$TrainIds)
       Wf$Pred_Test <- Wf$Current_Learner$predict(task = currenttask$task, row_ids = Wf$TestIds)
-      #24.02
-      #x <- Wf$Current_Learner$predict(task = currenttask$task)
-      #i <- x$prob
-      #i <- as.data.frame(i)
-      #i <- i$good
-      #explain_helper$Pred_Vector <- as.vector(i)
       },
       error = errorAlertPredict
     ),

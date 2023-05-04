@@ -155,7 +155,6 @@ observeEvent(input$Pred_train_learner, {
     withProgress(message = "Training model on all data", {
       withCallingHandlers(
         tryCatch({
-      
           trained_learner_list[[input$Pred_learner]] <- Pred$Learner$train(currenttask$task)
           Pred$Learner <- trained_learner_list[[input$Pred_learner]]
         }
