@@ -90,11 +90,6 @@ observeEvent(input$evaluate_start, {
         dalex_temp <- currenttask$task$data(data_format = "data.table")
         dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
         dalex_target <- dalex_temp %>% select(currenttask$task$target_names)
-         
-        #This does not work unfortunately
-        #if(isTRUE(currenttask$task$properties == "multiclass" && eval_meta$current_learner$predict_type == "response")){
-         # eval_meta$current_learner$predict_type <- "prob"
-        #}
         
         incProgress(0.1, paste("Initialising Workflow"))
         
@@ -131,15 +126,6 @@ observeEvent(input$evaluate_start, {
         
         if("Specific feature analysis" %in% input$explanation_selection && input$automation_flag == "automatic"){
           incProgress(0.6, paste("Computing plot: ", input$method_picker))
-          #temp_var_imp <- model %>% model_parts(B=1)
-          #temp_var_imp_vector <- temp_var_imp$variable
-          
-          #eval_meta$feature_effect <- model_profile(
-             # model, 
-            #  variables <<- head(tail(temp_var_imp_vector,5),4),
-           #   type = input$method_picker)
-          #plot_feature_analysis(eval_meta$feature_effect)
-          
           
           #1. Compute VI in a time efficient manner
           temp_var_imp <- model %>% model_parts(B=1)
@@ -429,16 +415,6 @@ get_learner_selection <- function(list_of_learners) {
   }
 }
 
-# printing the pdp and vi plot to output
-calculate_plots <- function(x) {
-  output$pdp_plot <- renderPlot({
-    plot(x, geom = "aggregates")
-  })
-  output$vi_plot <- renderPlot({
-    plot(eval_meta$feature_importance)
-  })
-}
-
 #plot function for feature importance
 plot_feature_importance <- function(){
   output$feature_imp_plot <- renderPlot({
@@ -452,17 +428,6 @@ plot_feature_analysis <- function(x){
   output$feature_analysis_plot <- renderPlot({
     plot(x, geom = "aggregates")
   })
-  #Optional future feature: Explanation for Automatic display
-  #if("Specific feature analysis" %in% input$explanation_selection && input$automation_flag == "automatic"){
-  #output$auto_response <- renderText({
-   # paste("The following features were selected for display: ")
-    
-  #})
-  #output$auto_response2 <- renderText({
-   # paste(variables)
-  #}
-  
-  #)
 }
 
 #display option to automate feature analysis or make it manual
@@ -509,8 +474,6 @@ display_plot_tabs <- function() {
         wellPanel(
           plotOutput(outputId = "feature_analysis_plot")
         )
-        #textOutput(outputId = "auto_response"),
-       # textOutput(outputId = "auto_response2")
         )
     )
     return(ui)
@@ -529,8 +492,7 @@ display_plot_tabs <- function() {
         "Feature-Analysis-Plot",
         wellPanel(
           plotOutput(outputId = "feature_analysis_plot")
-        )#,
-       # textOutput(outputId = "auto_response")
+        )
       )
     )
     return(ui)
@@ -550,8 +512,6 @@ reset_evaluation <- function() {
 reset_plots <- function() {
   output$feature_analysis_plot <- NULL
   output$feature_imp_plot <- NULL
-  output$auto_response <- NULL
-  output$auto_response2 <- NULL
 }
 
 observe({
