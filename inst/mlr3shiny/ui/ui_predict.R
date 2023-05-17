@@ -17,7 +17,7 @@ tabpanel_predict <- fluidPage(
              h5("Import a new dataset", style = "font-weight: bold;"),
              hr(style = "border-color: #3e3f3a;"),
              selectInput(
-               inputId = "Predict_data_type", label = h5("Type"),choices = c("csv", "txt", "xlsx"),
+               inputId = "Predict_data_type", label = h5("Type"),choices = c("csv", "txt", "xlsx","spss","sas","stata"),
                selected = "csv"),
              # To be expanded, if more file formats are accepted
              conditionalPanel(
@@ -36,6 +36,27 @@ tabpanel_predict <- fluidPage(
                          accept = c(".xlsx", ".xls")),
                checkboxInput("Predict_data_header_xlsx", "Header", TRUE),
                numericInput(inputId = "Predict_data_sheet", label = h5("Sheet"), value = 1)
+             ),
+             conditionalPanel(
+               condition = "input.Predict_data_type == 'spss'",
+               fileInput(
+                 inputId = "Predict_data_spss", label = h5("Select a File"),
+                 accept = c(".sav", ".por")
+               )
+             ),
+             conditionalPanel(
+               condition = "input.Predict_data_type == 'sas'",
+               fileInput(
+                 inputId = "Predict_data_sas", label = h5("Select a File"),
+                 accept = c(".sas7bdat")
+               )
+             ),
+             conditionalPanel(
+               condition = "input.Predict_data_type == 'stata'",
+               fileInput(
+                 inputId = "Predict_data_stata", label = h5("Select a File"),
+                 accept = c(".dta")
+               )
              ),
              hr(style = "border-color: #3e3f3a;"),
              div(style = "display:inline-block; width:100%; text-align: center;",
