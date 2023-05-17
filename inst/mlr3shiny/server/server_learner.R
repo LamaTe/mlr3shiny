@@ -593,7 +593,7 @@ createGraphLearner <- function(selectedlearner) {
                                  character_action   = input[["character_action"]],
                                  POSIXct_action     = input[["POSIXct_action"]]) %>>% learner
   } else graph <- as_graph(po("learner", learner))
-  plot(graph)  
+  #plot(graph)  
   if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")
   
   return(as_learner(graph))
