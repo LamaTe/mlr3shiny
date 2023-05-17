@@ -572,7 +572,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 
 createGraphLearner <- function(selectedlearner) {
   if (!isTRUE(currenttask$task$properties == "twoclass")) {
-    learner <- lrn(input[[selectedlearner]])
+    learner <- lrn(input[[selectedlearner]]) 
   } else { # ...otherwise predict_type = "prob" is set and a threshold po added below
     learner <- lrn(input[[selectedlearner]], predict_type = "prob")
   }
@@ -603,7 +603,7 @@ createGraphLearner <- function(selectedlearner) {
 # add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
    observeEvent(input[[trigger]], {
-      learnerobject$Learner <- createGraphLearner(selectedlearner)
+       learnerobject$Learner <- createGraphLearner(selectedlearner)
       learnerobject$Learner_Name <- input[[selectedlearner]]
       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
