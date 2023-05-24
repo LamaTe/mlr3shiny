@@ -356,42 +356,97 @@ get_task_code <- function(task) {
   return(task_code)
 }
 
+## old version
+# get_learner_code <- function(learner) {
+#   # creating initial graph
+#   learner_code <- "# create initial graph <br>"
+#   learner_code <- paste0(learner_code, "graph <- Graph$new() <br>")
+#   # adding graph learner to graph
+#   learner_name <- learner$graph$ids()[grep("\\.", learner$graph$ids())]
+#   learner_code <- paste0(learner_code, "# adding learner PipeOp <br>")
+#   if(!isTRUE(currenttask$task$properties == "twoclass")){
+#     learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"", learner$predict_type, "\")) <br>")
+#     }
+#   if(isTRUE(currenttask$task$properties == "twoclass")){
+#     learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"prob\")) <br>")
+#   }
+#   if (any(grepl("encode", learner$graph$ids()))) {
+#     learner_code <- paste0(learner_code,
+#     "# adding a PipeOp to enable the usage of factor columns for the chosen learner <br>")
+#     learner_code <- paste0(learner_code,
+#     "graph <- po(\"encode\", method = \"treatment\", affect_columns = selector_type(\"factor\")) %>>% graph <br>")
+#   }
+#   if (any(grepl("colapply", learner$graph$ids()))) {
+#     learner_code <- paste0(learner_code, "# adding a colapply PipeOp  <br>")
+#     learner_code <- paste0(learner_code,
+#     "graph <- po(\"colapply\", applicator = as.integer, affect_columns = selector_type(\"ordered\")) %>>% graph <br>")
+#   }
+#   if(isTRUE(currenttask$task$properties == "twoclass")){
+#     learner_code <- paste0(learner_code, "# adding a threshold PipeOp for twoclass task <br>")
+#     learner_code <- paste0(learner_code, "graph <- graph %>>% po(\"threshold\") <br>")
+#   }
+#   for (parameter in names(learner$param_set$values)) {
+#     learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, "<- ", learner$param_set$values[parameter], "<br>")
+#   }
+# 
+#   learner_code <- paste0(learner_code, "# saving the graph as a GraphLearner <br>")
+#   learner_code <- paste0(learner_code, "learner <- as_learner(graph) <br>")
+#   return(learner_code)
+# }
+
 get_learner_code <- function(learner) {
-  # creating intial graph
-  learner_code <- "# create initial graph <br>"
-  learner_code <- paste0(learner_code, "graph <- Graph$new() <br>")
-  # adding graph learner to graph
   learner_name <- learner$graph$ids()[grep("\\.", learner$graph$ids())]
-  learner_code <- paste0(learner_code, "# adding learner PipeOp <br>")
+  # creating initial learner
+  learner_code <- "# create initial learner <br>"
   if(!isTRUE(currenttask$task$properties == "twoclass")){
-    learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"", learner$predict_type, "\")) <br>")
-    }
+    learner_code <- paste0(learner_code, "learner <- lrn(\"", learner_name, "\") <br>")
+  }
   if(isTRUE(currenttask$task$properties == "twoclass")){
     learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"prob\")) <br>")
+  }  
+  
+  # create graph learner
+  learner_code <- paste0(learner_code, "# create graph of processing chain <br>")
+  if(input[["Task_robustify"]]){
+    learner_code <- paste0(learner_code, "graph <- pipeline_robustify(task, learner) %>>% learner <br>")
+    learner_code <- paste0(learner_code, "# (Note: Additional hyperparameters for robustification can be specified.) <br>")
+    
   }
-  if (any(grepl("encode", learner$graph$ids()))) {
-    learner_code <- paste0(learner_code,
-    "# adding a PipeOp to enable the usage of factor columns for the chosen learner <br>")
-    learner_code <- paste0(learner_code,
-    "graph <- po(\"encode\", method = \"treatment\", affect_columns = selector_type(\"factor\")) %>>% graph <br>")
+  if(!input[["Task_robustify"]]){
+    learner_code <- paste0(learner_code, "graph <- as_graph(po(\"learner\", learner)) <br>")
   }
-  if (any(grepl("colapply", learner$graph$ids()))) {
-    learner_code <- paste0(learner_code, "# adding a colapply PipeOp  <br>")
-    learner_code <- paste0(learner_code,
-    "graph <- po(\"colapply\", applicator = as.integer, affect_columns = selector_type(\"ordered\")) %>>% graph <br>")
-  }
-  if(isTRUE(currenttask$task$properties == "twoclass")){
-    learner_code <- paste0(learner_code, "# adding a threshold PipeOp for twoclass task <br>")
+  
+  if (isTRUE(currenttask$task$properties == "twoclass")){
+    learner_code <- paste0(learner_code, "# add threshold parameter for twoclass classification <br>")
     learner_code <- paste0(learner_code, "graph <- graph %>>% po(\"threshold\") <br>")
-  }
-  for (parameter in names(learner$param_set$values)) {
-    learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, "<- ", learner$param_set$values[parameter], "<br>")
-  }
-
+  } 
+  
   learner_code <- paste0(learner_code, "# saving the graph as a GraphLearner <br>")
   learner_code <- paste0(learner_code, "learner <- as_learner(graph) <br>")
+
+  # set parameters
+  possibleparams <- c("threshold",
+                       "rpart.minsplit","rpart.maxdepth","rpart.cp",
+                       "ranger.num.trees", "ranger.mtry", "ranger.min.node.size",
+                       "svm.kernel","svm.cost", "svm.gamma", "svm.degree",
+                       "xgboost.eta", "xgboost.max_depth", "xgboost.nrounds", "xgboost.colsample_bytree", "xgboost.booster")
+  # REM: ugly brute force list of currently implemented learners/parameters. should ideally be created automatically (problem: some nonempty fileds in graph$param_set$value although not specified
+  
+  pars_set <- 0
+  for (parameter in names(learner$param_set$values)) {
+ cat(parameter, "\n")
+ cat(inlist, "\n")    
+      inlist <- sapply(possibleparams, function(z) length(grep(z, parameter)))
+      if(any(inlist > 0)) {
+        pars_set <- pars_set + 1
+        if(pars_set == 1) learner_code <- paste0(learner_code, "<br># set hyperparameters <br>")
+        learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, " <-  ", learner$param_set$values[parameter], "<br>")
+        }
+  }
   return(learner_code)
+  
 }
+
 
 get_training_code <- function() {
   train_code <- NULL

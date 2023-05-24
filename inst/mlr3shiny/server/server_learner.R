@@ -676,8 +676,8 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       }
 
       if(!is.null(invalidparams)){
-        shinyalert(title = "Empty or Invalid Parameter Input",
-                text = paste("It seems that you tried to set parameter(s): ",
+        shinyalert(title = "Notification",
+                text = paste("(Empty or Invalid Parameter Input:) It seems that you tried to set parameter(s): ",
                              paste(unlist(invalidparams), collapse = ', '),
                              " that are left empty or not within their parameter range. The default value for the parameter(s) is used instead."),
                 animation = FALSE, closeOnClickOutside = TRUE)
