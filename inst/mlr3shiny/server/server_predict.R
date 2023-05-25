@@ -434,8 +434,6 @@ get_learner_code <- function(learner) {
   
   pars_set <- 0
   for (parameter in names(learner$param_set$values)) {
- cat(parameter, "\n")
- cat(inlist, "\n")    
       inlist <- sapply(possibleparams, function(z) length(grep(z, parameter)))
       if(any(inlist > 0)) {
         pars_set <- pars_set + 1
