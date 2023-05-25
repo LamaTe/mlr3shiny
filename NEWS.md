@@ -5,9 +5,9 @@
 * Allowing import of different file types
 * Fixing thresholding in twoclass classif
 * Updating dependencies and fixing dependency bugs
-* adding xgboost
-* adding XAI
-* adding show code option in predict tab 
+* Adding xgboost learner
+* Adding explain tab
+* Adding code display option in predict tab 
 
 # mlr3shiny 0.2
 
