@@ -709,7 +709,9 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
          paramlist[[paste0(learnerobject$Learner_Name, ".", "type")]] <- "eps-regression"
       }
 
-      learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
+      #old: learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
+      learnerobject$Learner$param_set$values <- c(learnerobject$Learner$param_set$values, paramlist) # update hyperparameter values of current learner
+      
       # learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
 
