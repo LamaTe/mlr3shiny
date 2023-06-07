@@ -13,7 +13,10 @@ Current functionalities of mlr3shiny are:
 * Prediction on new data using the trained learner
 * Explain trained learner 
 
-[Reference](https://www.sciencedirect.com/science/article/pii/S2352711022001649).
+## Reference
+
+Tetzlaff, L. and Szepannek G. (2022): mlr3shiny—State-of-the-art machine learning made easy, SoftwareX 20, DOI: 
+[10.1016/j.softx.2022.101246](https://doi.org/10.1016/j.softx.2022.101246).
 
 ## Installation
 
