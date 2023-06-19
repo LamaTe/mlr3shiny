@@ -709,7 +709,16 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
          paramlist[[paste0(learnerobject$Learner_Name, ".", "type")]] <- "eps-regression"
       }
 
-      learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
+     # check for any parameters that are to be overwritten by paramlist
+     if(length(learnerobject$Learner$param_set$values) > 0){
+       for (pn in names(learnerobject$Learner$param_set$values)){
+         if (any(pn == names(paramlist))) {learnerobject$Learner$param_set$values[[pn]] <- NULL}
+       }
+     }
+
+      #old: learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
+      learnerobject$Learner$param_set$values <- c(learnerobject$Learner$param_set$values, paramlist) # update hyperparameter values of current learner
+      # is new learnerobject$Learner$param_set$values still compatible with (unchanged) rest of learnerobject$Learner$param_set?
       # learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
 
