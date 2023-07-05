@@ -505,10 +505,6 @@ display_plot_tabs <- function() {
   }
   #if feature analysis is selected
   if (is.null(eval_meta$feature_importance) && !is.null(eval_meta$feature_effect_num) && !is.null(input$selected_learner)) {
-    
-    #?Temporary bruteforce solution
-    # CAT JA NUM NEIN
-    #FUNKT NICHT
     if(!is.null(eval_meta$cat_list) && is.null(eval_meta$num_list)){
     ui <- tabsetPanel(
       type = "tabs",
@@ -519,7 +515,7 @@ display_plot_tabs <- function() {
           )
         )
     )}
-    #CAT NEIN NUM JA
+    #CAT No NUM YES
     if(is.null(eval_meta$cat_list) && !is.null(eval_meta$num_list)){
       ui <- tabsetPanel(
         type = "tabs",
