@@ -60,7 +60,6 @@ observeEvent(input$evaluate_start, {
   withProgress(message = "Initialising evaluation", style = "notification",
       withCallingHandlers(
       tryCatch({
-        reset_plots()
         if (isTRUE(currenttask$task$properties == "twoclass") ){
           
           #Preparation for Explainer | TASK
@@ -416,8 +415,8 @@ specific_feature_analysis <- function(list, explainer){
   eval_meta$num_list <- currenttask$task$feature_types[currenttask$task$feature_types$type == "numeric" | 
                                                   currenttask$task$feature_types$type == "integer",]
   eval_meta$num_list <- eval_meta$num_list$id
-
-  if(length(intersect(eval_meta$selected_features, eval_meta$num_list)) > 0){
+  if(length(intersect(list, eval_meta$num_list)) > 0){
+  
     eval_meta$feature_effect_num <- model_profile(
       explainer, 
       variables <- intersect(eval_meta$num_list, list),
@@ -432,8 +431,7 @@ specific_feature_analysis <- function(list, explainer){
                                                   currenttask$task$feature_types$type == "logical",]
   eval_meta$cat_list <- eval_meta$cat_list$id
   
-  if(length(intersect(eval_meta$selected_features, eval_meta$cat_list)) > 0){
-  
+  if(length(intersect(list, eval_meta$cat_list)) > 0){
   eval_meta$feature_effect_cat <- model_profile(
     explainer, 
     variables <- intersect(eval_meta$cat_list, list),
