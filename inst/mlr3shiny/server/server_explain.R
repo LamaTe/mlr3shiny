@@ -1,7 +1,10 @@
 # reactive values for the chosen learner, the features selected and the iml objects used for explaining the model
 eval_meta <- reactiveValues(current_learner = NULL, 
                             selected_features = NULL, 
-                            feature_effect = NULL, 
+                            feature_effect_num = NULL,
+                            feature_effect_cat = NULL,
+                            cat_list = NULL,
+                            num_list = NULL,
                             feature_importance = NULL, 
                             feature_importance_compare = NULL)
 
@@ -57,7 +60,6 @@ observeEvent(input$evaluate_start, {
   withProgress(message = "Initialising evaluation", style = "notification",
       withCallingHandlers(
       tryCatch({
-        
         if (isTRUE(currenttask$task$properties == "twoclass") ){
           
           #Preparation for Explainer | TASK
@@ -117,11 +119,7 @@ observeEvent(input$evaluate_start, {
         
         if("Specific feature analysis" %in% input$explanation_selection && input$automation_flag == "manual"){
           incProgress(0.6, paste("Computing plot: ", input$method_picker))  
-          eval_meta$feature_effect <- model_profile(
-                model, 
-                variables = eval_meta$selected_features,
-                type = input$method_picker)
-            plot_feature_analysis(eval_meta$feature_effect)
+          specific_feature_analysis(eval_meta$selected_features, model)
         }
         
         if("Specific feature analysis" %in% input$explanation_selection && input$automation_flag == "automatic"){
@@ -137,12 +135,7 @@ observeEvent(input$evaluate_start, {
           len <- length(temp_var_imp_vector)
           temp_var_imp_vector <- head(tail(temp_var_imp_vector,len-1), len-2)
           
-          #compute Feature Effect
-          eval_meta$feature_effect <- model_profile(
-            model, 
-            variables <- tail(temp_var_imp_vector, as.numeric(input$automation_slider)),
-            type = input$method_picker)
-          plot_feature_analysis(eval_meta$feature_effect)
+          specific_feature_analysis(tail(temp_var_imp_vector, as.numeric(input$automation_slider)), model)
         }
         incProgress(0.8, paste("Finishing Plot"))
         
@@ -415,6 +408,43 @@ get_learner_selection <- function(list_of_learners) {
   }
 }
 
+#Split numeric and categorical values
+specific_feature_analysis <- function(list, explainer){
+  #initialise categorical list and numeric list
+  #Here feature_type = POSIXct is excluded
+  eval_meta$num_list <- currenttask$task$feature_types[currenttask$task$feature_types$type == "numeric" | 
+                                                  currenttask$task$feature_types$type == "integer",]
+  eval_meta$num_list <- eval_meta$num_list$id
+  if(length(intersect(list, eval_meta$num_list)) > 0){
+  
+    eval_meta$feature_effect_num <- model_profile(
+      explainer, 
+      variables <- intersect(eval_meta$num_list, list),
+      type = input$method_picker)
+    
+    plot_feature_analysis_num(eval_meta$feature_effect_num)
+  }
+
+  eval_meta$cat_list <- currenttask$task$feature_types[currenttask$task$feature_types$type == "ordered" | 
+                                                  currenttask$task$feature_types$type == "factor" | 
+                                                  currenttask$task$feature_types$type == "character" | 
+                                                  currenttask$task$feature_types$type == "logical",]
+  eval_meta$cat_list <- eval_meta$cat_list$id
+  
+  if(length(intersect(list, eval_meta$cat_list)) > 0){
+  eval_meta$feature_effect_cat <- model_profile(
+    explainer, 
+    variables <- intersect(eval_meta$cat_list, list),
+    type = input$method_picker)
+  
+  plot_feature_analysis_cat(eval_meta$feature_effect_cat)
+  }
+  
+}
+
+
+  
+  
 #plot function for feature importance
 plot_feature_importance <- function(){
   output$feature_imp_plot <- renderPlot({
@@ -423,9 +453,14 @@ plot_feature_importance <- function(){
   
 }
 
-#plot function for feature analysis
-plot_feature_analysis <- function(x){
-  output$feature_analysis_plot <- renderPlot({
+#plot functions for model_profile, separated by feature types
+plot_feature_analysis_num <- function(x){
+  output$feature_analysis_plot_num <- renderPlot({
+    plot(x, geom = "aggregates")
+  })
+}
+plot_feature_analysis_cat <- function(x){
+  output$feature_analysis_plot_cat <- renderPlot({
     plot(x, geom = "aggregates")
   })
 }
@@ -453,7 +488,8 @@ get_selection_automation <- function(){
 # display a tabPanel for the PDP and VI plots
 display_plot_tabs <- function() {
   #if Feature imp is selected
-  if (!is.null(eval_meta$feature_importance) && is.null(eval_meta$feature_effect) && !is.null(input$selected_learner)) {
+  #Ding Ding Ding
+  if (!is.null(eval_meta$feature_importance) && is.null(eval_meta$feature_effect_num) && !is.null(input$selected_learner)) {
     ui <- tabsetPanel(
       type = "tabs",
       tabPanel(
@@ -466,20 +502,48 @@ display_plot_tabs <- function() {
     return(ui)
   }
   #if feature analysis is selected
-  if (is.null(eval_meta$feature_importance) && !is.null(eval_meta$feature_effect) && !is.null(input$selected_learner)) {
+  if (is.null(eval_meta$feature_importance) && !is.null(eval_meta$feature_effect_num) && !is.null(input$selected_learner)) {
+    if(!is.null(eval_meta$cat_list) && is.null(eval_meta$num_list)){
     ui <- tabsetPanel(
       type = "tabs",
-      tabPanel(
-        "Feature-Analysis-Plot",
-        wellPanel(
-          plotOutput(outputId = "feature_analysis_plot")
+        tabPanel(
+          "Feature-Analysis-Plot",  
+          wellPanel(
+            plotOutput(outputId = "feature_analysis_plot_cat")
+          )
         )
-        )
-    )
+    )}
+    #CAT No NUM YES
+    if(is.null(eval_meta$cat_list) && !is.null(eval_meta$num_list)){
+      ui <- tabsetPanel(
+        type = "tabs",
+        tabPanel(
+          "Feature-Analysis-Plot",
+          wellPanel(
+            plotOutput(outputId = "feature_analysis_plot_num")
+          ))
+      )
+    }
+    else{
+      ui <- tabsetPanel(
+        type = "tabs",
+        tabPanel(
+          "Feature-Analysis-Plot",
+          wellPanel(
+            plotOutput(outputId = "feature_analysis_plot_num")
+          ),
+          tabPanel(
+            "",  
+            wellPanel(
+              plotOutput(outputId = "feature_analysis_plot_cat")
+            )
+          ))
+      )
+    }
     return(ui)
   }
   #if both are selected
-  if (!is.null(eval_meta$feature_importance) && !is.null(eval_meta$feature_effect) && !is.null(input$selected_learner)) {
+  if (!is.null(eval_meta$feature_importance) && !is.null(eval_meta$feature_effect_num) && !is.null(input$selected_learner)) {
     ui <- tabsetPanel(
       type = "tabs",
       tabPanel(
@@ -491,26 +555,31 @@ display_plot_tabs <- function() {
       tabPanel(
         "Feature-Analysis-Plot",
         wellPanel(
-          plotOutput(outputId = "feature_analysis_plot")
+          plotOutput(outputId = "feature_analysis_plot_num")
+        ),
+        tabPanel(
+        "",  
+        wellPanel(
+          plotOutput(outputId = "feature_analysis_plot_cat")
         )
-      )
+      ))
     )
     return(ui)
   }
 }
 
-
-
 # helper for resetting the eval_meta object
 reset_evaluation <- function() {
   eval_meta$current_learner <- NULL
-  eval_meta$feature_effect <- NULL
+  eval_meta$feature_effect_num <- NULL
+  eval_meta$feature_effect_cat <- NULL
   eval_meta$feature_importance <- NULL
 }
 
 # helper for resetting the plots in the ui
 reset_plots <- function() {
-  output$feature_analysis_plot <- NULL
+  output$feature_analysis_plot_num <- NULL
+  output$feature_analysis_plot_cat <- NULL
   output$feature_imp_plot <- NULL
 }
 
