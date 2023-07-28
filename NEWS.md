@@ -1,3 +1,11 @@
+# mlr3shiny 0.3.1
+
+* Migrating explain tab from iml to DALEX + additonal options
+* Adding option to select robustify parameters
+* Adding import of different file types also for predict tab
+* Readability of displayed code improved  
+* Several fixes
+
 # mlr3shiny 0.3.0
 
 * New algorithm evaluation metrics
