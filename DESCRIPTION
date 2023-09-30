@@ -20,7 +20,9 @@ Imports:
 	mlr3measures (>= 0.3.1),
 	mlr3learners,
 	mlr3pipelines,
-	iml,
+	DALEX,
+	DALEXtra,
+	Metrics
 	shiny (>= 1.6.0),
 	shinydashboard,
 	shinyjs (>= 2.0.0),
@@ -31,6 +33,7 @@ Imports:
 	readxl,
 	stringr,
 	plyr,
+	dplyr,
 	purrr,
 	ranger,
 	e1071,
