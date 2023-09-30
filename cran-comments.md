@@ -6,4 +6,4 @@
 There were no ERRORs or WARNINGs. 
 
 ## Note
-Namespaces in Imports field not imported from some packages - Declared package imports are actually still used within Shiny app on load.
+Namespaces in Imports field not imported from [...] All declared Imports should be used. - Declared package imports are actually still used within Shiny app on load.
