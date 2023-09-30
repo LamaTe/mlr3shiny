@@ -3,7 +3,7 @@ bibentry(
     bibtype = "Article",
     title = "mlr3shiny—State-of-the-art machine learning made easy",
     author = c(
-      person("Laurens", "Tetzlaff")
+      person("Laurens", "Tetzlaff"),
       person("Gero", "Szepannek")
     ),
     journal = "SoftwareX",
