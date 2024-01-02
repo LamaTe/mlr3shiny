@@ -44,7 +44,7 @@ getLrnsStrtsUI <- function() {
 # get learnerobjects of selected learners and assign them to Bench$Current_Learners
 setLrnsObjects <- function() {
   for (i in input$Bench_learners) {
-    Bench$Current_Learners[[i]] <- get(i)$Learner$clone(deep = TRUE) #maybe reason for long name?
+    Bench$Current_Learners[[i]] <- get(i)$Learner$clone(deep = TRUE)
   }
 }
 
