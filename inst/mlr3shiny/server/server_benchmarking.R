@@ -44,7 +44,7 @@ getLrnsStrtsUI <- function() {
 # get learnerobjects of selected learners and assign them to Bench$Current_Learners
 setLrnsObjects <- function() {
   for (i in input$Bench_learners) {
-    Bench$Current_Learners[[i]] <- get(i)$Learner$clone(deep = TRUE)
+    Bench$Current_Learners[[i]] <- get(i)$Learner$clone(deep = TRUE) #maybe reason for long name?
   }
 }
 
@@ -63,7 +63,8 @@ getItersOv <- function() {
 getCurrentLearnersOv <- function() {
   if (!is.null(Bench$Current_Learners)) {
     lrns <- paste(sapply(input$Bench_learners, function(x){
-      c(paste(x, Bench$Current_Learners[[x]]$id, sep = ": "))
+      #Bench$Current_Learners[[x]]$label <- "Test1"
+      c(paste(x, Bench$Current_Learners[[x]]$label, sep = ": "))
       }), collapse = ", ")
     return(lrns)
   }
@@ -79,7 +80,7 @@ getBestLrnOv <- function(){
     # Fix-Me: pretty ugly solution, replace for with apply function and paste functions with better function for string handling
     for (learner_number in 1:length(Bench$Current_Learners)) {
       if (Bench$Best[1] == Bench$Current_Learners[[learner_number]]$hash) {
-        learner_info_vec = paste(input$Bench_learners[[learner_number]], Bench$Current_Learners[[learner_number]]$id)
+        learner_info_vec = paste(input$Bench_learners[[learner_number]], Bench$Current_Learners[[learner_number]]$label)
       }
     }
 
@@ -295,19 +296,22 @@ observeEvent(input$Bench_benchmark, {
 observeEvent(input$Bench_aggr_measure, {
   # aggregate the results and find the best learner based on the last measure provided
   # try catch since learners require same predict type for measure -> easy error handling
-  withCallingHandlers(
-    tryCatch({
-      aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
-      Bench$Best <- getBestLrn(aggr_rslt)
-    },
-    error = errorAlertBenchAggr
-    ),
-    warning = warningAlert
-  )
-
+  withProgress(message = "Initialising scoring", style = "notification", 
+      withCallingHandlers(
+        tryCatch({
+        incProgress(0.3)
+        aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
+        Bench$Best <- getBestLrn(aggr_rslt)
+      },
+      error = errorAlertBenchAggr
+      ),
+      warning = warningAlert
+      ))
+  #incProgress(0.6, paste("Initialising Workflow")),
   output$Bench_rslt_view <- DT::renderDataTable({
     getBenchTable(aggr_rslt)
   })
+  #incProgress(0.8, paste("Initialising Workflow")),
   Bench$Overview <- createBenchOverview()
 })
 

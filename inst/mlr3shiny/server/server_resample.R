@@ -25,10 +25,10 @@ getResIters <- function() {
   }
 }
 
-createResOverview <- function() {
+createResOverview <- function() { 
   overview <- list(
     Task <- currenttask$task$id,
-    Learner <- paste(input$Res_learner, Res$Current_Learner$id, sep = " "),
+    Learner <- Res$Current_Learner$label,
     Strategy <- input$Res_strategy,
     Iterations <- getResIters(),
     "Aggregated Performance" <- getResPerfAggr()

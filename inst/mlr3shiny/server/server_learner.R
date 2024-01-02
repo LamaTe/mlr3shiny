@@ -201,8 +201,10 @@ makeOverviewUi <- function(learnerobject) {
             addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
             addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
             # addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-            addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-         ),
+            addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", ")),
+            textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = "", width = NULL, placeholder = "Create Learner label"),
+            actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Update Label", style = "float: left;")
+            ),
          column(
             6,
             # addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
@@ -572,9 +574,9 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 
 createGraphLearner <- function(selectedlearner) {
   if (!isTRUE(currenttask$task$properties == "twoclass")) {
-    learner <- lrn(input[[selectedlearner]]) 
+    learner <- lrn(input[[selectedlearner]], label = "") 
   } else { # ...otherwise predict_type = "prob" is set and a threshold po added below
-    learner <- lrn(input[[selectedlearner]], predict_type = "prob")
+    learner <- lrn(input[[selectedlearner]], predict_type = "prob", label = "")
   }
   if(input[["Task_robustify"]]){
     impm <- NULL 
@@ -630,6 +632,11 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       learnerobject$Learner$predict_type <- input[[paste0(learnername, "PredictTypeChoice")]]
       learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
+   })
+   
+   # observerevent for label button: implemented because of interactivity.So that a user knows it has been updated 
+   observeEvent(input[[paste0(learnerobject$Learner_Name, "LabelChange")]], {
+     learnerobject$Learner$label <- input[[paste0(learnerobject$Learner_Name, "LabelChoice")]]
    })
 
    # kernel params for svm
