@@ -299,7 +299,7 @@ observeEvent(input$Bench_aggr_measure, {
   withProgress(message = "Initialising scoring", style = "notification", 
       withCallingHandlers(
         tryCatch({
-        incProgress(0.3)
+        incProgress(0.5)
         aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
         Bench$Best <- getBestLrn(aggr_rslt)
       },
@@ -307,11 +307,11 @@ observeEvent(input$Bench_aggr_measure, {
       ),
       warning = warningAlert
       ))
-  #incProgress(0.6, paste("Initialising Workflow")),
+  
   output$Bench_rslt_view <- DT::renderDataTable({
     getBenchTable(aggr_rslt)
   })
-  #incProgress(0.8, paste("Initialising Workflow")),
+
   Bench$Overview <- createBenchOverview()
 })
 
