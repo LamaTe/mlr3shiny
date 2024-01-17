@@ -459,11 +459,17 @@ makeParamUi <- function(learnerobject, learnername) {
       params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
       if (grepl("threshold", learnerobject$Learner$id)) {
          parameterui <- tagList(
+            #ETA 
             addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
+            #Max Depth
             addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
+            #nrounds
             addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
+            #colsample bytree
             addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
+            #Booster
             addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
+            #???
             addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
@@ -655,8 +661,17 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
       invalidparams <- NULL
+      #Dominic This loop causes crash
+      
+      #current Theory: currentinput expects Param, but with factors its factor, not param
       for (i in learnerobject$Params) {
          currentinput <- input[[paste0(learnername, "Param", i$id)]]
+         
+         #Test Domi: FactorKrücke
+         if(i$id == "regr.xgboost.booster"){
+           currentinput <- input[[paste0(learnername, "factor", i$id)]]
+         }
+         print(learnername)
          # validate input value with 2 overall if statements 
          # on Windows and Linux Shiny sends NA (empty) inputs differently
          # Windows translates to 0 whereas Linux keeps as NA
@@ -664,6 +679,12 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
          if (is.null(currentinput) || is.na(currentinput)) {
            invalidparams <- c(invalidparams, i$id)
          }
+         
+         print("Current Input:")
+         print(currentinput)
+         
+         print("Invalid:")
+         print(invalidparams)
          
          if (!is.null(currentinput) & !is.na(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
@@ -681,7 +702,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
             }
          }
       }
-
+      ######################################
       if(!is.null(invalidparams)){
         shinyalert(title = "Empty or Invalid Parameter Input",
                 text = paste("It seems that you tried to set parameter(s): ",
@@ -698,7 +719,9 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       svm_kernel <- c("radial", "polynomial", "linear")
 
       if (grepl("xgboost", learnerobject$Learner_Name)) {
+        print("Ich lebe noch (Z707)")
          xgboost_booster <- c("gblinear", "gbtree", "dart")
+         print(paste0(learnername, "factor"))
          if (input[[paste0(learnername, "factor")]] %in% xgboost_booster) {
             paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor")]]
          }
@@ -715,7 +738,8 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       } else if (grepl("regr.svm", learnerobject$Learner_Name)) {
          paramlist[[paste0(learnerobject$Learner_Name, ".", "type")]] <- "eps-regression"
       }
-
+      print("Paramlist")
+      print(paramlist)
       learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
       # learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
