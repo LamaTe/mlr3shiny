@@ -595,8 +595,10 @@ createGraphLearner <- function(selectedlearner) {
   } else graph <- as_graph(po("learner", learner))
   #plot(graph)  
   if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")
-  
-  return(as_learner(graph))
+  graph_learner <- as_learner(graph)
+  #regex: search for underscore, return all after it
+  graph_learner$id <- paste(str_extract(selectedlearner, "(?<=_).*"), input[[selectedlearner]], sep=".")
+  return(as_learner(graph_learner))
 }
 
 

@@ -289,6 +289,7 @@ observeEvent(input$Bench_benchmark, {
                  warning = warningAlert
                )
   )
+  print(Bench$Bench_Rslt)
   Bench$Overview <- createBenchOverview()
 })
 
@@ -342,3 +343,7 @@ observeEvent(input$Bench_start, {
 observeEvent(currenttask$task, {
   resetBench()
 })
+
+observeEvent(input$Bench_visualization) {
+
+}
