@@ -344,6 +344,65 @@ observeEvent(currenttask$task, {
   resetBench()
 })
 
-observeEvent(input$Bench_visualization) {
-
+render_visualization_plot <- function() {
+  plot_choices <- input$Plot_Choice
+  if(!is.null(plot_choices)) {
+    if(is.element("Boxplot", plot_choices)){
+      output$plot_visualization_boxplot <- renderPlot(autoplot(Bench$Bench_Rslt))
+    }
+    if (is.element("ROC", plot_choices)) {
+      output$plot_visualization_roc <- renderPlot(autoplot(Bench$Bench_Rslt, type="roc"))
+    }
+  }
+  else {
+    shinyalert(
+      title = "Warning",
+      text = "No Plot Type is selected.",
+      animation = FALSE,
+      showConfirmButton = TRUE)
+  }
 }
+
+observeEvent(input$action_visualize, {
+  output$show_viz <- reactive(TRUE)
+  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+
+  if(!is.null(Bench$Bench_Rslt)) {
+    render_visualization_plot()
+  }
+  else {
+    shinyalert(
+      title = "Warning",
+      text = "You have to execute the benchmark before you can visualize it.",
+      animation = FALSE,
+      showConfirmButton = TRUE)
+  }
+})
+
+observeEvent(input$Bench_learners, {
+  output$plot_visualization_boxplot <- renderPlot({})
+  output$plot_visualization_roc <- renderPlot({})
+
+  output$show_viz <- reactive(FALSE)
+  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+})
+
+output$Bench_visualization <- renderUI({
+  plot_choices <- c("Boxplot")
+  if (currenttask$task$properties != "multiclass" && currenttask$task$task_type == "classif") {
+    plot_choices <- c(plot_choices, "ROC")
+  }
+    tagList(
+      fluidRow(
+        column(4, h5("Select Plot Type:")),
+        column(3, pickerInput("Plot_Choice",
+                                  choices = plot_choices,
+                                  multiple = TRUE,
+                                  selected = plot_choices)),
+        column(4, actionButton(inputId = "action_visualize", label = "Create Visualization", icon = icon("hammer")))
+      ),
+      conditionalPanel(condition="input.Plot_Choice.includes('Boxplot') && output.show_viz == true", plotOutput(outputId = "plot_visualization_boxplot")),
+      conditionalPanel(condition="input.Plot_Choice.includes('ROC') && output.show_viz == true", plotOutput(outputId = "plot_visualization_roc"))
+    )
+})
+
