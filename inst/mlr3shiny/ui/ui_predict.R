@@ -90,7 +90,7 @@ tabpanel_predict <- fluidPage(
               id = "Pred_well_decision_tree",
               fluidRow(
                 column(4, h5("Decision Tree", style="font-weight: bold;")),
-                column(4, actionButton(inputId = "action_visualize", label = "Visualize Tree", icon = icon("hammer")))),
+                column(4, actionButton(inputId = "action_visualize_predict", label = "Visualize Tree", icon = icon("hammer")))),
               uiOutput(outputId = "plotDecisionTree")
               )
              )

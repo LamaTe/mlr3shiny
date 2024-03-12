@@ -344,7 +344,7 @@ observeEvent(currenttask$task, {
   resetBench()
 })
 
-render_visualization_plot <- function() {
+render_visualization_bench <- function() {
   plot_choices <- input$Plot_Choice
   if(!is.null(plot_choices)) {
     if(is.element("Boxplot", plot_choices)){
@@ -363,12 +363,12 @@ render_visualization_plot <- function() {
   }
 }
 
-observeEvent(input$action_visualize, {
+observeEvent(input$action_visualize_bench, {
   output$show_viz <- reactive(TRUE)
   outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
 
   if(!is.null(Bench$Bench_Rslt)) {
-    render_visualization_plot()
+    render_visualization_bench()
   }
   else {
     shinyalert(
@@ -399,7 +399,7 @@ output$Bench_visualization <- renderUI({
                                   choices = plot_choices,
                                   multiple = TRUE,
                                   selected = plot_choices)),
-        column(4, actionButton(inputId = "action_visualize", label = "Create Visualization", icon = icon("hammer")))
+        column(4, actionButton(inputId = "action_visualize_bench", label = "Create Visualization", icon = icon("hammer")))
       ),
       conditionalPanel(condition="input.Plot_Choice.includes('Boxplot') && output.show_viz == true", plotOutput(outputId = "plot_visualization_boxplot")),
       conditionalPanel(condition="input.Plot_Choice.includes('ROC') && output.show_viz == true", plotOutput(outputId = "plot_visualization_roc"))

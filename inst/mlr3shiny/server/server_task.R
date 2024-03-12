@@ -32,6 +32,7 @@ observe({
 
 observeEvent(currenttask$task,{
   reset_trained_learner_list()
+  output$plot_visualization <- renderPlot({})
 })
 
 observe({

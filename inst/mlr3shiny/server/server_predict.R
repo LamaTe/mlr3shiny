@@ -572,7 +572,7 @@ render_decision_tree <- function(decision_overwrite=FALSE) {
   )
 }
 
-observeEvent(input$action_visualize, {
+observeEvent(input$action_visualize_predict, {
   if (Pred$Learner_Ov[[4]] == "trained") {
     output$show_viz <- reactive(TRUE)
     outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
