@@ -386,6 +386,14 @@ observeEvent(input$Bench_learners, {
   outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
 })
 
+observeEvent(input$Bench_start, {
+  output$plot_visualization_boxplot <- renderPlot({})
+  output$plot_visualization_roc <- renderPlot({})
+
+  output$show_viz <- reactive(FALSE)
+  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+})
+
 output$Bench_visualization <- renderUI({
   plot_choices <- c("Boxplot")
   if (currenttask$task$properties != "multiclass" && currenttask$task$task_type == "classif") {
