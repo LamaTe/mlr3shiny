@@ -139,8 +139,6 @@ output$Task_overview <- renderPrint({
 # Task processing
 
 observeEvent(input$Task_feat_deactivate, {
-  print("Change")
-  print(originalTask)
     #updatedfeat <- setdiff(currenttask$task$feature_names, input$Task_feature)
     #currenttask$task$select(cols = updatedfeat)
     currenttask$task$select(cols = input$Task_feature)
@@ -148,8 +146,6 @@ observeEvent(input$Task_feat_deactivate, {
     ## here we need to update currenttask$features, so that Shiny recognizes that the R6- task - object has changed
     currenttask$featTypes <- currenttask$task$feature_types
     currenttask$featNames <- currenttask$task$feature_names
-
-    print(originalTask)
 })
 
 observeEvent(input$Task_change_pos_class, {

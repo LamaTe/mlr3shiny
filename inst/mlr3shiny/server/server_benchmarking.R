@@ -289,7 +289,6 @@ observeEvent(input$Bench_benchmark, {
                  warning = warningAlert
                )
   )
-  print(Bench$Bench_Rslt)
   Bench$Overview <- createBenchOverview()
 })
 
