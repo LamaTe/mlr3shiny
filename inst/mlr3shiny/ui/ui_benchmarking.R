@@ -44,7 +44,6 @@ tabpanel_benchmarking <- fluidPage(
   ),
   fluidRow(
     column(8,
-           #hidden()
              wellPanel(
               id = "Bench_well_viz",
               h5("Visualisations of Benchmarks", style = "font-weight: bold;"),

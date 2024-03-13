@@ -363,10 +363,10 @@ render_visualization_bench <- function() {
 }
 
 observeEvent(input$action_visualize_bench, {
-  output$show_viz <- reactive(TRUE)
-  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
-
   if(!is.null(Bench$Bench_Rslt)) {
+    output$show_viz <- reactive(TRUE)
+    outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+
     render_visualization_bench()
   }
   else {

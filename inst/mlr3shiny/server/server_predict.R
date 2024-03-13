@@ -522,7 +522,10 @@ get_final_training_code <- function(task, learner) {
 
 observe({
   toggle(id = "Pred_well_decision_tree", 
-  condition = !is.null(input$Pred_learner) && (Pred$Learner$graph_model$output$op.id == "classif.rpart" | Pred$Learner$graph_model$output$op.id == "regr.rpart"))
+  condition = !is.null(input$Pred_learner)
+    && ((Pred$Learner$graph_model$output$op.id %in% c("classif.rpart", "regr.rpart")) 
+    | !is.null(Pred$Learner$graph_model$pipeops$classif.rpart)))
+    #last part of condition is needet for twoclass classifcations
 })
 
 raise_alert <- function(message, bttn_confirm=FALSE) {
@@ -547,7 +550,7 @@ raise_alert <- function(message, bttn_confirm=FALSE) {
 
 render_decision_tree <- function(decision_overwrite=FALSE) {
   node_limit <- 15
-  if (Pred$Learner$graph_model$output$op.id == "classif.rpart") {
+  if (!is.null(Pred$Learner$graph_model$pipeops$classif.rpart)) {
     nodes <- nrow(Pred$Learner$graph_model$pipeops$classif.rpart$learner_model$model$frame)
     if (nodes <= node_limit | decision_overwrite) {
       output$plot_decision_tree <- renderPlot(autoplot(Pred$Learner$graph_model$pipeops$classif.rpart$learner_model, type="ggparty"))
@@ -594,4 +597,3 @@ observeEvent(input$Pred_learner, {
   output$show_viz <- reactive(FALSE)
     outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
 })
-

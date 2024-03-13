@@ -240,20 +240,34 @@ output$Task_processing <- renderUI({
 render_visualization_plot <- function(task) {
   output$plot_visualization <- renderPlot({
     autoplot(task, input$Plot_Type)
-  })
-}
+    })
+  }
 
 observeEvent(input$action_visualize, {
   temp_task <- originalTask$clone(deep = TRUE)
+
+  if (is.null(input$Features_Viz)) {
+    #exit code execution if no feature is selected and reset selected to default
+    updatePickerInput(session = session, inputId="Features_Viz", selected=originalTask$feature_names)
+    shinyalert(
+      title = "Warning",
+      text = "You need to select Features for Visualization.",
+      animation = FALSE,
+      showConfirmButton = TRUE,
+    )
+    return()
+  }
   task <- temp_task$select(cols = input$Features_Viz)
+
   output$show_viz <- reactive(TRUE)
   outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
-  
-  if (task$nrow > 5000 | length(task$featNames) > 5) {
+
+  if (task$nrow > 5000 | length(task$feature_names) > 5) {
     shinyalert(
       title = "Warning",
       text = "Computation time for the plot might take long, 
-      because there are many observations or variables in the Data Backend.",
+      because there are many observations or variables in the Data Backend.
+      This might also affect readability of the plot.",
       animation = FALSE,
       showCancelButton = TRUE,
       showConfirmButton = TRUE,
@@ -289,8 +303,13 @@ printTaskVisualizeUI <- function(){
                                 selected = originalTask$feature_names)))),
     conditionalPanel(condition="input.action_visualize != 0 && output.show_viz == true", plotOutput(outputId = "plot_visualization"))
   )
-  
 }
+
+observeEvent(input$Plot_Type, {
+  output$show_viz <- reactive(FALSE)
+  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+  output$plot_visualization <- renderPlot({})
+})
 
 output$Task_visualize <- renderUI({
   printTaskVisualizeUI()
