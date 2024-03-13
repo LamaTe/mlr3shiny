@@ -549,7 +549,6 @@ render_decision_tree <- function(decision_overwrite=FALSE) {
   node_limit <- 15
   if (Pred$Learner$graph_model$output$op.id == "classif.rpart") {
     nodes <- nrow(Pred$Learner$graph_model$pipeops$classif.rpart$learner_model$model$frame)
-    print("nodes")
     if (nodes <= node_limit | decision_overwrite) {
       output$plot_decision_tree <- renderPlot(autoplot(Pred$Learner$graph_model$pipeops$classif.rpart$learner_model, type="ggparty"))
     }
