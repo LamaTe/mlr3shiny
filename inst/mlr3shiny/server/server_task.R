@@ -2,6 +2,8 @@
 currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, positive = NULL, tableOptions = NULL)
 # in case a feature gets dropped make sure to only include the same features when predicting new data
 features_to_use <- reactiveValues(features = NULL)
+# used for visualization puropses
+originalTask <- NULL
 
 # render sidebarPanel depending on input for Task
 observe({
@@ -30,6 +32,7 @@ observe({
 
 observeEvent(currenttask$task,{
   reset_trained_learner_list()
+  output$plot_visualization <- renderPlot({})
 })
 
 observe({
@@ -234,5 +237,80 @@ output$Task_processing <- renderUI({
   printTaskProcessingUI()
 })
 
+render_visualization_plot <- function(task) {
+  output$plot_visualization <- renderPlot({
+    autoplot(task, input$Plot_Type)
+    })
+  }
 
+observeEvent(input$action_visualize, {
+  temp_task <- originalTask$clone(deep = TRUE)
 
+  if (is.null(input$Features_Viz)) {
+    #exit code execution if no feature is selected and reset selected to default
+    updatePickerInput(session = session, inputId="Features_Viz", selected=originalTask$feature_names)
+    shinyalert(
+      title = "Warning",
+      text = "You need to select Features for Visualization.",
+      animation = FALSE,
+      showConfirmButton = TRUE,
+    )
+    return()
+  }
+  task <- temp_task$select(cols = input$Features_Viz)
+
+  output$show_viz <- reactive(TRUE)
+  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+
+  if (task$nrow > 5000 | length(task$feature_names) > 5) {
+    shinyalert(
+      title = "Warning",
+      text = "Computation time for the plot might take long, 
+      because there are many observations or variables in the Data Backend.
+      This might also affect readability of the plot.",
+      animation = FALSE,
+      showCancelButton = TRUE,
+      showConfirmButton = TRUE,
+      callbackR = function(x) {if (x == TRUE) {render_visualization_plot(task)}})
+  }
+  else {
+    render_visualization_plot(task)
+    }
+})
+
+printTaskVisualizeUI <- function(){
+  # make a copy of the task so the vizualisation is independent
+  originalTask <<- currenttask$task$clone(deep = TRUE)
+  plot_features = originalTask$feature_names
+  plot_choices = c("target", "duo", "pairs")
+  if (originalTask$task_type == "regr") {
+    plot_choices = plot_choices[plot_choices != "duo"]
+  }
+  tagList(
+    h5("Visualization of Data", style = "font-weight: bold;"),
+    fluidRow(
+      column(4, h5("Select Plot Type:")),
+      column(4, pickerInput("Plot_Type",
+                             choices = plot_choices,
+                             selected = "pairs")),
+      column(4, actionButton(inputId = "action_visualize", label = "Create Visualization", icon = icon("hammer")))),
+      conditionalPanel(condition = "input[[\"Plot_Type\"]] != 'target'", 
+        fluidRow(
+        column(4, h5("Select Features for Visulization:")),
+        column(4, pickerInput("Features_Viz",
+                                choices = originalTask$feature_names,
+                                multiple = TRUE,
+                                selected = originalTask$feature_names)))),
+    conditionalPanel(condition="input.action_visualize != 0 && output.show_viz == true", plotOutput(outputId = "plot_visualization"))
+  )
+}
+
+observeEvent(input$Plot_Type, {
+  output$show_viz <- reactive(FALSE)
+  outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
+  output$plot_visualization <- renderPlot({})
+})
+
+output$Task_visualize <- renderUI({
+  printTaskVisualizeUI()
+})

@@ -571,10 +571,21 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 
 
 createGraphLearner <- function(selectedlearner) {
+  learner_algo <- input[[selectedlearner]]
   if (!isTRUE(currenttask$task$properties == "twoclass")) {
-    learner <- lrn(input[[selectedlearner]]) 
-  } else { # ...otherwise predict_type = "prob" is set and a threshold po added below
-    learner <- lrn(input[[selectedlearner]], predict_type = "prob")
+    if (learner_algo == "classif.rpart" | learner_algo == "regr.rpart") {
+      #only decision trees are able to use keep_model = T | used for visualization
+      learner <- lrn(input[[selectedlearner]], keep_model = TRUE)} 
+    else {
+      learner <- lrn(input[[selectedlearner]])} 
+  } 
+  else { # ...otherwise predict_type = "prob" is set and a threshold po added below
+    if (learner_algo == "classif.rpart" | learner_algo == "regr.rpart") {
+      learner <- lrn(input[[selectedlearner]], predict_type = "prob", keep_model = TRUE)
+    }
+    else {
+      learner <- lrn(input[[selectedlearner]], predict_type = "prob")
+    }
   }
   if(input[["Task_robustify"]]){
     impm <- NULL 
@@ -595,8 +606,10 @@ createGraphLearner <- function(selectedlearner) {
   } else graph <- as_graph(po("learner", learner))
   #plot(graph)  
   if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")
-  
-  return(as_learner(graph))
+  graph_learner <- as_learner(graph)
+  #regex: search for underscore, return all after it
+  graph_learner$id <- paste(str_extract(selectedlearner, "(?<=_).*"), input[[selectedlearner]], sep=".")
+  return(as_learner(graph_learner))
 }
 
 
