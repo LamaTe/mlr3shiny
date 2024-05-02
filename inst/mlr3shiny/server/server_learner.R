@@ -649,7 +649,12 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       paramlist <- list()
       invalidparams <- NULL
       for (i in learnerobject$Params) {
-         currentinput <- input[[paste0(learnername, "Param", i$id)]]
+         if(i$class == "ParamFct") {
+           currentinput <- input[[paste0(learnername, "factor")]]
+         }
+         else {
+           currentinput <- input[[paste0(learnername, "Param", i$id)]]
+         }
          # validate input value with 2 overall if statements 
          # on Windows and Linux Shiny sends NA (empty) inputs differently
          # Windows translates to 0 whereas Linux keeps as NA
