@@ -735,6 +735,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       #old: learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
       learnerobject$Learner$param_set$values <- c(learnerobject$Learner$param_set$values, paramlist) # update hyperparameter values of current learner
       # is new learnerobject$Learner$param_set$values still compatible with (unchanged) rest of learnerobject$Learner$param_set?
+      # learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
 
       # resetting trained learner when params change
