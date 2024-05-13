@@ -25,7 +25,7 @@ getResIters <- function() {
   }
 }
 
-createResOverview <- function() { 
+createResOverview <- function() {
   overview <- list(
     Task <- currenttask$task$id,
     Learner <- Res$Current_Learner$label,

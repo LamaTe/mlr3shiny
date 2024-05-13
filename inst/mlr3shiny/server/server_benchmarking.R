@@ -63,7 +63,6 @@ getItersOv <- function() {
 getCurrentLearnersOv <- function() {
   if (!is.null(Bench$Current_Learners)) {
     lrns <- paste(sapply(input$Bench_learners, function(x){
-      #Bench$Current_Learners[[x]]$label <- "Test1"
       c(paste(x, Bench$Current_Learners[[x]]$label, sep = ": "))
       }), collapse = ", ")
     return(lrns)
@@ -311,7 +310,6 @@ observeEvent(input$Bench_aggr_measure, {
   output$Bench_rslt_view <- DT::renderDataTable({
     getBenchTable(aggr_rslt)
   })
-
   Bench$Overview <- createBenchOverview()
 })
 
