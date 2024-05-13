@@ -482,7 +482,6 @@ makeParamUi <- function(learnerobject, learnername) {
             addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
-        
       }
    }
      else if (grepl("log_reg", learnerobject$Learner$id, fixed = TRUE)) {
@@ -665,11 +664,8 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       invalidparams <- NULL
      
       for (i in learnerobject$Params) {
-        print("Basis für currentinput:")
-        print(paste0(learnername, "Param", i$id))
          currentinput <- input[[paste0(learnername, "Param", i$id)]]
          
-        
          # validate input value with 2 overall if statements 
          # on Windows and Linux Shiny sends NA (empty) inputs differently
          # Windows translates to 0 whereas Linux keeps as NA
@@ -677,7 +673,6 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
          if (is.null(currentinput) || is.na(currentinput)) {
            invalidparams <- c(invalidparams, i$id)
          }
-         
          
          if (!is.null(currentinput) && !is.na(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
@@ -710,7 +705,6 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # a solution could be to distinguish between a display name and the internal one
       # so the ChangeParams-Routine could be used
 
-
       svm_kernel <- c("radial", "polynomial", "linear")
 
       if (grepl("xgboost", learnerobject$Learner_Name)) {
@@ -738,8 +732,6 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
 
       # resetting trained learner when params change
       reset_single_trained_learner(learnername)
-      
-     
    })
 }
 
