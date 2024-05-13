@@ -153,8 +153,9 @@ observeEvent(input$Task_change_pos_class, {
 
 observeEvent(input$Task_robustify, {
   if(!input[["Task_robustify"]]){
-    shinyalert(title = "Robustify data preprocessing disabled",
-               text = "Note that this might lead to an error 
+    shinyalert(title = "Notification",
+               text = "Robustify data preprocessing disabled. 
+                       Note that this might lead to an error 
                        when training a learner if the chosen
                        learner can not deal with all variable types 
                        in the original data.",

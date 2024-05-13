@@ -1,0 +1,14 @@
+bref = c(  
+bibentry(
+    bibtype = "Article",
+    title = "mlr3shiny—State-of-the-art machine learning made easy",
+    author = c(
+      person("Laurens", "Tetzlaff")
+      person("Gero", "Szepannek")
+    ),
+    journal = "SoftwareX",
+    volume = "20",
+    year = 2022,
+    doi = "10.1016/j.softx.2022.101246"
+  )
+)

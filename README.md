@@ -13,6 +13,11 @@ Current functionalities of mlr3shiny are:
 * Prediction on new data using the trained learner
 * Explain trained learner 
 
+## Reference
+
+Tetzlaff, L. and Szepannek G. (2022): mlr3shiny—State-of-the-art machine learning made easy, SoftwareX 20, DOI: 
+[10.1016/j.softx.2022.101246](https://doi.org/10.1016/j.softx.2022.101246).
+
 ## Installation
 
 Install the package in R via CRAN:
@@ -29,7 +34,7 @@ remotes::install_github("https://github.com/LamaTe/mlr3shiny.git")
 ## Example
 Launch the application via:
 ``` r
-launchMlr3Shiny()
+mlr3shiny::launchMlr3Shiny()
 ```
 
 ## Usage Description
