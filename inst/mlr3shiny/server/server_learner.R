@@ -724,8 +724,13 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       } else if (grepl("regr.svm", learnerobject$Learner_Name)) {
          paramlist[[paste0(learnerobject$Learner_Name, ".", "type")]] <- "eps-regression"
       }
+      if(length(learnerobject$Learner$param_set$values) > 0){
+        for (pn in names(learnerobject$Learner$param_set$values)){
+          if (any(pn == names(paramlist))) {learnerobject$Learner$param_set$values[[pn]] <- NULL}
+        }
+      }
       
-      learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
+      learnerobject$Learner$param_set$values <- c(learnerobject$Learner$param_set$values, paramlist) # update hyperparameter values of current learner
       # learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
 
