@@ -41,7 +41,7 @@ getLrnStatus <- function() {
 # learner overview
 createPredLrnOv <- function() {
   overview <- list(
-    Learner <- paste(input$Pred_learner, Pred$Learner$id, sep = " "),
+    Learner <- paste(input$Pred_learner, Pred$Learner$label, sep = " "),
     # from server_Learner
     PredType <- Pred$Learner$predict_type,
     Target <- currenttask$task$target_names,
