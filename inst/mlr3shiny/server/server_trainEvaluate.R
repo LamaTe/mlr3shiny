@@ -83,7 +83,7 @@ createWfOverview <- function() {
     Task <- currenttask$task$id,
     Learner <- paste(input$TrainFit_learner, getLrnModel(), sep = " "),
     "State of Workflow" <- getWfState(),
-    Model <- getLrnModel(),
+    Model <- custom_map(getLrnModel()),
     "Performance Train Data" <- getWfPerfTrain(),
     "Performance Test Data" <- getWfPerfTest()
   )
