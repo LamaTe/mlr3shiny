@@ -201,8 +201,10 @@ makeOverviewUi <- function(learnerobject) {
             addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
             addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
             # addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-            addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-         ),
+            addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", ")),
+            textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = "", width = NULL, placeholder = "Create Learner label"),
+            actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Update Label", style = "float: left;")
+            ),
          column(
             6,
             # addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
@@ -256,7 +258,8 @@ addFactorParam <- function(id, levels, learnername, default) {
       ),
       column(
          3,
-         selectInput(inputId = paste0(learnername, "factor"), label = NULL, choices = levels, selected = default)
+         selectInput(inputId = paste0(learnername, "factor",id), label = NULL, 
+                     choices = levels, selected = default)
       )
    )
 }
@@ -457,10 +460,15 @@ makeParamUi <- function(learnerobject, learnername) {
       params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
       if (grepl("threshold", learnerobject$Learner$id)) {
          parameterui <- tagList(
+            #ETA 
             addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
+            #Max Depth
             addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
+            #nrounds
             addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
+            #colsample bytree
             addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
+            #Booster
             addFactorParam(id = params[[5]]$id, levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
             addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
@@ -571,10 +579,21 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
 
 
 createGraphLearner <- function(selectedlearner) {
+  learner_algo <- input[[selectedlearner]]
   if (!isTRUE(currenttask$task$properties == "twoclass")) {
-    learner <- lrn(input[[selectedlearner]]) 
-  } else { # ...otherwise predict_type = "prob" is set and a threshold po added below
-    learner <- lrn(input[[selectedlearner]], predict_type = "prob")
+    if (learner_algo == "classif.rpart" | learner_algo == "regr.rpart") {
+      #only decision trees are able to use keep_model = T | used for visualization
+      learner <- lrn(input[[selectedlearner]], keep_model = TRUE, label = "")} 
+    else {
+      learner <- lrn(input[[selectedlearner]], label = "")} 
+  } 
+  else { # ...otherwise predict_type = "prob" is set and a threshold po added below
+    if (learner_algo == "classif.rpart" | learner_algo == "regr.rpart") {
+      learner <- lrn(input[[selectedlearner]], predict_type = "prob", keep_model = TRUE, label = "")
+    }
+    else {
+      learner <- lrn(input[[selectedlearner]], predict_type = "prob", label = "")
+    }
   }
   if(input[["Task_robustify"]]){
     impm <- NULL 
@@ -584,18 +603,18 @@ createGraphLearner <- function(selectedlearner) {
     ftn <- NULL 
     if(input[["factors_to_numeric"]] == "TRUE") {ftn <- TRUE}
     if(input[["factors_to_numeric"]] == "FALSE") {ftn <- FALSE}
-     
-     graph <- pipeline_robustify(currenttask$task, learner,
+
+    graph <- pipeline_robustify(currenttask$task, learner,
                                  impute_missings    = impm,
                                  factors_to_numeric = ftn,
                                  max_cardinality    = input[["max_cardinality"]],
                                  ordered_action     = input[["ordered_action"]],
                                  character_action   = input[["character_action"]],
                                  POSIXct_action     = input[["POSIXct_action"]]) %>>% learner
+       
+    plot(graph)
   } else graph <- as_graph(po("learner", learner))
-  #plot(graph)  
   if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")
-  
   return(as_learner(graph))
 }
 
@@ -631,6 +650,12 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
    })
+   
+   # observerevent for label button: implemented because of interactivity.So that a user knows it has been updated 
+   observeEvent(input[[paste0(learnerobject$Learner_Name, "LabelChange")]], {
+     learnerobject$Learner$label <- input[[paste0(learnerobject$Learner_Name, "LabelChoice")]]
+     showNotification("Label updated successfully", duration = 3, id = "LabelChangeSuccess", type = "message")
+   })
 
    # kernel params for svm
    output[[paste0(learnername, "KernelParam", "kernel")]] <- renderUI({
@@ -648,6 +673,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
       invalidparams <- NULL
+     
       for (i in learnerobject$Params) {
          if(i$class == "ParamFct") {
            currentinput <- input[[paste0(learnername, "factor")]]
@@ -663,7 +689,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
            invalidparams <- c(invalidparams, i$id)
          }
          
-         if (!is.null(currentinput) & !is.na(currentinput)) {
+         if (!is.null(currentinput) && !is.na(currentinput)) {
             if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
                  currentinput > learnerobject$Learner$param_set$params[[i$id]]$upper) ||
                 (!is.na(learnerobject$Learner$param_set$params[[i$id]]$lower) &&
@@ -679,7 +705,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
             }
          }
       }
-
+ 
       if(!is.null(invalidparams)){
         shinyalert(title = "Notification",
                 text = paste("(Empty or Invalid Parameter Input:) It seems that you tried to set parameter(s): ",
@@ -692,15 +718,14 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # a solution could be to distinguish between a display name and the internal one
       # so the ChangeParams-Routine could be used
 
-
       svm_kernel <- c("radial", "polynomial", "linear")
 
       if (grepl("xgboost", learnerobject$Learner_Name)) {
-         xgboost_booster <- c("gblinear", "gbtree", "dart")
          if (input[[paste0(learnername, "factor")]] %in% xgboost_booster) {
-            paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor")]]
+            paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor",id)]]
          }
       }
+
       if (grepl("svm", learnerobject$Learner_Name)) {
          if (input[[paste0(learnername, "factor")]] %in% svm_kernel) {
             paramlist[[paste0(learnerobject$Learner_Name, ".kernel")]] <- input[[paste0(learnername, "factor")]]
