@@ -199,13 +199,13 @@ makeOverviewUi <- function(learnerobject) {
          column(
             6,
             addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
-            addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
-            # addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-            addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", "))
+            addOverviewLineLearner("Current Predict Type: ", custom_map(learnerobject$Overview[[2]])),
+            #addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
+            addOverviewLineLearner("Supported Predict Types: ", paste(custom_map(learnerobject$Overview[[3]]), collapse = ", "))
          ),
          column(
             6,
-            # addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
+            #addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
             addOverviewLineLearner("Properties: ", paste(learnerobject$Overview[[4]], collapse = ", ")),
             addOverviewLineLearner("Supported Feature Types: ", paste(learnerobject$Overview[[5]], collapse = ", "))
          )
@@ -219,10 +219,12 @@ addNumericParam <- function(id, lower, upper, learnername, default, stpsize = 1)
    if (missing(default)) {
       default <- 0
    }
-   fluidRow(
+   fluidRow( 
       column(
          3,
-         h5(id)
+         h5(id), 
+         tags$div(title=custom_map(id), 
+                  bsicons::bs_icon("question-circle"), color="blue"),          
       ),
       column(
          3,
@@ -248,7 +250,9 @@ addFactorParam <- function(id, levels, learnername, default) {
    fluidRow(
       column(
          3,
-         h5(id)
+         h5(id), 
+         tags$div(title=custom_map(id), 
+                  bsicons::bs_icon("question-circle")),  
       ),
       column(
          6,
@@ -355,37 +359,39 @@ makeParamUi <- function(learnerobject, learnername) {
          parameterui <- tagList(
             # num.trees
             addNumericParam(
-               id = custom_map(params[[1]]$i), lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
+               id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                default = params[[1]]$default
             ),
+            tags$div(title="Hier kann ganz viel erklärender Text zu der Anzahl der Bäume stehen", bsicons::bs_icon("question-circle")),
             # mtry upper needs to be restricted to number of features since mlr ships with Inf as upper value
             addNumericParam(
-               id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = length(currenttask$task$feature_names), learnername = learnername,
+               id = params[[2]]$id, lower = params[[2]]$lower, upper = length(currenttask$task$feature_names), learnername = learnername,
                default = params[[2]]$default
             ),
             # min.node.size
             addNumericParam(
-               id = custom_map(params[[3]]$id), lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
+               id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                default = params[[3]]$default
             ),
-            addNumericParam(id = custom_map(params[[length(params)]]$id), lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
+            addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
       } else {
          parameterui <- tagList(
             # num.trees
-            addNumericParam(
-               id = custom_map(params[[1]]$id), lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
+           addNumericParam(
+               id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                default = params[[1]]$default
             ),
+           
             # mtry upper needs to be restricted to number of features since mlr ships with Inf as upper value
             addNumericParam(
-               id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = length(currenttask$task$feature_names), learnername = learnername,
+               id = params[[2]]$id, lower = params[[2]]$lower, upper = length(currenttask$task$feature_names), learnername = learnername,
                default = params[[2]]$default
             ),
             # min.node.size
             addNumericParam(
-               id = custom_map(params[[3]]$id), lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
+               id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                default = params[[3]]$default
             ),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
@@ -396,32 +402,32 @@ makeParamUi <- function(learnerobject, learnername) {
       if (grepl("threshold", learnerobject$Learner$id)) {
          parameterui <- tagList(
             addNumericParam(
-               id = custom_map(params[[1]]$id), lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
+               id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                default = params[[1]]$default, stpsize = 1
             ),
             addNumericParam(
-               id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
+               id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
                default = params[[2]]$default, stpsize = 0.0025
             ),
             addNumericParam(
-               id = custom_map(params[[3]]$id), lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
+               id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                default = params[[3]]$default, stpsize = 1
             ),
-            addNumericParam(id = custom_map(params[[length(params)]]$id), lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
+            addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
       } else {
          parameterui <- tagList(
             addNumericParam(
-               id = custom_map(params[[1]]$id), lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
+               id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername,
                default = params[[1]]$default, stpsize = 1
             ),
             addNumericParam(
-               id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
+               id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
                default = params[[2]]$default, stpsize = 0.0025
             ),
             addNumericParam(
-               id = custom_map(params[[3]]$id), lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
+               id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername,
                default = params[[3]]$default, stpsize = 1
             ),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
@@ -432,21 +438,21 @@ makeParamUi <- function(learnerobject, learnername) {
       if (grepl("threshold", learnerobject$Learner$id)) {
          parameterui <- tagList(
             # sigmoid kernel removed for explanatory reasons
-            addFactorParam(id = custom_map(params[[1]]$id), levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
+            addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
             addNumericParam(
-               id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
+               id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
                default = params[[2]]$default, stpsize = 0.1
             ),
             uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
-            addNumericParam(id = custom_map(params[[length(params)]]$id), lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
+            addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
       } else {
          parameterui <- tagList(
             # sigmoid kernel removed for explanatory reasons
-            addFactorParam(id = custom_map(params[[1]]$id), levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
+            addFactorParam(id = params[[1]]$id, levels = c("radial", "polynomial", "linear"), learnername = learnername, default = params[[1]]$default),
             addNumericParam(
-               id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
+               id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername,
                default = params[[2]]$default, stpsize = 0.1
             ),
             uiOutput(outputId = paste0(learnername, "KernelParam", "kernel")), # depending on selected kernel, different hyperparameters are available
@@ -457,21 +463,21 @@ makeParamUi <- function(learnerobject, learnername) {
       params <- getAvailableParams(algorithm = "xgboost", learnerobject = learnerobject)
       if (grepl("threshold", learnerobject$Learner$id)) {
         parameterui <- tagList(
-            addNumericParam(id = custom_map(params[[1]]$id), lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
-            addNumericParam(id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
-            addNumericParam(id = custom_map(params[[3]]$id), lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
-            addNumericParam(id = custom_map(params[[4]]$id), lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
-            addFactorParam(id = custom_map(params[[5]]$id), levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
-            addNumericParam(id = custom_map(params[[length(params)]]$id), lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
+            addNumericParam(id = params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
+            addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
+            addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
+            addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
+            addFactorParam(id =  params[[5]]$id, levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
+            addNumericParam(id = params[[length(params)]]$id, lower = 0, upper = 1, learnername = learnername, default = 0.5, stpsize = 0.1),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
       } else {
          parameterui <- tagList(
-            addNumericParam(id = custom_map(params[[1]]$id), lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
-            addNumericParam(id = custom_map(params[[2]]$id), lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
-            addNumericParam(id = custom_map(params[[3]]$id), lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
-            addNumericParam(id = custom_map(params[[4]]$id), lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
-            addFactorParam(id = custom_map(params[[5]]$id), levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
+           addNumericParam(id =  params[[1]]$id, lower = params[[1]]$lower, upper = params[[1]]$upper, learnername = learnername, default = params[[1]]$default, stpsize = 0.1),
+            addNumericParam(id = params[[2]]$id, lower = params[[2]]$lower, upper = params[[2]]$upper, learnername = learnername, default = params[[2]]$default, stpsize = 1),
+            addNumericParam(id = params[[3]]$id, lower = params[[3]]$lower, upper = params[[3]]$upper, learnername = learnername, default = params[[3]]$default, stpsize = 1),
+            addNumericParam(id = params[[4]]$id, lower = params[[4]]$lower, upper = params[[4]]$upper, learnername = learnername, default = params[[4]]$default, stpsize = 0.1),
+            addFactorParam(id =  params[[5]]$id, levels = c("gblinear", "gbtree", "dart"), learnername = learnername, default = params[[5]]$default),
             actionButton(inputId = paste0(learnername, "ChangeParams"), label = "Change Parameters", style = "float: right;")
          )
       }

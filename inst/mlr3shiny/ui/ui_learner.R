@@ -1,5 +1,5 @@
 # Layout of "Learner" UI
-tabpanel_Learner <- fluidPage(
+tabpanel_Learner <- fluidPage( #page_fillable for tooltip
     fluidRow(
       column(4,
              wellPanel(
