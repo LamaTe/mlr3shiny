@@ -51,7 +51,7 @@ observeEvent(input$explanation_selection, {
      
     shinyalert(title = "Notification",
                text = paste("You chose a response type in the learner tab. This might not work.",
-                            "Try training a Random Forest with the predict type set to 'Probability' to fix this"),
+                            "Try training a model with the predict type set to 'Probability' to fix this"),
                animation = FALSE, closeOnClickOutside = TRUE)
     }
   
