@@ -332,8 +332,8 @@ getAvailableParams <- function(algorithm, learnerobject) {
         # concatenating the learner id (e.g. "classif.rpart") with a . and the actual parameter
         # this is required because the graph learner stores all parameters in this format
         # example: "classif.rpart.maxdepth"
-        params[[i]] <- learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]]
-     }
+        params[[i]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]
+     } #paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])
      if (grepl("threshold", learnerobject$Learner$id)) {
         params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
      }
