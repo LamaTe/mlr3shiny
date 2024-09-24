@@ -19,7 +19,15 @@ ui <- tagList(
         ".navbar {background-color: #2FA4E7;}",
         ".navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover
         {background-color:}",
-        "h5 {color: black;}"
+        "h5 {color: black;}",
+        ".alert-info {
+          background-color: #2FA4E7 !important;
+          p {color: white !important}
+          button {color: #575757 !important}}",
+        ".alert-warning {
+          background-color: #d97070 !important;
+          p {color: white !important}
+          button {color: #575757 !important}}"
       )
     )
   ),

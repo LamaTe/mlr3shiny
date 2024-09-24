@@ -337,7 +337,9 @@ observeEvent(input$Bench_start, {
     shinyalert(title = "No Learner Selected",
                text = paste("In order to start benchmarking, learners must be selected.",
                             sep = " "),
-               animation = FALSE, closeOnClickOutside = TRUE)
+               animation = FALSE,
+               closeOnClickOutside = TRUE,
+               className="alert-warning",)
   }
 })
 

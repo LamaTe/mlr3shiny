@@ -162,7 +162,9 @@ observeEvent(input$Task_robustify, {
                        when training a learner if the chosen
                        learner can not deal with all variable types 
                        in the original data.",
-               animation = FALSE, closeOnClickOutside = TRUE)
+               animation = FALSE, 
+               closeOnClickOutside = TRUE,
+               className="alert-info",)
   }
 })
 
@@ -254,6 +256,7 @@ observeEvent(input$action_visualize, {
       text = "You need to select Features for Visualization.",
       animation = FALSE,
       showConfirmButton = TRUE,
+      className="alert-warning",
     )
     return()
   }
@@ -264,13 +267,14 @@ observeEvent(input$action_visualize, {
 
   if (task$nrow > 5000 | length(task$feature_names) > 5) {
     shinyalert(
-      title = "Warning",
+      title = "Information",
       text = "Computation time for the plot might take long, 
       because there are many observations or variables in the Data Backend.
       This might also affect readability of the plot.",
       animation = FALSE,
       showCancelButton = TRUE,
       showConfirmButton = TRUE,
+      className="alert-info",
       callbackR = function(x) {if (x == TRUE) {render_visualization_plot(task)}})
   }
   else {
