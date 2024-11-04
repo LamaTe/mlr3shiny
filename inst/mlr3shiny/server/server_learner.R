@@ -675,7 +675,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       invalidparams <- NULL
      
       for (i in learnerobject$Params) {
-         if(i$class == "ParamFct") {
+         if(i$cls == "ParamFct") {
            currentinput <- input[[paste0(learnername, "factor")]]
          }
          else {
@@ -688,12 +688,12 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
          if (is.null(currentinput) || is.na(currentinput)) {
            invalidparams <- c(invalidparams, i$id)
          }
-         
+
          if (!is.null(currentinput) && !is.na(currentinput)) {
-            if ((!is.na(learnerobject$Learner$param_set$params[[i$id]]$upper) &&
-                 currentinput > learnerobject$Learner$param_set$params[[i$id]]$upper) ||
-                (!is.na(learnerobject$Learner$param_set$params[[i$id]]$lower) &&
-                 currentinput < learnerobject$Learner$param_set$params[[i$id]]$lower) ||
+            if ((!is.na(learnerobject$Learner$param_set$params[id==i$id]$upper) &&
+                 currentinput > learnerobject$Learner$param_set$params[id==i$id]$upper) ||
+                (!is.na(learnerobject$Learner$param_set$params[id==i$id]$lower) &&
+                 currentinput < learnerobject$Learner$param_set$params[id==i$id]$lower) ||
                 (i$id == "classif.ranger.mtry" && currentinput > length(currenttask$task$feature_names)) ||
                 (i$id == "threshold.thresholds" && currentinput > 1) ||
                 (i$id == "threshold.thresholds" && currentinput < 0)) 
@@ -747,13 +747,16 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
      }
 
       #old: learnerobject$Learner$param_set$values <- paramlist # update hyperparameter values of current learner
-      learnerobject$Learner$param_set$values <- c(learnerobject$Learner$param_set$values, paramlist) # update hyperparameter values of current learner
+      learnerobject$Learner$param_set$set_values(.values=paramlist) # update hyperparameter values of current learner
       # is new learnerobject$Learner$param_set$values still compatible with (unchanged) rest of learnerobject$Learner$param_set?
       # learnerobject$Overview <- getLearnerOverview(learnerobject = learnerobject)
       learnerobject$Hash <- learnerobject$Learner$hash
 
       # resetting trained learner when params change
       reset_single_trained_learner(learnername)
+
+      print("prüfe werte")
+      print(learnerobject$Learner$param_set$sets[[learnerobject$Learner_Name]])
    })
 }
 

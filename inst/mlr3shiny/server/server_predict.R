@@ -164,6 +164,7 @@ observeEvent(input$Pred_train_learner, {
       show(id = "Pred_trained_learner")
       show(id = "Pred_codegen")
     })
+    print(Pred$Learner$param_set)
   Pred$Learner_Ov <- createPredLrnOv()
 })
 
