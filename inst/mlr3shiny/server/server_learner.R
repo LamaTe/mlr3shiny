@@ -276,43 +276,43 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
    if (selectedkernel == "polynomial") {
       kernelparams <- tagList(
          addNumericParam(
-            id = paste0(learnerobject$Learner_Name, ".", "gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]$lower,
-            upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]$upper,
-            learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]$default,
+            id = paste0(learnerobject$Learner_Name, ".", "gamma"), lower = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]$lower,
+            upper = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]$upper,
+            learnername = learnername, default = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]$default,
             stpsize = 0.1
          ),
          addNumericParam(
-            id = paste0(learnerobject$Learner_Name, ".", "degree"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "degree")]]$lower,
-            upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "degree")]]$upper,
-            learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "degree")]]$default
+            id = paste0(learnerobject$Learner_Name, ".", "degree"), lower = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "degree")]$lower,
+            upper = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "degree")]$upper,
+            learnername = learnername, default = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "degree")]$default
          )
       )
       # update learnerobject$Params so that only the hyperparams are set that are actually available
       learnerobject$Params <- c(
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "kernel")]],
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "cost")]],
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]],
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "degree")]]
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")],
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")],
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")],
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "degree")]
       )
       return(kernelparams)
    } else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
       kernelparams <- tagList(
          addNumericParam(
-            id = paste0(learnerobject$Learner_Name, ".", "gamma"), lower = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]$lower, upper = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]$upper,
-            learnername = learnername, default = learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]$default,
+            id = paste0(learnerobject$Learner_Name, ".", "gamma"), lower = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]$lower, upper = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]$upper,
+            learnername = learnername, default = learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]$default,
             stpsize = 0.1
          )
       )
       learnerobject$Params <- c(
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "kernel")]],
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "cost")]],
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "gamma")]]
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")],
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")],
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]
       )
       return(kernelparams)
    } else {
       learnerobject$Params <- c(
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "kernel")]],
-         learnerobject$Learner$param_set$params[[paste0(learnerobject$Learner_Name, ".", "cost")]]
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")],
+         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")]
       )
       return(NULL)
    }
@@ -325,7 +325,7 @@ getAvailableParams <- function(algorithm, learnerobject) {
    # Output: list of parameters with id, lower and upper levels, defaults
    params <- list()
    if (grepl("log_reg", learnerobject$Learner$id)) {
-     params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
+     params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[id == "threshold.thresholds"]
    }
    else{
      for (i in 1:length(learnerparams[[algorithm]])) {
@@ -335,7 +335,7 @@ getAvailableParams <- function(algorithm, learnerobject) {
         params[[i]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])]
      } #paste0(learnerobject$Learner_Name, ".", learnerparams[[algorithm]][i])
      if (grepl("threshold", learnerobject$Learner$id)) {
-        params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[["threshold.thresholds"]]
+        params[[length(params) + 1]] <- learnerobject$Learner$param_set$params[id == "threshold.thresholds"]
      }
    }
    learnerobject$Params <- params
@@ -664,7 +664,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       if (input[[selectedlearner]] %in% c("classif.svm", "regr.svm")) {
          getKernelParams(
             learnerobject = learnerobject, learnername = learnername,
-            selectedkernel = input[[paste0(learnername, "factor")]]
+            selectedkernel = input[[paste0(learnername, "factor", learnerobject$Learner_Name, ".kernel")]]
          )
       }
    })
@@ -754,9 +754,6 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
 
       # resetting trained learner when params change
       reset_single_trained_learner(learnername)
-
-      print("prüfe werte")
-      print(learnerobject$Learner$param_set$sets[[learnerobject$Learner_Name]])
    })
 }
 
