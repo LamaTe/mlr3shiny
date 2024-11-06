@@ -3,6 +3,7 @@
 *Adding option to visualize objects in Tabs Predict and Task
 *Adding option to create custom label for learners
 *Several fixes
+*Several QoL improvements
 
 # mlr3shiny 0.3.1
 
