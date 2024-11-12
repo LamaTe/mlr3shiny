@@ -48,12 +48,14 @@ output$eval_learner_plot_tabs <- renderUI({
 ##display warning message if model interpretation may fail and how the user can avoid this
 observeEvent(input$explanation_selection, {
   if(isTRUE(currenttask$task$properties == "multiclass" && eval_meta$current_learner$predict_type == "response")){
-     showNotification("This learner may not work due to the predict_type being set 
-                      to response. Consider changing it to 'prob' in the learner-tab", duration = 15, type = "warning")
-    }
+    
+    shinyalert(title = "Notification",
+               text = paste("You chose a response type in the learner tab. This is currently not supported.",
+                            "Try training a model with the predict type set to 'Probability' to fix this"),
+               animation = FALSE, closeOnClickOutside = TRUE)
+  }
   
 })
-
 
 # observe "start evaluation" button and start DALEX Workflow
 observeEvent(input$evaluate_start, {
