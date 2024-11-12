@@ -34,6 +34,7 @@ Imports:
 	mlr3viz,
 	DALEX,
 	DALEXtra,
+	Metrics,
 	shiny (>= 1.6.0),
 	shinydashboard,
 	shinyjs (>= 2.0.0),
@@ -41,12 +42,10 @@ Imports:
 	shinyalert,
 	data.table (>= 1.12.8),
 	DT (>= 0.11),
-	readxl,
 	stringr,
 	plyr,
+	dplyr,
 	purrr,
-	ranger,
-	e1071,
 	stats,
 	patchwork,
 	bslib,
@@ -55,9 +54,19 @@ Imports:
 	igraph,
 	ggparty,
 	GGally
+  
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 2.1.0),
     shinytest,
-    devtools
+    devtools,
+    ranger,
+	  e1071,
+	  xgboost,
+	  igraph,
+	  readxl,
+    DALEX,
+  	DALEXtra,
+  	bslib,
+  	haven

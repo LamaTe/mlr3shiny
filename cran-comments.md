@@ -1,7 +1,9 @@
 ## Test environments
-* local manjaro 21.1.0, R 4.1.0
-* ubuntu 16.04.6 LTS (on travis-ci), R 4.0.2
+* local macOS Sonoma 14.0 (R 4.3.1)
 * win-builder (devel and release)
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
+
+## Note
+Namespaces in Imports field not imported from [...] All declared Imports should be used. - Declared package imports are actually still used within Shiny app on load.

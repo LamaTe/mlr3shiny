@@ -4,8 +4,11 @@
     "Data_train_header": true,
     "Data_train_header_xlsx": true,
     "Data_train_quote": "\"",
+    "Data_train_sas": null,
     "Data_train_sep": ",",
     "Data_train_sheet": 1,
+    "Data_train_spss": null,
+    "Data_train_stata": null,
     "Data_train_type": "csv",
     "Data_train_xlsx": null,
     "evaluate_start": 0,
@@ -17,8 +20,11 @@
     "Predict_data_header": true,
     "Predict_data_header_xlsx": true,
     "Predict_data_quote": "\"",
+    "Predict_data_sas": null,
     "Predict_data_sep": ",",
     "Predict_data_sheet": 1,
+    "Predict_data_spss": null,
+    "Predict_data_stata": null,
     "Predict_data_type": "csv",
     "Predict_data_xlsx": null,
     "Predict_predict": 0,
@@ -51,9 +57,9 @@
         },
         {
           "name": "dt-core",
-          "version": "1.11.3",
+          "version": "1.13.4",
           "src": {
-            "href": "dt-core-1.11.3"
+            "href": "dt-core-1.13.4"
           },
           "meta": null,
           "script": "js/jquery.dataTables.min.js",
@@ -68,13 +74,13 @@
         },
         {
           "name": "crosstalk",
-          "version": "1.1.1",
+          "version": "1.2.0",
           "src": {
-            "href": "crosstalk-1.1.1"
+            "href": "crosstalk-1.2.0"
           },
           "meta": null,
           "script": "js/crosstalk.min.js",
-          "stylesheet": "css/crosstalk.css",
+          "stylesheet": "css/crosstalk.min.css",
           "head": null,
           "attachment": null,
           "all_files": true
