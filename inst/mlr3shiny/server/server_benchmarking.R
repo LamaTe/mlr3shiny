@@ -198,6 +198,12 @@ getBenchButton <- function() {
 # show comparison table for the performance of each learner
 getBenchTable <- function(aggregated_result) {
   if (!is.null(Bench$Bench_Rslt)) {
+    #replace LearnerID with Learner labels
+    aggregated_result$learner_id <- sapply(input$Bench_learners, function(x){
+      c(Bench$Current_Learners[[x]]$label)})
+    #rename column
+    aggregated_result <- rename(aggregated_result, learner_name = learner_id)
+    
     tabl <-  DT::datatable(aggregated_result[, -c(1,2,3,6)],
                            options = list(scrollX = TRUE,searching = FALSE, ordering = FALSE, bInfo = FALSE,
                                           lengthChange = FALSE, paging = FALSE))
