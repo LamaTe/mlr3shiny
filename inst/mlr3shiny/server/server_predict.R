@@ -164,6 +164,7 @@ observeEvent(input$Pred_train_learner, {
       show(id = "Pred_trained_learner")
       show(id = "Pred_codegen")
     })
+    print(Pred$Learner$param_set)
   Pred$Learner_Ov <- createPredLrnOv()
 })
 
@@ -263,7 +264,10 @@ observeEvent(input$Predict_predict, {
     shinyalert(title = "Predicting Failed",
                text = paste("Please train a learner on the entire training data set and import a new dataset prior to predicting.",
                             "the target value", sep = " "),
-               closeOnClickOutside = TRUE, animation = FALSE)
+               closeOnClickOutside = TRUE,
+               animation = FALSE,
+               className="alert-warning",
+               )
   }
   else {
     withCallingHandlers(
@@ -535,6 +539,7 @@ raise_alert <- function(message, bttn_confirm=FALSE) {
       text = message,
       animation = FALSE,
       showConfirmButton = TRUE,
+      className="alert-warning",
       )
   }
   else {
@@ -544,6 +549,7 @@ raise_alert <- function(message, bttn_confirm=FALSE) {
       animation = FALSE,
       showCancelButton = TRUE,
       showConfirmButton = TRUE,
+      className="alert-warning",
       callbackR = function(x) {if (x == TRUE) {render_decision_tree(TRUE)}})
   }
 }
