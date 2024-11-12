@@ -1,3 +1,23 @@
+# mlr3shiny 0.5.0
+
+* Updated to new ParamSet backbone
+* Some warning messages are now less aggressive
+* Some fixes
+
+# mlr3shiny 0.4.0
+
+* Adding option to visualize objects in Tabs Predict and Task
+* Adding option to create custom label for learners
+* Several fixes
+
+# mlr3shiny 0.3.1
+
+* Migrating explain tab from iml to DALEX + additonal options
+* Adding option to select robustify parameters
+* Adding import of different file types also for predict tab
+* Readability of displayed code improved  
+* Several fixes
+
 # mlr3shiny 0.3.0
 
 * New algorithm evaluation metrics

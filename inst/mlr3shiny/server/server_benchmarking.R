@@ -63,7 +63,7 @@ getItersOv <- function() {
 getCurrentLearnersOv <- function() {
   if (!is.null(Bench$Current_Learners)) {
     lrns <- paste(sapply(input$Bench_learners, function(x){
-      c(paste(x, Bench$Current_Learners[[x]]$id, sep = ": "))
+      c(paste(x, Bench$Current_Learners[[x]]$label, sep = ": "))
       }), collapse = ", ")
     return(lrns)
   }
@@ -79,7 +79,7 @@ getBestLrnOv <- function(){
     # Fix-Me: pretty ugly solution, replace for with apply function and paste functions with better function for string handling
     for (learner_number in 1:length(Bench$Current_Learners)) {
       if (Bench$Best[1] == Bench$Current_Learners[[learner_number]]$hash) {
-        learner_info_vec = paste(input$Bench_learners[[learner_number]], Bench$Current_Learners[[learner_number]]$id)
+        learner_info_vec = paste(input$Bench_learners[[learner_number]], Bench$Current_Learners[[learner_number]]$label)
       }
     }
 
@@ -198,6 +198,12 @@ getBenchButton <- function() {
 # show comparison table for the performance of each learner
 getBenchTable <- function(aggregated_result) {
   if (!is.null(Bench$Bench_Rslt)) {
+    #replace LearnerID with Learner labels
+    aggregated_result$learner_id <- sapply(input$Bench_learners, function(x){
+      c(Bench$Current_Learners[[x]]$label)})
+    #rename column
+    aggregated_result <- rename(aggregated_result, learner_name = learner_id)
+    
     tabl <-  DT::datatable(aggregated_result[, -c(1,2,3,6)],
                            options = list(scrollX = TRUE,searching = FALSE, ordering = FALSE, bInfo = FALSE,
                                           lengthChange = FALSE, paging = FALSE))
@@ -295,16 +301,18 @@ observeEvent(input$Bench_benchmark, {
 observeEvent(input$Bench_aggr_measure, {
   # aggregate the results and find the best learner based on the last measure provided
   # try catch since learners require same predict type for measure -> easy error handling
-  withCallingHandlers(
-    tryCatch({
-      aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
-      Bench$Best <- getBestLrn(aggr_rslt)
-    },
-    error = errorAlertBenchAggr
-    ),
-    warning = warningAlert
-  )
-
+  withProgress(message = "Initialising scoring", style = "notification", 
+      withCallingHandlers(
+        tryCatch({
+        incProgress(0.5)
+        aggr_rslt <- Bench$Bench_Rslt$aggregate(msrs(c(input$Bench_measure)))
+        Bench$Best <- getBestLrn(aggr_rslt)
+      },
+      error = errorAlertBenchAggr
+      ),
+      warning = warningAlert
+      ))
+  
   output$Bench_rslt_view <- DT::renderDataTable({
     getBenchTable(aggr_rslt)
   })
@@ -335,10 +343,14 @@ observeEvent(input$Bench_start, {
     shinyalert(title = "No Learner Selected",
                text = paste("In order to start benchmarking, learners must be selected.",
                             sep = " "),
-               animation = FALSE, closeOnClickOutside = TRUE)
+               animation = FALSE,
+               closeOnClickOutside = TRUE,
+               className="alert-warning",)
   }
 })
 
 observeEvent(currenttask$task, {
   resetBench()
 })
+
+

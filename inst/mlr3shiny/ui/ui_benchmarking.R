@@ -41,5 +41,5 @@ tabpanel_benchmarking <- fluidPage(
              )
            )
            )
-  )
+  ),
 )
