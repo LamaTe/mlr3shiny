@@ -199,9 +199,10 @@ makeOverviewUi <- function(learnerobject) {
          column(
             6,
             addOverviewLineLearner("Algorithm: ", learnerobject$Overview[[1]]),
-            addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
+            addOverviewLineLearner("Current Predict Type: ", custom_map(learnerobject$Overview[[2]])),
             # addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
-            addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", ")),
+            # A bug in the next line: Es wird nicht angezeigt (weil auflistung)
+            addOverviewLineLearner("Supported Predict Types: ", paste(custom_map(learnerobject$Overview[[3]]), collapse = ", ")),
             textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = "", width = NULL, placeholder = "Create Learner label"),
             actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Update Label", style = "float: left;")
             ),
@@ -224,7 +225,15 @@ addNumericParam <- function(id, lower, upper, learnername, default, stpsize = 1)
    fluidRow(
       column(
          3,
-         h5(id)
+         tags$div(
+           style = "display: flex; align-items: center;",
+           h5(id),
+           tags$div(
+             title = custom_map(id), 
+             bsicons::bs_icon("question-circle"),
+             style = "margin-left: 5px;"
+           )
+         )
       ),
       column(
          3,
@@ -250,7 +259,15 @@ addFactorParam <- function(id, levels, learnername, default) {
    fluidRow(
       column(
          3,
-         h5(id)
+         tags$div(
+           style = "display: flex; align-items: center;",
+           h5(id),
+           tags$div(
+             title = custom_map(id), 
+             bsicons::bs_icon("question-circle"),
+             style = "margin-left: 5px;"
+           )
+         )
       ),
       column(
          6,
@@ -527,7 +544,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
             column(
                4,
                selectInput(
-                  inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = learnerobject$Learner$predict_types,
+                  inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = setNames(learnerobject$Learner$predict_types, custom_map(learnerobject$Learner$predict_types)),
                   selected = learnerobject$Learner$predict_type
                )
             ),
