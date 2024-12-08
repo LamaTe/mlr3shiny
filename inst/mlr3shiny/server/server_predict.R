@@ -69,7 +69,7 @@ getLrnOverview <- function() {
         column(12,
                addOverviewLineWf("Learner: ", Pred$Learner_Ov[[1]]),
                #addOverviewLineWf("Parameter: ", Pred$Learner_Ov[[2]]),
-               addOverviewLineWf("Predict Type", Pred$Learner_Ov[[2]]),
+               addOverviewLineWf("Predict Type:", custom_map(Pred$Learner_Ov[[2]])),
                addOverviewLineWf("Target:", Pred$Learner_Ov[[3]]),
                addOverviewLineWf("Status:", Pred$Learner_Ov[[4]])
         )
