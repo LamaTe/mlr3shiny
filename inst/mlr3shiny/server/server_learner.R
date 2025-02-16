@@ -202,8 +202,8 @@ makeOverviewUi <- function(learnerobject) {
             addOverviewLineLearner("Current Predict Type: ", learnerobject$Overview[[2]]),
             # addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
             addOverviewLineLearner("Supported Predict Types: ", paste(learnerobject$Overview[[3]], collapse = ", ")),
-            textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = "", width = NULL, placeholder = "Create Learner label"),
-            actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Update Label", style = "float: left;")
+            textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = learnerobject$Learner_Name, width = NULL, placeholder = "Create Learner label"),
+            actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Change Label", style = "float: left;")
             ),
          column(
             6,

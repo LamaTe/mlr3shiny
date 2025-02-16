@@ -127,7 +127,7 @@ observeEvent(input$evaluate_start, {
         if("Specific feature analysis" %in% input$explanation_selection && input$automation_flag == "automatic"){
           incProgress(0.6, paste("Computing plot: ", input$method_picker))
           
-          #1. Compute VI in a time efficient manner
+          #1. Compute VI
           temp_var_imp <- model %>% model_parts(B=1)
           #2. Get Vector of most important columns from worst to best
           temp_var_imp_vector <- temp_var_imp$variable
@@ -377,17 +377,6 @@ get_trained_learners <- function() {
 
 # get all possible learners
 get_learner_selection <- function(list_of_learners) {
-  if (length(reactiveValuesToList(trained_learner_list)) == 0) {
-    ui <- tagList(
-      fluidRow(
-        column(
-          12,
-          h5("No learner has been trained on the whole dataset, go back to the previous tab to train on the whole dataset")
-        )
-      )
-    )
-    return(ui)
-  } else {
     ui <- tagList(
       fluidRow(
         column(
@@ -399,7 +388,7 @@ get_learner_selection <- function(list_of_learners) {
           12,
           radioButtons(
             inputId = "selected_learner",
-            label = h5("Select a learner to evaluate its performance."),
+            label = h5("Select a learner to evaluate its performance. If no learner is selectable, make sure you have trained a learner on the full dataset in the previous tab"),
             choices = get_trained_learners(),
             selected = character(0)
           )
@@ -407,7 +396,6 @@ get_learner_selection <- function(list_of_learners) {
       )
     )
     return(ui)
-  }
 }
 
 #Split numeric and categorical values
