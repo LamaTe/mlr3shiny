@@ -1,3 +1,7 @@
+# mlr3shiny 0.5.3
+
+* Fixed Hyperparameters for SVM and XGBoost
+
 # mlr3shiny 0.5.0
 
 * Updated to new ParamSet backbone

@@ -719,10 +719,11 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # so the ChangeParams-Routine could be used
 
       svm_kernel <- c("radial", "polynomial", "linear")
+      xgboost_booster <- c("gblinear", "gbtree", "dart")
 
       if (grepl("xgboost", learnerobject$Learner_Name)) {
-         if (input[[paste0(learnername, "factor")]] %in% xgboost_booster) {
-            paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor",id)]]
+         if (input[[paste0(learnername, "factor", learnerobject$Learner$base_learner()$id, '.booster')]] %in% xgboost_booster) {
+            paramlist[[paste0(learnerobject$Learner_Name, ".booster")]] <- input[[paste0(learnername, "factor", learnerobject$Learner$base_learner()$id, '.booster')]]
          }
       }
 
