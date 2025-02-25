@@ -152,15 +152,15 @@ observe({
 ## Learner overview
 
 # get set params
-getCurrentParams <- function(learnerobject) {
-   selectedParams <- character(0)
-   for (i in names(learnerobject$Learner$param_set$values)) {
-      selectedParams <- paste(c(selectedParams, paste(i, learnerobject$Learner$param_set$values[[i]],
-         sep = ": "
-      )), collapse = ", ")
-   }
-   return(selectedParams)
-}
+# getCurrentParams <- function(learnerobject) {
+#    selectedParams <- character(0)
+#    for (i in names(learnerobject$Learner$param_set$values)) {
+#       selectedParams <- paste(c(selectedParams, paste(i, learnerobject$Learner$param_set$values[[i]],
+#          sep = ": "
+#       )), collapse = ", ")
+#    }
+#    return(selectedParams)
+# }
 
 getLearnerOverview <- function(learnerobject) {
    overview <- list(
@@ -272,7 +272,7 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
    # Generates a ui taglist to display additional hyperparameter that are available for selected kernel
    # Implicitly updates available hyperparameters depending on kernel for later hyperparameter adjustment (not ideal - function with side effects!)
    # Returns: taglist for kernelparamet
-
+   param_list <- list()
    if (selectedkernel == "polynomial") {
       kernelparams <- tagList(
          addNumericParam(
@@ -288,12 +288,12 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
          )
       )
       # update learnerobject$Params so that only the hyperparams are set that are actually available
-      learnerobject$Params <- c(
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")],
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")],
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")],
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "degree")]
-      )
+      param_list[[1]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")]
+      param_list[[2]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")]
+      param_list[[3]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]
+      param_list[[4]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "degree")]
+      
+      learnerobject$Params <- param_list
       return(kernelparams)
    } else if (selectedkernel == "radial" || selectedkernel == "sigmoid") {
       kernelparams <- tagList(
@@ -303,17 +303,17 @@ getKernelParams <- function(learnerobject, learnername, selectedkernel) {
             stpsize = 0.1
          )
       )
-      learnerobject$Params <- c(
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")],
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")],
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]
-      )
+      param_list[[1]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")]
+      param_list[[2]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")]
+      param_list[[3]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "gamma")]
+
+      learnerobject$Params <- param_list
       return(kernelparams)
    } else {
-      learnerobject$Params <- c(
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")],
-         learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")]
-      )
+      param_list[[1]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "kernel")]
+      param_list[[2]] <- learnerobject$Learner$param_set$params[id == paste0(learnerobject$Learner_Name, ".", "cost")]
+
+      learnerobject$Params <- param_list
       return(NULL)
    }
 }
@@ -673,10 +673,10 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
       paramlist <- list()
       invalidparams <- NULL
-     
+      
       for (i in learnerobject$Params) {
          if(i$cls == "ParamFct") {
-           currentinput <- input[[paste0(learnername, "factor")]]
+           currentinput <- input[[paste0(learnername, "factor", i$id)]]
          }
          else {
            currentinput <- input[[paste0(learnername, "Param", i$id)]]
@@ -705,7 +705,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
             }
          }
       }
- 
+
       if(!is.null(invalidparams)){
         shinyalert(title = "Notification",
                 text = paste("(Empty or Invalid Parameter Input:) It seems that you tried to set parameter(s): ",
@@ -727,8 +727,9 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       }
 
       if (grepl("svm", learnerobject$Learner_Name)) {
-         if (input[[paste0(learnername, "factor")]] %in% svm_kernel) {
-            paramlist[[paste0(learnerobject$Learner_Name, ".kernel")]] <- input[[paste0(learnername, "factor")]]
+         # bad concatination of input id
+         if (input[[paste0(learnername, "factor", learnerobject$Learner$base_learner()$id, '.kernel')]] %in% svm_kernel) {
+            paramlist[[paste0(learnerobject$Learner_Name, ".kernel")]] <- input[[paste0(learnername, "factor", learnerobject$Learner$base_learner()$id, '.kernel')]]
          }
       }
 
