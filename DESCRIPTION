@@ -39,6 +39,7 @@ Imports:
 	shinydashboard,
 	shinyjs (>= 2.0.0),
 	shinyWidgets,
+	shinycssloaders,
 	shinyalert,
 	data.table (>= 1.12.8),
 	DT (>= 0.11),

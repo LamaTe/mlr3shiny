@@ -13,6 +13,7 @@ library(shinydashboard)
 library(shinyjs)
 library(shinyWidgets)
 library(shinyalert)
+library(shinycssloaders)
 library(data.table)
 library(readxl)
 library(stringr)
@@ -26,7 +27,7 @@ library(ranger)
 library(ggparty)
 library(GGally)
 library(e1071)
-library(shinycssloaders)
+
 
 
 requireNamespace("mlr3measures")
