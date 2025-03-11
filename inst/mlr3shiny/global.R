@@ -229,6 +229,7 @@ custom_map <- function(y){
     "classif.ranger.min.node.size" = "Minimal Node size",
     "classif.rpart.minsplit" = "Minimum of observations in a node before split",
     "classif.rpart.maxdepth" = "Maximum depth of node in tree",
+    "classif.rpart.cp" = "Complexity Parameter",
     "classif.svm.kernel" = "Kernel function",
     "classif.svm.cost" = "Cost of constraint violations",
     "classif.svm.gamma" = "Influence of observation",
@@ -251,6 +252,7 @@ custom_map <- function(y){
     "regr.xgboost.nrounds" = "Maximum number of boosting iterations",
     "regr.xgboost.colsample_bytree" = "Subsample ratio of columns when constructing each tree",
     "regr.xgboost.booster" = "Boosting algorithm",
+    "threshold.thresholds" ="decision boundary used to convert predicted probabilities into class labels",
     #ML Algorithmns
     "classif.ranger" = "classification random forest",
     "regr.ranger" = "regression random forest",
