@@ -25,7 +25,7 @@ ui <- tagList(
           p {color: white !important}
           button {color: #575757 !important}}",
         ".alert-warning {
-          background-color: #d97070 !important;
+          background-color: rgba(214,165,51,0.8) !important;
           p {color: white !important}
           button {color: #575757 !important}}"
       )
