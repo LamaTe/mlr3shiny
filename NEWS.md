@@ -1,3 +1,8 @@
+# mlr3shiny 0.5.1
+
+* Improved Message when trying to visualise tree with only one node
+* Less aggressive alert-waning color
+
 # mlr3shiny 0.5.0
 
 * Updated to new ParamSet backbone
