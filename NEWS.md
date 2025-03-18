@@ -1,3 +1,7 @@
+# mlr3shiny 0.5.2
+
+* Added message to also think of robustifications steps, when model training fails
+
 # mlr3shiny 0.5.1
 
 * Improved Message when trying to visualise tree with only one node
