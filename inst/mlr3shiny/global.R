@@ -12,6 +12,7 @@ library(DT)
 library(shinydashboard)
 library(shinyjs)
 library(shinyWidgets)
+library(bsicons)
 library(shinyalert)
 library(data.table)
 library(readxl)
@@ -215,6 +216,69 @@ msr_translations <- data.table(key_msr = c('classif.acc', 'classif.bacc', 'class
                                         'positive predictive value (precision)', 'true negative rate (specificity)', 'true positive rate (recall/sensitivity)',
                                         'mean absolute error', 'mean squared error', 'root mean squared error', 'r squared'
 ))
+
+custom_map <- function(y){
+  mapping <- list(
+    #Prediction Types
+    "se" = "standard error",
+    "distr" = "distribution",
+    "prob" = "probability",
+    "response" = "response",
+    #Hyper Parameters
+    "classif.ranger.num.trees" = "Number of trees",
+    "classif.ranger.mtry" = "Number of features affecting node split",
+    "classif.ranger.min.node.size" = "Minimal Node size",
+    "classif.rpart.minsplit" = "Minimum of observations in a node before split",
+    "classif.rpart.maxdepth" = "Maximum depth of node in tree",
+    "classif.rpart.cp" = "Complexity Parameter",
+    "classif.svm.kernel" = "Kernel function",
+    "classif.svm.cost" = "Cost of constraint violations",
+    "classif.svm.gamma" = "Influence of observation",
+    "classif.xgboost.eta" = "Learning Rate",
+    "classif.xgboost.max_depth" = "Maximum depth of tree",
+    "classif.xgboost.nrounds" = "Maximum number of bossting iterations",
+    "classif.xgboost.colsample_bytree" = "Subsample ratio of columns when constructing each tree",
+    "classif.xgboost.booster" = "Boosting algorithm",
+    "regr.ranger.num.trees" = "Number of trees",
+    "regr.ranger.mtry" = "Number of features affecting node split",
+    "regr.ranger.min.node.size" = "Minimal Node size",
+    "regr.rpart.minsplit" = "Minimum of observations in a node before split",
+    "regr.rpart.cp" = "Larger complexity parameter",
+    "regr.rpart.maxdepth" = "Maximum depth of node in tree",
+    "regr.svm.kernel" = "Kernel function",
+    "regr.svm.cost" = "Cost of constraint violations",
+    "regr.svm.gamma" = "Influence of observation",
+    "regr.xgboost.eta" = "Learning Rate",
+    "regr.xgboost.max_depth" = "Maximum depth of tree",
+    "regr.xgboost.nrounds" = "Maximum number of boosting iterations",
+    "regr.xgboost.colsample_bytree" = "Subsample ratio of columns when constructing each tree",
+    "regr.xgboost.booster" = "Boosting algorithm",
+    "threshold.thresholds" ="decision boundary used to convert predicted probabilities into class labels",
+    #ML Algorithmns
+    "classif.ranger" = "classification random forest",
+    "regr.ranger" = "regression random forest",
+    "classif.rpart" = "classification decision tree",
+    "regr.rpart" = "regression decision tree",
+    "classif.svm" = "classification support vector machine",
+    "regr.svm" = "regression vupport vector machine",
+    "classif.xgboost" = "classification eXtreme Gradient Boost",
+    "regr.ranger" = "regression eXtreme Gradient Boost",
+    "regr.lm" = "linear regression",
+    # Task Overviews
+    "multiclass classif" = "Multiclass Classification",
+    "twoclass classif" = "Two-class Classification",
+    " regr" = "Regression"
+  )
+  
+  index <- 1
+  mapping_vector <- c()
+  for (i in y){
+    mapping_vector[index] <- mapping[i]
+    index <- index + 1
+  }
+  
+  return(mapping_vector) 
+}
 
 avail_msrs <- as.data.table(mlr_measures) # get all mlr3 measures
 get_msrs <- function(current_task, current_learner, available_measures, measure_translations){

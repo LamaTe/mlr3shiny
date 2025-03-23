@@ -115,7 +115,7 @@ addOverviewLineTask = function(title, body) {
 printTaskOverviewUI = function() {
   tagList(
             h5("Task Overview", style = " font-weight: bold;"),
-            addOverviewLineTask("Supervised Task: ", paste(currenttask$overview[[2]], currenttask$overview[[3]], sep = " ")),
+            addOverviewLineTask("Supervised Task: ", custom_map(paste(currenttask$overview[[2]], currenttask$overview[[3]], sep = " "))),
             addOverviewLineTask("Task ID: ", currenttask$overview[[1]]),
             addOverviewLineTask("Data: ", paste(currenttask$overview[[4]], "Variables with",
                                             currenttask$overview[[5]], "Observations", sep = " ")),
