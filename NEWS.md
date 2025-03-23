@@ -1,6 +1,7 @@
 # mlr3shiny 0.5.5
 
 * Adding loading animations to visualizations due to potential long waiting times
+* Some fixes
 
 # mlr3shiny 0.5.4
 
