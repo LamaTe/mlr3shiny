@@ -305,7 +305,7 @@ printTaskVisualizeUI <- function(){
                                 choices = originalTask$feature_names,
                                 multiple = TRUE,
                                 selected = originalTask$feature_names)))),
-    conditionalPanel(condition="input.action_visualize != 0 && output.show_viz == true", plotOutput(outputId = "plot_visualization"))
+    conditionalPanel(condition="input.action_visualize != 0 && output.show_viz == true", plotOutput(outputId = "plot_visualization") %>% withSpinner(color = "#38A8E8"))
   )
 }
 
