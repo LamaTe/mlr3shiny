@@ -225,6 +225,7 @@ custom_map <- function(y){
     "distr" = "distribution",
     "prob" = "probability",
     "response" = "response",
+    "quantiles" = "quantiles",
     #Hyper Parameters
     "classif.ranger.num.trees" = "Number of trees",
     "classif.ranger.mtry" = "Number of features affecting node split",
