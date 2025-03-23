@@ -1,3 +1,8 @@
+# mlr3shiny 0.5.4
+
+* Adding explanatory labels to learner parameters
+* Minor changes to make UI more user friendly 
+
 # mlr3shiny 0.5.0
 
 * Updated to new ParamSet backbone

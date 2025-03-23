@@ -230,7 +230,7 @@ addNumericParam <- function(id, lower, upper, learnername, default, stpsize = 1)
            h5(id),
            tags$div(
              title = custom_map(id), 
-             bsicons::bs_icon("question-circle"),
+             bs_icon("question-circle"),
              style = "margin-left: 5px;"
            )
          )
@@ -264,7 +264,7 @@ addFactorParam <- function(id, levels, learnername, default) {
            h5(id),
            tags$div(
              title = custom_map(id), 
-             bsicons::bs_icon("question-circle"),
+             bs_icon("question-circle"),
              style = "margin-left: 5px;"
            )
          )

@@ -1,6 +1,6 @@
 Package: mlr3shiny
 Title: Machine Learning in 'shiny' with 'mlr3'
-Version: 0.5.0
+Version: 0.5.4
 Authors@R: 
     c(person(given = "Laurens",
            family = "Tetzlaff",
@@ -45,6 +45,7 @@ Imports:
 	stringr,
 	plyr,
 	dplyr,
+	bsicons,
 	purrr,
 	stats,
 	patchwork,
