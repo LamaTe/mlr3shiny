@@ -164,7 +164,6 @@ observeEvent(input$Pred_train_learner, {
       show(id = "Pred_trained_learner")
       show(id = "Pred_codegen")
     })
-    print(Pred$Learner$param_set)
   Pred$Learner_Ov <- createPredLrnOv()
 })
 
@@ -600,7 +599,7 @@ observeEvent(input$action_visualize_predict, {
 
 output$plotDecisionTree <- renderUI({
   tagList(
-    conditionalPanel(condition="output.show_viz == true", plotOutput(outputId = "plot_decision_tree"))
+    conditionalPanel(condition="output.show_viz == true", plotOutput(outputId = "plot_decision_tree") %>% withSpinner(color = "#38A8E8"))
     )
 })
 

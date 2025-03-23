@@ -1,3 +1,7 @@
+# mlr3shiny 0.5.5
+
+* Adding loading animations to visualizations due to potential long waiting times
+
 # mlr3shiny 0.5.4
 
 * Adding explanatory labels to learner parameters

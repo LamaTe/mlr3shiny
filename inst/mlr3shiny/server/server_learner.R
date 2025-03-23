@@ -204,7 +204,7 @@ makeOverviewUi <- function(learnerobject) {
             # A bug in the next line: Es wird nicht angezeigt (weil auflistung)
             addOverviewLineLearner("Supported Predict Types: ", paste(custom_map(learnerobject$Overview[[3]]), collapse = ", ")),
             textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = "", width = NULL, placeholder = "Create Learner label"),
-            actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Update Label", style = "float: left;")
+            actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Change Label", style = "float: left;")
             ),
          column(
             6,

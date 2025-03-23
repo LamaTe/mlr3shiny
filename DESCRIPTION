@@ -1,6 +1,6 @@
 Package: mlr3shiny
 Title: Machine Learning in 'shiny' with 'mlr3'
-Version: 0.5.4
+Version: 0.5.5
 
 Authors@R: 
     c(person(given = "Laurens",
@@ -41,6 +41,7 @@ Imports:
 	shinyjs (>= 2.0.0),
 	shinyWidgets,
 	shinyalert,
+	shinycssloaders,
 	data.table (>= 1.12.8),
 	DT (>= 0.11),
 	stringr,
