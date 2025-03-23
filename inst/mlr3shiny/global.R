@@ -328,6 +328,7 @@ errorAlertTrain <- function(error) {
   errorModal(title = "Model Training Failed",
              description = paste("It seems that the selected learner does not fully support the current data.",
                                  "Please review the dataset and check if the learner can work with all features present.",
+                                 "A solution might be to alter the robustification process (located in 2. Task).",
                                  sep = " "),
              err = error$message,
              id = "okTrain")
