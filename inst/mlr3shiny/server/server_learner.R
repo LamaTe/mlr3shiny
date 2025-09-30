@@ -644,6 +644,7 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
       learnerobject$Hash <- learnerobject$Learner$hash
+      
       output[[learnerparamoutput]] <- renderUI({
          makeLearnerParamTab(learnerobject = learnerobject, learnername = learnername)
       })
