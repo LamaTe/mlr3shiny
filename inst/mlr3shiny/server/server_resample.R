@@ -246,6 +246,7 @@ observeEvent(input$Res_resample, {
       set.seed(42)
       incProgress(0.2)
       Res$R_Res <- resample(task = currenttask$task, learner = Res$Current_Learner, resampling = Res$Strat)
+
       incProgress(0.5)
       },
       error = errorAlertResample

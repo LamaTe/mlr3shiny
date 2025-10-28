@@ -1,3 +1,10 @@
+# mlr3shiny 0.5.6
+
+* Fixed options in ordered_action within the Robustify pipeline
+* Fixed code extraction
+* Added the ability to display model information in the Predict Tab
+* Introduced a "No Learner / Reset Learner" option in the Predict tab to fix cases where Pred$Learner did not update 
+
 # mlr3shiny 0.5.5
 
 * Adding loading animations to visualizations due to potential long waiting times

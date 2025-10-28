@@ -14,13 +14,13 @@ getLrnsUi <- function() {
     )
     return(ui)
   }
-  else {
+  else {            
     ui <- tagList(
       fluidRow(
         column(12,
                radioButtons(inputId = "Pred_learner", label = h5("Select the best learner to train on the entire training data:"),
-                                  choices = LearnerMeta$Learner_Avail,
-                                  selected = character(0))
+                            choices = c("No Learner / Reset Learner" = "", LearnerMeta$Learner_Avail),
+                            selected = "No Learner / Reset Learner")
         )
       )
     )
@@ -114,6 +114,21 @@ getNewPrediction <- function() {
   }
 }
 
+getModelInformationBtn <- function() {
+  if (!is.null(Pred$Learner)) {
+    lrnbutton <- tagList(
+      hr(style = "border-color: #3e3f3a;"),
+      fluidRow(
+        column(12,
+               hidden(
+                 actionButton(inputId = "Show_info", label = "Show Model Information", style = "stretch", width = "100%")
+               )
+        )
+      )
+    )
+  }
+}
+
 getLrnCodegenBtn <- function() {
   if (!is.null(Pred$Learner)) {
     lrnbutton <- tagList(
@@ -145,6 +160,10 @@ output$Predict_learner_train_btn <- renderUI({
   getLrnTrainBtn()
 })
 
+output$Show_model_info_btn <- renderUI({
+  getModelInformationBtn()
+})
+
 # code-generation button
 output$Predict_codegen_btn <- renderUI({
   getLrnCodegenBtn()
@@ -163,9 +182,76 @@ observeEvent(input$Pred_train_learner, {
       incProgress(0.8)
       show(id = "Pred_trained_learner")
       show(id = "Pred_codegen")
+      show(id = "Show_info")
     })
+
   Pred$Learner_Ov <- createPredLrnOv()
 })
+
+
+observeEvent(input$Show_info, {
+
+      sel_learner <- sub(".*postrobustify\\.([^.]+\\.[^.]+).*", "\\1", Pred$Learner$id)
+      
+      if(sel_learner %in% c("classif.log_reg", "regr.lm")) {
+        output$model_info <- renderPrint({
+          summary(Pred$Learner$model[[sel_learner]]$model)
+        })
+        
+        showModal(
+          modalDialog(
+            h4("Model information:"),verbatimTextOutput("model_info")
+          ))
+      }
+      
+      if(sel_learner %in% c("classif.svm", "regr.svm")) {
+        output$sv <- renderPrint({
+          print(Pred$Learner$model[[sel_learner]]$model$SV)
+        })
+        
+        showModal(
+          modalDialog(
+            h4("Number of support vectors:"), HTML(nrow(Pred$Learner$model[[sel_learner]]$model$SV)),
+            h4("Support vectors:"), verbatimTextOutput("sv")
+          ))
+      }
+      
+      if (sel_learner %in% c("regr.xgboost", "classif.xgboost")) {
+        output$call <- renderPrint({
+          print(Pred$Learner$model[[sel_learner]]$model$call)
+        })
+        
+        output$parameters <- renderTable({
+          parameter_list <- Pred$Learner$model[[sel_learner]]$model$params
+          data.frame(
+            Parameter = names(parameter_list),
+            Wert = unlist(parameter_list),
+            row.names = NULL,
+            stringsAsFactors = FALSE
+          )
+        })
+        
+        showModal(
+          modalDialog(
+            h4("Call:"), verbatimTextOutput("call"),
+            h4("Parameters:"), tableOutput("parameters"),
+            h4("Number of iterations:"),HTML(as.character(Pred$Learner$model[[sel_learner]]$model$niter)),
+            h4("Number of features:"), HTML(as.character(Pred$Learner$model[[sel_learner]]$model$nfeatures))
+          ))
+      }
+      
+      if(sel_learner %in% c("classif.rpart", "regr.rpart", "classif.ranger", "regr.ranger")) {
+        output$model_info <- renderPrint({
+          print(Pred$Learner$model[[sel_learner]])
+         })
+        
+        showModal(
+          modalDialog( 
+            h4("Model information:"),verbatimTextOutput("model_info")
+            ))
+      }
+})
+
 
 # display generated code when the button is pressed
 observeEvent(input$Pred_codegen, {
@@ -311,11 +397,13 @@ resetPredLrn <- function() {
 
 
 observeEvent(input$Pred_learner, {
-  if (!is.null(trained_learner_list[[input$Pred_learner]])) {
-    Pred$Learner <- trained_learner_list[[input$Pred_learner]]
+  if (input$Pred_learner == "") {
+    Pred$Learner <- NULL
+    return(NULL)
   } else {
     Pred$Learner <- get(input$Pred_learner)$Learner$clone(deep = TRUE)
   }
+
   Pred$Learner_Ov <- createPredLrnOv()
 })
 
@@ -348,12 +436,12 @@ get_task_code <- function(task) {
       input$Data_train_quote,  quote_seperator, ", stringsAsFactors = TRUE) <br>")
     if (is.numeric(currenttask$target)) {
       task_code <- paste0(task_code,
-      "task <- TaskRegr$new(id = \"newData\", backend = data, target = ",
-      input$Task_target, ")")
+      "task <- TaskRegr$new(id = \"newData\", backend = data, target = '",
+      input$Task_target, "')")
     } else if (is.factor(currenttask$target)) {
       task_code <- paste0(task_code,
-      "task <- TaskClassif$new(id = ", input$Task_id, ", backend = data, target = ",
-      input$Task_target, ")")
+      "task <- TaskClassif$new(id = \"", input$Task_id, "\", backend = data, target = \"",
+      input$Task_target, "\")")
     }
   }
   return(task_code)
@@ -405,7 +493,7 @@ get_learner_code <- function(learner) {
     learner_code <- paste0(learner_code, "learner <- lrn(\"", learner_name, "\") <br>")
   }
   if(isTRUE(currenttask$task$properties == "twoclass")){
-    learner_code <- paste0(learner_code, "graph$add_pipeop(lrn(\"", learner_name, "\", predict_type = \"prob\")) <br>")
+    learner_code <- paste0(learner_code, "learner <- lrn(\"", learner_name, "\", predict_type = \"prob\") <br>")
   }  
   
   # create graph learner
@@ -431,22 +519,35 @@ get_learner_code <- function(learner) {
   possibleparams <- c("threshold",
                        "rpart.minsplit","rpart.maxdepth","rpart.cp",
                        "ranger.num.trees", "ranger.mtry", "ranger.min.node.size",
-                       "svm.kernel","svm.cost", "svm.gamma", "svm.degree",
+                       "svm.type", "svm.kernel","svm.cost", "svm.gamma", "svm.degree",
                        "xgboost.eta", "xgboost.max_depth", "xgboost.nrounds", "xgboost.colsample_bytree", "xgboost.booster")
   # REM: ugly brute force list of currently implemented learners/parameters. should ideally be created automatically (problem: some nonempty fileds in graph$param_set$value although not specified
   
   pars_set <- 0
-  for (parameter in names(learner$param_set$values)) {
-      inlist <- sapply(possibleparams, function(z) length(grep(z, parameter)))
-      if(any(inlist > 0)) {
-        pars_set <- pars_set + 1
-        if(pars_set == 1) learner_code <- paste0(learner_code, "<br># set hyperparameters <br>")
-        learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, " <-  ", learner$param_set$values[parameter], "<br>")
-        }
-  }
-  return(learner_code)
   
-}
+  for (params in possibleparams) {
+    
+    matching_parameters <- grep(params, names(learner$param_set$values), value = TRUE )
+    
+  
+    if (length(matching_parameters) != 0) {
+      
+      for (parameter in matching_parameters) {
+        
+        pars_set <- pars_set + 1
+        
+        if(pars_set == 1) learner_code <- paste0(learner_code, "<br># set hyperparameters <br>")
+
+        if(is.character(learner$param_set$values[[parameter]])) {
+          learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, " <- \"", learner$param_set$values[parameter],"\" <br>")
+        } else {
+          learner_code <- paste0(learner_code, "graph$param_set$values$", parameter, " <-  ", learner$param_set$values[parameter], "<br>")
+        }
+      }
+    }
+    }
+  return(learner_code)
+  }
 
 
 get_training_code <- function() {
@@ -458,7 +559,7 @@ get_training_code <- function() {
   train_code <- paste0(train_code, "# creating split for test and training data <br>")
   if (!is.null(input$TrainFit_input_split)) {
     train_code <- paste0(train_code, "# using the split set by the user <br>")
-    train_code <- paste0(train_code, "train_data <- sample(task$row_ids, task$nrow*",
+    train_code <- paste0(train_code, "train_ids <- sample(task$row_ids, task$nrow*",
       input$TrainFit_input_split / 100, ") <br>")
   } else {
     train_code <- paste0(train_code, "# using default 80/20 split <br>")
