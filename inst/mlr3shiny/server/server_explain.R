@@ -65,7 +65,7 @@ observeEvent(input$evaluate_start, {
         if (isTRUE(currenttask$task$properties == "twoclass") ){
           
           #Preparation for Explainer | TASK
-          dalex_temp <- currenttask$task$data(data_format = "data.table")
+          dalex_temp <- currenttask$task$data() 
           dalex_predictors <- dalex_temp %>% select(-currenttask$task$target_names)
           dalex_target <- dalex_temp %>% select(currenttask$task$target_names)
           colnames(dalex_target) <- "target"
