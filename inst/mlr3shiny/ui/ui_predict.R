@@ -26,6 +26,7 @@ tabpanel_predict <- fluidPage(
                fileInput(inputId = "Predict_data_csv", label = h5("Select a File"),
                          accept = c("text/csv", ".csv", "text/comma-separated-values,text/plain", "text*")),
                checkboxInput("Predict_data_header", "Header", TRUE),
+               checkboxInput("Predict_data_rowID", "Use rowID", FALSE), 
                selectInput(inputId = "Predict_data_sep", label = h5("Separator"),
                            choices = c(Comma = ",", Semicolon = ";", Tab = "\t", Space = " ", Vertical = "|")),
                selectInput(inputId = "Predict_data_quote", label = h5("Quote"),

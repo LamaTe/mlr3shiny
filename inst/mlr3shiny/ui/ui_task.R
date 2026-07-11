@@ -12,6 +12,7 @@ tabpanel_Task <- fluidPage(
                                   selected = "iris", multiple = FALSE),
                       uiOutput(outputId = "Task_make_id"),
                       uiOutput(outputId = "Task_make_target"),
+                      uiOutput(outputId = "Task_make_rowid"), 
                       uiOutput(outputId = "Task_make_task")
                ),
                column(8,

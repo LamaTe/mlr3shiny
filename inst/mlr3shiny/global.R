@@ -349,7 +349,7 @@ errorAlertPredictNew <- function(error) {
   errorModal(title = "Predicting Target Failed",
              description = paste("Sorry, predicting the target variable of the newly imported dataset did not work.",
                                  "Please have a look at the error message to get insight into the cause.", sep = " "),
-             err = error$message,
+             err = "Prediction is not possible because the learner has not been trained yet. Please train the learner again on all data in the Predict tab.",
              id = "okPredict")
 }
 
@@ -394,3 +394,20 @@ warningAlert <- function(warning) {
 messageDetail <- function(msg) {
   showNotification(msg, type = "message")
 }
+
+get_version <- function() {
+  version <- read.dcf("../../DESCRIPTION", fields = "Version")
+  return (version[1,1])
+}
+
+errorInvalidGraphicsState <- function(error) {
+  errorModal(title = "Invalid Graphics State",
+             description = paste("The GraphLearner could not be plotted in RStudio 
+                                 because there is not enough space on the screen. 
+                                 Please expand the sidebar to display the visualization.",
+                                 sep = " "),
+             err = error$message,
+             id = "okLearner")
+
+}
+
