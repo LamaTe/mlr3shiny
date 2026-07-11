@@ -5,6 +5,7 @@ for (i in seq_along(ui_files)) {
   source(ui_files[i], local = TRUE)
 }
 
+
 ui <- tagList(
   tags$head(
     tags$style(
@@ -38,7 +39,10 @@ ui <- tagList(
   ),
   navbarPage(
     theme =  bs_theme(version = 3, bootswatch = 'cerulean'),
-    title = a("mlr3shiny", href = "https://github.com/LamaTe/mlr3shiny", target = "_blank", style = "color: white;"),
+    title = div( style = "display: flex; flex-direction: column;justify-content: center; height: 100%;", 
+      a("mlr3shiny", href = "https://github.com/LamaTe/mlr3shiny", target = "_blank", style = "color: white;"),
+      div(paste("Version", get_version()), style = "color: white; font-size: 65%; margin-top: -3px;")
+    ),
     windowTitle = "mlr3shiny",
     id = "navbar",
     tabPanel("1. Data",
