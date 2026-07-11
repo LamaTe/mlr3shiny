@@ -107,10 +107,20 @@ getNewDataTbl <- function() {
 }
 
 getNewPrediction <- function() {
-  if (!is.null(Pred$Pred)) {
-    tabl <- DT::datatable(as.data.table(Pred$Pred),
-                          options = list(scrollX = TRUE,searching = FALSE, bInfo = FALSE, lengthChange = FALSE, scrollY = "150px"))
-    return(tabl)
+  if (input$Predict_data_rowID && currenttask$rowID != ""){
+    if (!is.null(Pred$Pred)) {
+      tabl <- as.data.table(Pred$Pred)
+      tabl$row_ids <- currenttask$task$data(rows = Pred$Pred$row_ids, cols = currenttask$rowID)[[1]]
+      tabl <- DT::datatable(tabl,
+                            options = list(scrollX = TRUE, searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
+      return(tabl)
+    }
+  } else {
+    if (!is.null(Pred$Pred)) {
+      tabl <- DT::datatable(as.data.table(Pred$Pred),
+                            options = list(scrollX = TRUE, searching = FALSE, bInfo = FALSE, lengthChange = FALSE))
+      return(tabl)
+    }
   }
 }
 
@@ -186,8 +196,15 @@ observeEvent(input$Pred_train_learner, {
     })
 
   Pred$Learner_Ov <- createPredLrnOv()
+  
+  if (currenttask$rowID != "") {
+    updateCheckboxInput(session, inputId = "Predict_data_rowID", label = paste("Use ", currenttask$rowID, "as rowID"))
+    shinyjs::enable("Predict_data_rowID")
+  } else {
+    updateCheckboxInput(session, inputId = "Predict_data_rowID", label = HTML("<div style='color: #808080;'>Use rowID (not available)</div>"), value = FALSE)
+    shinyjs::disable("Predict_data_rowID")
+  }
 })
-
 
 observeEvent(input$Show_info, {
 
@@ -347,8 +364,8 @@ output$Pred_new_data_view <- DT::renderDataTable({
 observeEvent(input$Predict_predict, {
   if (is.null(Pred$Learner) || is.null(Pred$New_Data)) {
     shinyalert(title = "Predicting Failed",
-               text = paste("Please train a learner on the entire training data set and import a new dataset prior to predicting.",
-                            "the target value", sep = " "),
+               text = paste("Please train a learner on the entire training data set and import a new dataset prior to predicting",
+                            "the target value.", sep = " "),
                closeOnClickOutside = TRUE,
                animation = FALSE,
                className="alert-warning",
@@ -376,7 +393,13 @@ output$Pred_prediction_download_csv <- downloadHandler(
     paste("Prediction_new_data", ".csv", sep = "")
   },
   content = function(file) {
-    write.csv(x = as.data.table(Pred$Pred), file = file)
+    if(input$Predict_data_rowID && currenttask$rowID != "") {
+      pred_table <- as.data.table(Pred$Pred)
+      pred_table$row_ids <- currenttask$task$data(rows = Pred$Pred$row_ids, cols = currenttask$rowID)[[1]]
+      write.csv(x = pred_table, file = file)
+    } else {
+      write.csv(x = as.data.table(Pred$Pred), file = file)
+    }
   }
 )
 output$Pred_prediction_download_rds <- downloadHandler(
@@ -629,7 +652,7 @@ observe({
   condition = !is.null(input$Pred_learner)
     && ((Pred$Learner$graph_model$output$op.id %in% c("classif.rpart", "regr.rpart")) 
     | !is.null(Pred$Learner$graph_model$pipeops$classif.rpart)))
-    #last part of condition is needet for twoclass classifcations
+    #last part of condition is needed for twoclass classifcations
 })
 
 raise_alert <- function(message, bttn_confirm=FALSE) {
