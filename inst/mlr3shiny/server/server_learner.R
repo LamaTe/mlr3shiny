@@ -1,12 +1,12 @@
 # each Learner has its own reactive values
 LearnerMeta <- reactiveValues(Count = 1, learner_choice = NULL, Learner_Avail = NULL, TwoClass = NULL)
-Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
-Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
-Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
-Learner4 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
-Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
-Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
-Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL)
+Learner1 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 1) 
+Learner2 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 2)
+Learner3 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 3)
+Learner4 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 4)
+Learner5 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 5)
+Learner6 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 6)
+Learner7 <- reactiveValues(Learner = NULL, Overview = NULL, Params = list(), Predict_Type = NULL, Hash = NULL, Learner_Name = NULL, Index = 7)
 
 # list of trained learners (will be dynamically filled in the training process)
 trained_learner_list <- reactiveValues()
@@ -202,7 +202,7 @@ makeOverviewUi <- function(learnerobject) {
             addOverviewLineLearner("Current Predict Type: ", custom_map(learnerobject$Overview[[2]])),
             # addOverviewLineLearner("Current Parameter: ", paste(learnerobject$Overview[[3]], collapse = ", "))
             # A bug in the next line: Es wird nicht angezeigt (weil auflistung)
-            addOverviewLineLearner("Supported Predict Types: ", paste(custom_map(learnerobject$Overview[[3]]), collapse = ", ")),
+            addOverviewLineLearner("Supported Predict Types: ", paste(custom_map(learnerobject$Learner$graph$pipeops[[3]]$learner$predict_types), collapse = ", ")),
             textInput(inputId = paste0(learnerobject$Learner_Name, "LabelChoice"), label = "Label:", value = "", width = NULL, placeholder = "Create Learner label"),
             actionButton(inputId = paste0(learnerobject$Learner_Name, "LabelChange"), label = "Change Label", style = "float: left;")
             ),
@@ -544,7 +544,7 @@ makeLearnerParamTab <- function(learnerobject, learnername) {
             column(
                4,
                selectInput(
-                  inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = setNames(learnerobject$Learner$predict_types, custom_map(learnerobject$Learner$predict_types)),
+                  inputId = paste0(learnername, "PredictTypeChoice"), label = NULL, choices = setNames(learnerobject$Learner$graph$pipeops[[3]]$learner$predict_types, custom_map(learnerobject$Learner$graph$pipeops[[3]]$learner$predict_types)),
                   selected = learnerobject$Learner$predict_type
                )
             ),
@@ -629,7 +629,10 @@ createGraphLearner <- function(selectedlearner) {
                                  character_action   = input[["character_action"]],
                                  POSIXct_action     = input[["POSIXct_action"]]) %>>% learner
        
-    plot(graph)
+    tryCatch({plot(graph)}, 
+      error = errorInvalidGraphicsState
+    )
+
   } else graph <- as_graph(po("learner", learner))
   if (isTRUE(currenttask$task$properties == "twoclass")) graph <- graph %>>% po("threshold")
   return(as_learner(graph))
@@ -638,13 +641,15 @@ createGraphLearner <- function(selectedlearner) {
 
 # add observers and others to generate the tabs depending on the needs of the user
 makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, learnerparamoutput, learnerovoutput) {
+   
    observeEvent(input[[trigger]], {
        learnerobject$Learner <- createGraphLearner(selectedlearner)
-      learnerobject$Learner_Name <- input[[selectedlearner]]
-      # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
-      LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
-      learnerobject$Hash <- learnerobject$Learner$hash
-      
+       learnerobject$Learner_Name <- input[[selectedlearner]]
+       # learnerobject$Learner <- mlr_learners$get(input[[selectedlearner]])
+       LearnerMeta$Learner_Avail <- unique(sort(c(LearnerMeta$Learner_Avail, learnername)))
+       learnerobject$Hash <- learnerobject$Learner$hash
+       learnerobject$Learner$label <- paste("Learner", learnerobject$Index) 
+
       output[[learnerparamoutput]] <- renderUI({
          makeLearnerParamTab(learnerobject = learnerobject, learnername = learnername)
       })
@@ -689,6 +694,12 @@ makeLearner <- function(learnerobject, learnername, trigger, selectedlearner, le
 
    # # To-Do: get a prettier solution
    observeEvent(input[[paste0(learnername, "ChangeParams")]], {
+     
+     if (grepl("svm", learnerobject$Learner_Name)) {
+       values <- startsWith(names(learnerobject$Learner$param_set$values), "classif") | startsWith(names(learnerobject$Learner$param_set$values), "regr")
+       learnerobject$Learner$param_set$values[values] <- NULL
+     }
+     
       paramlist <- list()
       invalidparams <- NULL
       
