@@ -1,5 +1,5 @@
 # reactive values for task
-currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, positive = NULL, tableOptions = NULL)
+currenttask <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, positive = NULL, tableOptions = NULL, rowID = NULL) 
 # in case a feature gets dropped make sure to only include the same features when predicting new data
 features_to_use <- reactiveValues(features = NULL)
 # used for visualization puropses
@@ -9,6 +9,38 @@ originalTask <- NULL
 observe({
   if (input$Task_backend == "iris" || input$Task_backend == "mtcars" || input$Task_backend == "german_credit") {
     currenttask$task <- mlr_tasks$get(input$Task_backend)
+    
+    choices <- colnames(currenttask$task$data())
+    choices_reduced <- c()
+    
+    for (i in choices) {
+      if (!is.numeric(currenttask$task$data()[[i]]) && anyDuplicated(currenttask$task$data()[[i]]) == 0 && !any(is.na(currenttask$task$data()[[i]])) && !(currenttask$task$target_names %in% i)) {
+        choices_reduced <- c(choices_reduced, i)
+      }
+    }
+    
+    output$Task_make_rowid <- renderUI({
+      selectInput(
+        inputId = "Task_rowid",
+        label = tags$div(
+          style = "display: flex; align-items: center;",
+          h5("Row ID"),
+          tags$div(
+            title = "To remove the selected Row ID, please press the Backspace key.\nVariables that are internally defined as observation identifiers are excluded from model training.",
+            bs_icon("info-circle"),
+            style = "margin-left: 5px;"
+          )
+        ),
+        choices = c("No rowID" = "", currenttask$task$col_roles$name, choices_reduced),
+        selected = currenttask$rowID
+      )
+    })
+     if (!is.null(input$Task_rowid) && input$Task_rowid != "" && input$Task_rowid %in% colnames(currenttask$task$data())) {
+        currenttask$task$set_col_roles(currenttask$task$col_roles$name, roles = "feature")
+        currenttask$task$set_col_roles(input$Task_rowid, roles = "name")
+     } 
+    
+    currenttask$rowID <- input$Task_rowid
   }
   else if (is.null(data$traindata) && input$Task_backend == "imported training data" ) {
     shinyalert(title = "Task Creation", text = userhelp[["Task Creation"]], closeOnClickOutside = TRUE, animation = FALSE)
@@ -22,11 +54,42 @@ observe({
       selectInput(inputId = "Task_target", label = h5("Task Target"), choices = choices,
                   selected = choices[length(choices)])
     })
+    
+    choices_reduced <- c()
+    for (i in choices) {
+      if (!is.numeric(data$traindata[[i]]) && anyDuplicated(data$traindata[[i]]) == 0 && !any(is.na(data$traindata[[i]])) && !(currenttask$task$target_names %in% i)) {
+        choices_reduced <- c(choices_reduced, i)
+      }
+    }
+    
+    output$Task_make_rowid <- renderUI({
+      selectInput(
+        inputId = "Task_rowid",
+        label = tags$div(
+          style = "display: flex; align-items: center;",
+          h5("Row ID"),
+          tags$div(
+            title = "To remove the selected Row ID, please press the Backspace key.",
+            bs_icon("info-circle"),
+            style = "margin-left: 5px;"
+          )
+        ),
+        choices = c("No rowID" = "", choices_reduced),
+        selected = currenttask$task$col_roles$name
+      )
+    })
+    
     output$Task_make_task <- renderUI({
       div(style = "display:inline-block; width:100%; text-align: center;",
           actionButton(inputId = "Task_make", label = "Create Task", icon = icon("bookmark"))
       )
     })
+    
+    if(length(choices_reduced) > 0 && choices_reduced %in% colnames(currenttask$task$data())) {
+      shinyalert(title = "Potential Row ID Detected",
+                 text = "With the current settings, at least one variable with unique values will be used for model training. If you want to exclude this variable, please select it as Row ID.", 
+                 closeOnClickOutside = TRUE, animation = FALSE)
+    }
   }
 })
 
@@ -39,22 +102,35 @@ observe({
   toggle(id = "Task_target", condition = (input$Task_backend == "imported training data"))
   toggle(id = "Task_id", condition = (input$Task_backend == "imported training data"))
   toggle(id = "Task_make", condition = (input$Task_backend == "imported training data"))
+  toggle(id = "Task_rowid", condition = (input$Task_backend == "imported training data"))
 })
 
 # decide whether it is a classification or regression task
 observeEvent(input$Task_make, {
+
+  currenttask$rowID <- input$Task_rowid
+ 
   currenttask$target <- data$traindata[, input$Task_target]
 
   if (is.numeric(currenttask$target)) {
     currenttask$task <- TaskRegr$new(id = input$Task_id, backend = data$traindata, target = input$Task_target)
+    if (input$Task_rowid != "" && input$Task_rowid %in% colnames(currenttask$task$data())) {
+      currenttask$task$set_col_roles(currenttask$task$col_roles$name, roles = "feature")
+      currenttask$task$set_col_roles(input$Task_rowid, roles = "name")
+    } 
   }
   else if (is.factor(currenttask$target)) {
-    currenttask$task <- TaskClassif$new(id = input$Task_id, backend = data$traindata, target = input$Task_target)
+    currenttask$task <- TaskClassif$new(id = input$Task_id, backend = data$traindata, target = input$Task_target) 
+    if (input$Task_rowid != "" && input$Task_rowid %in% colnames(currenttask$task$data())) {
+      currenttask$task$set_col_roles(currenttask$task$col_roles$name, roles = "feature")
+      currenttask$task$set_col_roles(input$Task_rowid, roles = "name")
+    } 
   }
   else {
     shinyalert(title = "Target Selection",
                text = userhelp[["Task Creation Target"]], closeOnClickOutside = TRUE, animation = FALSE)
   }
+ 
 })
 
 # Task Summary
@@ -79,6 +155,7 @@ observe({
   if (!identical(currenttask$task$properties, character(0)) && currenttask$task$properties == "twoclass") {
     currenttask$positive <- currenttask$task$positive
   }
+
   # add positive label if twoclass
   currenttask$overview <- list(
     task_id <- currenttask$task$id,
@@ -87,6 +164,7 @@ observe({
     cols = currenttask$task$ncol,
     observations = currenttask$task$nrow,
     target = c(currenttask$task$target_names),
+    rowid = currenttask$rowID,
     features = currenttask$featTypes
   )
 })
@@ -120,10 +198,11 @@ printTaskOverviewUI = function() {
             addOverviewLineTask("Data: ", paste(currenttask$overview[[4]], "Variables with",
                                             currenttask$overview[[5]], "Observations", sep = " ")),
             addOverviewLineTask("Target: ", currenttask$overview[[6]]),
+            addOverviewLineTask("Rowid: ", currenttask$overview[[7]]), 
             if (!identical(currenttask$task$properties, character(0)) && currenttask$task$properties == "twoclass") {
             addOverviewLineTask("Positive Class: ", currenttask$positive)
-              },
-            addOverviewLineTask("Features: ", renderDataTable(expr = as.data.table(currenttask$overview[[7]]), rownames = FALSE,
+              }, 
+            addOverviewLineTask("Features: ", renderDataTable(expr = as.data.table(currenttask$overview[[8]]), rownames = FALSE, 
                                                           options = currenttask$tableOptions)
                             )
   )
@@ -260,7 +339,42 @@ observeEvent(input$action_visualize, {
     )
     return()
   }
+  
   task <- temp_task$select(cols = input$Features_Viz)
+  
+  
+  if (input$num_observations == "sample") {
+    if(is.na(input$sample_size)) {
+      output$warning <- renderUI({
+        p(style = "color: red;", "The number of observations cannot be empty.")
+      })
+      return()
+      
+    } else if(input$sample_size == 0) {
+      output$warning <- renderUI({
+        p(style = "color: red;", "The number of observations must be greater than 0.")
+      })
+      return()
+      
+    }else if(input$sample_size > currenttask$overview[[5]]) {
+      max_val <- currenttask$overview[[5]]
+      
+      output$warning <- renderUI({
+        p(style = "color: red;", sprintf("Value must be less than or equal to %d.", max_val)) 
+        })
+      return()
+      
+    } else {
+      output$warning <- renderUI({NULL})
+    }
+    n_observations <- input$sample_size
+    
+  } else {
+    output$warning <- renderUI({NULL})
+    n_observations <- input$num_observations
+  }
+  
+  task <- task$filter(rows = sample(task$row_ids, size = n_observations))
 
   output$show_viz <- reactive(TRUE)
   outputOptions(output, "show_viz", suspendWhenHidden = FALSE)
@@ -305,6 +419,54 @@ printTaskVisualizeUI <- function(){
                                 choices = originalTask$feature_names,
                                 multiple = TRUE,
                                 selected = originalTask$feature_names)))),
+    
+    tags$head(
+      tags$style(HTML("
+    #num_observations .radio:nth-child(2) > label > input[type='radio'] {
+      transform: translateY(9px);
+    }
+  "))
+    ),
+    
+    fluidRow(
+      column(4, h5("Size of the data:")),
+      column(8, 
+             radioButtons(
+               inputId = "num_observations",
+               label = NULL,
+               choiceNames = list(
+                 paste0("Entire dataset (", currenttask$overview[[5]], " observations)"),
+                 
+                 div(style = "display: flex; line-height:2.8;",
+                     div("Random subsample of"),
+                     div(style = "width: 70px; margin-left: 8px; margin-right: 8px;",
+                         numericInput(
+                           inputId = "sample_size",
+                           label = NULL,
+                           value = if (currenttask$overview[[5]] > 1000) 
+                             {1000}
+                           else if (currenttask$overview[[5]] <= 100) 
+                             {currenttask$overview[[5]]}
+                           else {100},
+                           min =if(currenttask$overview[[5]] >= 100) {100} else {currenttask$overview[[5]]},
+                           max = currenttask$overview[[5]],
+                           step = 1
+                         )
+                     ),
+                     div("observations")
+                 )
+               ),
+               
+               choiceValues = list(
+                 currenttask$overview[[5]],
+                 "sample"
+               ),
+               selected = currenttask$overview[[5]]
+             ),
+             uiOutput('warning')
+      )
+    ),
+    
     conditionalPanel(condition="input.action_visualize != 0 && output.show_viz == true", plotOutput(outputId = "plot_visualization") %>% withSpinner(color = "#38A8E8"))
   )
 }
