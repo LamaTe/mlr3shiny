@@ -1,3 +1,14 @@
+# mlr3shiny 0.5.7
+* Adjusted  the available Predict Types for regression tasks
+* Fixed a bug that caused Shiny to crash after switching the SVM kernel
+* Added a subset option to the autoplot in Task
+* Added Shiny version to the title
+* Added error modal when the GraphLearner cannot be plotted
+* Improved the error modal shown when predicting without a trained learner
+* Added the option to select a row-ID
+* Changed the default label of a learner
+* Fixed outdated code that caused a crash in Explain
+
 # mlr3shiny 0.5.6
 
 * Fixed options in ordered_action within the Robustify pipeline
